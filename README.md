@@ -110,3 +110,4 @@ Pratinjau cepat tanpa build: buka **`docs/mockup/index.html`** di browser
 - [SCREENSHOT_DIRECTION.md](docs/SCREENSHOT_DIRECTION.md) — apa & bagaimana menangkap
 - [APP_ICON_DIRECTION.md](docs/APP_ICON_DIRECTION.md) — arah ikon final
 - [PROMO_ASSET_PROMPTS.md](docs/PROMO_ASSET_PROMPTS.md) — prompt Nano Banana (dekoratif)
+- [MOTION_LANGUAGE.md](docs/MOTION_LANGUAGE.md) — micro-interaksi, kurva/durasi, glow/pulse/particle, haptic & SFX

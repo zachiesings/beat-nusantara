@@ -125,10 +125,21 @@ class AppRadius {
 }
 
 class AppDur {
-  static const xfast = Duration(milliseconds: 120);
-  static const fast = Duration(milliseconds: 200);
-  static const med = Duration(milliseconds: 360);
-  static const slow = Duration(milliseconds: 650);
+  static const instant = Duration(milliseconds: 90); // press-down
+  static const xfast = Duration(milliseconds: 120); // press release / pop
+  static const fast = Duration(milliseconds: 200); // chips, toggles, tabs
+  static const med = Duration(milliseconds: 360); // page / view changes
+  static const slow = Duration(milliseconds: 650); // reveals
+  static const celebrate = Duration(milliseconds: 2600); // one-shot confetti
+}
+
+/// Curve vocabulary — the "voice" of every motion. Pick by intent.
+class AppCurves {
+  static const snappy = Curves.easeOutCubic; // default for almost everything
+  static const bouncy = Curves.easeOutBack; // selection pops (chips/cards/stickers)
+  static const gentle = Curves.easeInOut; // breathing / floating loops
+  static const overshoot = Curves.elasticOut; // BIG rewards only (grade reveal) — rare
+  static const press = Curves.easeOut; // button squish in/out
 }
 
 class AppShadows {

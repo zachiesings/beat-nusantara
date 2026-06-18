@@ -20,4 +20,22 @@ class Haptics {
   static void heavy() {
     if (enabled) HapticFeedback.heavyImpact();
   }
+
+  /// Composite "you did it" pattern — for result clear & mission complete.
+  static Future<void> success() async {
+    if (!enabled) return;
+    HapticFeedback.heavyImpact();
+    await Future<void>.delayed(const Duration(milliseconds: 90));
+    HapticFeedback.lightImpact();
+    await Future<void>.delayed(const Duration(milliseconds: 70));
+    HapticFeedback.lightImpact();
+  }
+
+  /// Gentle "nope" pattern — for tapping a locked item (never harsh).
+  static Future<void> error() async {
+    if (!enabled) return;
+    HapticFeedback.lightImpact();
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    HapticFeedback.lightImpact();
+  }
 }

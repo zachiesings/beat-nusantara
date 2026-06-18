@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/theme.dart';
+import '../../core/haptics.dart';
 import '../../game/models/song.dart';
 import '../../game/scoring/judgment.dart';
 import '../../game/scoring/score_engine.dart';
@@ -38,6 +39,13 @@ class _ResultScreenState extends State<ResultScreen>
   bool _bonusClaimed = false;
 
   ResultSummary get r => widget.result;
+
+  @override
+  void initState() {
+    super.initState();
+    // celebratory haptic on a clean clear (see docs/MOTION_LANGUAGE.md)
+    if (widget.result.cleared) Haptics.success();
+  }
 
   @override
   void dispose() {
