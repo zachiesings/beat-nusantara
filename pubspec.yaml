@@ -12,7 +12,7 @@ dependencies:
   provider: ^6.1.2          # simple, CI-stable state management (justified: minimal surface, no codegen)
   shared_preferences: ^2.2.2 # local persistence (progress, settings, unlocks, scores)
   audioplayers: ^6.1.0       # song + SFX playback (proven on this build pipeline)
-  google_mobile_ads: ^5.2.0  # rewarded ads (App ID injected into native config by CI)
+  google_mobile_ads: '>=5.3.0 <7.0.0'  # rewarded ads; >=5.3 for modern-Gradle compat (App ID injected by CI)
 
 dev_dependencies:
   flutter_test:
