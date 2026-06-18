@@ -98,7 +98,7 @@ void main() {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: AppColors.ink, useMaterial3: true),
+          theme: AppTheme.dark(),
           home: RepaintBoundary(
             key: key,
             child: Builder(builder: (ctx) => storeShot(ctx, name, kicker: copy[0], headline: copy[1])),
