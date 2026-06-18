@@ -21,6 +21,14 @@ class GameEngine {
   GameEngine(this.chart, {this.calibrationMs = 0})
       : laneCount = chart.laneCount,
         board = ScoreBoard(chart.noteCount) {
+    // charts are cached by ChartLoader → reset per-play mutable note state so
+    // replays don't see notes still flagged as judged from the last run.
+    for (final n in chart.notes) {
+      n.judged = false;
+      n.holding = false;
+      n.holdComplete = false;
+      n.judgedAt = null;
+    }
     _lastNoteMs = chart.notes.isEmpty
         ? 0
         : chart.notes
@@ -118,6 +126,7 @@ class GameEngine {
             : Judgment.good;
 
     best.judged = true;
+    best.judgedAt = now;
     final golden = best.type == NoteType.golden;
     board.register(j, golden: golden, feverMult: feverMult);
 

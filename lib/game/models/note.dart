@@ -38,6 +38,7 @@ class Note {
   bool judged = false;
   bool holding = false; // hold currently being held
   bool holdComplete = false;
+  int? judgedAt; // clock ms when it was hit (drives the dissolve burst)
 
   Note({
     required this.type,

@@ -50,6 +50,8 @@ class _GameplayScreenState extends State<GameplayScreen>
       AnimationController(vsync: this, duration: const Duration(milliseconds: 320));
   late final AnimationController _banner =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 850));
+  late final AnimationController _flash =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 360));
   String _bannerText = '';
   bool _wasFever = false;
 
@@ -130,6 +132,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     if (_engine!.feverActive && !_wasFever) {
       _wasFever = true;
       _showBanner('FEVER ×2!');
+      _flash.forward(from: 0); // screen flash on fever
       Haptics.heavy();
     } else if (!_engine!.feverActive) {
       _wasFever = false;
@@ -269,6 +272,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     _ticker.dispose();
     _shake.dispose();
     _banner.dispose();
+    _flash.dispose();
     _frame.dispose();
     _audio.stopSong();
     super.dispose();
@@ -331,6 +335,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                   _hud(),
                   _judgmentPopup(),
                   _comboBanner(),
+                  _feverFlash(),
                   if (_countdown > 0) _countdownOverlay(),
                   if (_paused) _pauseOverlay(),
                   if (_showRevive) _reviveOverlay(),
@@ -402,6 +407,22 @@ class _GameplayScreenState extends State<GameplayScreen>
               ),
             ),
             child: const SizedBox.expand(),
+          ),
+        );
+      },
+    );
+  }
+
+  // full-screen gold flash the instant FEVER kicks in
+  Widget _feverFlash() {
+    return AnimatedBuilder(
+      animation: _flash,
+      builder: (_, __) {
+        final v = _flash.value;
+        if (v >= 1) return const SizedBox.shrink();
+        return Positioned.fill(
+          child: IgnorePointer(
+            child: ColoredBox(color: AppColors.goldLt.withValues(alpha: (1 - v) * 0.5)),
           ),
         );
       },

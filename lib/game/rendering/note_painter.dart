@@ -52,6 +52,34 @@ class NotePainter extends CustomPainter {
       final cx = (n.lane + 0.5) * laneW;
       _paintNote(canvas, n, cx, y, laneW, hitY, now, fever);
     }
+
+    // DISSOLVE — a freshly-hit note shatters into lane-colour shards at the line
+    if (!reduceEffects) {
+      for (final n in engine.chart.notes) {
+        final ja = n.judgedAt;
+        if (ja == null || n.holding) continue;
+        final age = now - ja;
+        if (age < 0 || age > 280) continue;
+        final p = 1 - age / 280.0;
+        final cx = (n.lane + 0.5) * laneW;
+        final col = _noteColor(n);
+        // expanding ghost of the note fading out
+        final s = 1 + (1 - p) * 0.7;
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+              Rect.fromCenter(center: Offset(cx, hitY), width: laneW * 0.72 * s, height: laneW * 0.36 * s),
+              const Radius.circular(13)),
+          Paint()..color = col.withValues(alpha: 0.45 * p),
+        );
+        // shards flying outward
+        for (int k = 0; k < 7; k++) {
+          final a = k * (2 * math.pi / 7) + n.lane;
+          final dist = (1 - p) * laneW * 0.95;
+          final o = Offset(cx + math.cos(a) * dist, hitY + math.sin(a) * dist * 0.7);
+          canvas.drawCircle(o, 3.4 * p + 0.8, Paint()..color = col.withValues(alpha: 0.85 * p));
+        }
+      }
+    }
   }
 
   void _paintLanes(Canvas c, Size size, double laneW, double hitY, int now, bool fever) {

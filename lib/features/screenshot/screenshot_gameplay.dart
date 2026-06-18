@@ -31,6 +31,14 @@ class _ScreenshotGameplayState extends State<ScreenshotGameplay> {
     final chart = await ChartLoader.load('assets/charts/koplo_neon__expert.json');
     if (chart == null || !mounted) return;
     final e = GameEngine(chart)..songTimeMs = _frozenMs;
+    // stage a mid-dissolve on lane 1 for the still frame
+    for (final n in chart.notes) {
+      if (n.lane == 1) {
+        n.judged = true;
+        n.judgedAt = _frozenMs - 70;
+        break;
+      }
+    }
     setState(() => _engine = e);
   }
 
