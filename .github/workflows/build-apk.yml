@@ -32,6 +32,14 @@ jobs:
       - name: Generate platform folders
         run: flutter create --org com.beatnusantara --project-name beat_nusantara --platforms=android,ios .
 
+      - name: Pin Gradle 8.x + AGP 8.7 (google_mobile_ads isn't Gradle-9 ready)
+        run: |
+          sed -i 's#gradle-[0-9.]*-all\.zip#gradle-8.10.2-all.zip#' android/gradle/wrapper/gradle-wrapper.properties
+          sed -i 's/id("com.android.application") version "[0-9.]*"/id("com.android.application") version "8.7.0"/' android/settings.gradle.kts 2>/dev/null || true
+          sed -i "s/id 'com.android.application' version '[0-9.]*'/id 'com.android.application' version '8.7.0'/" android/settings.gradle 2>/dev/null || true
+          echo "--- wrapper ---"; grep distributionUrl android/gradle/wrapper/gradle-wrapper.properties
+          echo "--- agp ---"; grep -rh "com.android.application" android/settings.gradle* || true
+
       - name: Configure AdMob (Android) — app-id meta-data, INTERNET, minSdk 23
         run: |
           MANIFEST=android/app/src/main/AndroidManifest.xml
