@@ -12,6 +12,7 @@
 // Run locally:  flutter test test/screenshots_capture_test.dart
 // In CI:        .github/workflows/screenshots.yml uploads them as an artifact.
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:beat_nusantara/app/theme.dart';
@@ -50,6 +51,19 @@ Future<void> _loadFonts() async {
       break;
     } catch (_) {/* try next path */}
   }
+
+  // Color emoji — the headless renderer has no system emoji font, so 👋✨🎁 show
+  // as boxes. The CI workflow downloads NotoColorEmoji.ttf to repo root; load it
+  // as a fallback so emoji render in the captures. (Not bundled into the app —
+  // real iOS/Android devices use their native emoji.) Skipped if absent.
+  try {
+    final f = File('noto_emoji.ttf');
+    if (f.existsSync()) {
+      final bytes = await f.readAsBytes();
+      final emoji = FontLoader('NotoColorEmoji')..addFont(Future.value(ByteData.sublistView(bytes)));
+      await emoji.load();
+    }
+  } catch (_) {/* no emoji font available — captures will show boxes for emoji */}
 }
 
 void main() {

@@ -35,6 +35,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Fetch color emoji font (so 👋✨🎁 render, not boxes)
+        run: |
+          curl -fsSL https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf -o noto_emoji.ttf \
+            && echo "emoji font: $(wc -c <noto_emoji.ttf) bytes" || echo "emoji font download failed (captures will show boxes for emoji)"
+
       - name: Capture screenshots (home/library/gameplay/result/reward .png)
         run: flutter test test/screenshots_capture_test.dart
 
