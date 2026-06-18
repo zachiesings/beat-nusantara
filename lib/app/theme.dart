@@ -273,14 +273,18 @@ class _NeonBackgroundState extends State<NeonBackground>
       ),
       child: Stack(
         children: [
+          // animated warm glows (cheap, redrawn each frame)
           Positioned.fill(
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _c,
-                builder: (_, __) => CustomPaint(painter: _LivingBgPainter(_c.value)),
+                builder: (_, __) => CustomPaint(painter: _GlowPainter(_c.value)),
               ),
             ),
           ),
+          // detailed batik motif (static → painted once & cached, so the rich
+          // kawung/ceplok/isen detail costs nothing per frame)
+          const Positioned.fill(child: RepaintBoundary(child: CustomPaint(painter: _BatikPainter()))),
           if (widget.dim) const Positioned.fill(child: ColoredBox(color: Color(0x73000000))),
           widget.child,
         ],
@@ -289,11 +293,11 @@ class _NeonBackgroundState extends State<NeonBackground>
   }
 }
 
-class _LivingBgPainter extends CustomPainter {
+/// Animated warm glows + drifting prada-gold specks (cheap; redrawn each frame).
+class _GlowPainter extends CustomPainter {
   final double t;
-  _LivingBgPainter(this.t);
+  _GlowPainter(this.t);
 
-  // warm batik glows (gold / marun / indigo / jade), drifting
   static const _blobs = [
     (AppColors.gold, 0.16, 0.10, 360.0, 0.0),
     (AppColors.maroon, 0.90, 0.86, 380.0, 0.5),
@@ -318,34 +322,6 @@ class _LivingBgPainter extends CustomPainter {
           ]).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r)),
       );
     }
-
-    // KAWUNG batik lattice — interlocking quatrefoils in faint prada gold.
-    final line = Paint()
-      ..color = AppColors.gold.withValues(alpha: 0.07)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-    final dot = Paint()..color = AppColors.gold.withValues(alpha: 0.06);
-    const gap = 60.0;
-    const r = gap * 0.5;
-    for (double y = -gap; y < size.height + gap; y += gap) {
-      for (double x = -gap; x < size.width + gap; x += gap) {
-        final cx = x + gap / 2, cy = y + gap / 2;
-        // four petals (kawung): wide ovals L/R, tall ovals U/D
-        for (final d in const [Offset(1, 0), Offset(-1, 0), Offset(0, 1), Offset(0, -1)]) {
-          final oc = Offset(cx + d.dx * r * 0.5, cy + d.dy * r * 0.5);
-          canvas.drawOval(
-            Rect.fromCenter(
-                center: oc,
-                width: d.dx != 0 ? r * 1.05 : r * 0.58,
-                height: d.dy != 0 ? r * 1.05 : r * 0.58),
-            line,
-          );
-        }
-        canvas.drawCircle(Offset(cx, cy), 1.6, dot);
-      }
-    }
-
-    // floating prada-gold specks rising slowly (warm, not multicolour neon)
     final spark = Paint();
     for (int i = 0; i < 12; i++) {
       final seed = i * 0.137;
@@ -360,5 +336,57 @@ class _LivingBgPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _LivingBgPainter old) => old.t != t;
+  bool shouldRepaint(covariant _GlowPainter old) => old.t != t;
+}
+
+/// Detailed batik motif — a true KAWUNG lattice (four diagonal petals per unit)
+/// inside CEPLOK rings, with a center jewel and ISEN-ISEN (cecek) filler dots.
+/// Static & cached, so all this hand-drawn density is essentially free.
+class _BatikPainter extends CustomPainter {
+  const _BatikPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final petal = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.1
+      ..color = AppColors.gold.withValues(alpha: 0.10);
+    final faint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.9
+      ..color = AppColors.gold.withValues(alpha: 0.055);
+    final jewel = Paint()..color = AppColors.gold.withValues(alpha: 0.09);
+    final cecek = Paint()..color = AppColors.goldLt.withValues(alpha: 0.06);
+
+    const gap = 64.0;
+    const r = gap * 0.5;
+    for (double y = -gap; y < size.height + gap; y += gap) {
+      for (double x = -gap; x < size.width + gap; x += gap) {
+        final center = Offset(x + gap / 2, y + gap / 2);
+        // ceplok ring framing the unit
+        canvas.drawCircle(center, r * 0.94, faint);
+        // four diagonal kawung petals (double-stroked)
+        for (int k = 0; k < 4; k++) {
+          final ang = math.pi / 4 + k * math.pi / 2;
+          final oc = center + Offset(math.cos(ang), math.sin(ang)) * (r * 0.46);
+          canvas.save();
+          canvas.translate(oc.dx, oc.dy);
+          canvas.rotate(ang);
+          canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 1.02, height: r * 0.5), petal);
+          canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 0.62, height: r * 0.28), faint);
+          canvas.restore();
+        }
+        // center jewel
+        canvas.drawCircle(center, 2.4, jewel);
+        // isen-isen cecek dots in the N/E/S/W gaps between units
+        for (int k = 0; k < 4; k++) {
+          final ang = k * math.pi / 2;
+          canvas.drawCircle(center + Offset(math.cos(ang), math.sin(ang)) * r, 1.3, cecek);
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _BatikPainter old) => false;
 }

@@ -6,12 +6,13 @@ import '../../state/game_state.dart';
 import '../../widgets/glass_panel.dart';
 import '../results/result_screen.dart';
 import '../shell/main_shell.dart';
+import '../splash/splash_screen.dart';
 import 'demo_data.dart';
 import 'screenshot_gameplay.dart';
 
 /// Names map 1:1 to the requested routes: screenshot/home, screenshot/library,
 /// screenshot/gameplay, screenshot/result, screenshot/reward.
-const screenshotRoutes = ['home', 'library', 'gameplay', 'result', 'reward'];
+const screenshotRoutes = ['splash', 'home', 'library', 'gameplay', 'result', 'reward'];
 
 /// Returns a screenshot-ready screen built from REAL app widgets + deterministic
 /// demo data. Reachable via `--dart-define=SCREENSHOT=<name>` at launch, or from
@@ -24,6 +25,8 @@ Widget screenshotScreen(BuildContext context, String name) {
       ChangeNotifierProvider<GameState>.value(value: demo, child: child);
 
   switch (name) {
+    case 'splash':
+      return const Scaffold(body: NeonBackground(child: Center(child: SplashContent())));
     // home/library/reward render inside the shell so the floating nav shows
     case 'home':
       return wrap(const MainShell(initialTab: 0));

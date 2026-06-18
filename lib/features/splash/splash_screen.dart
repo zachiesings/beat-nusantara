@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../core/constants.dart';
 import '../../state/game_state.dart';
+import '../../widgets/gunungan.dart';
+import '../../widgets/pulse.dart';
+import '../../widgets/shapes.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../shell/main_shell.dart';
 
@@ -15,8 +18,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))
-        ..forward();
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 1600))..forward();
 
   @override
   void initState() {
@@ -33,10 +35,8 @@ class _SplashScreenState extends State<SplashScreen>
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 450),
-        pageBuilder: (_, __, ___) =>
-            done ? const MainShell() : const OnboardingScreen(),
-        transitionsBuilder: (_, a, __, child) =>
-            FadeTransition(opacity: a, child: child),
+        pageBuilder: (_, __, ___) => done ? const MainShell() : const OnboardingScreen(),
+        transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
       ),
     );
   }
@@ -54,38 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
         child: Center(
           child: AnimatedBuilder(
             animation: _c,
-            builder: (_, __) {
-              final t = Curves.easeOutBack.transform(_c.value.clamp(0.0, 1.0).toDouble());
-              return Opacity(
-                opacity: _c.value.clamp(0.0, 1.0).toDouble(),
-                child: Transform.scale(
-                  scale: 0.7 + 0.3 * t,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _PulseLogo(progress: _c.value),
-                      const SizedBox(height: 24),
-                      ShaderMask(
-                        shaderCallback: (r) =>
-                            AppColors.brandGradient.createShader(r),
-                        child: const Text(
-                          K.appName,
-                          style: TextStyle(
-                            fontSize: 34,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(K.tagline,
-                          style: TextStyle(color: AppColors.textLo, fontSize: 14)),
-                    ],
-                  ),
-                ),
-              );
-            },
+            builder: (_, __) => SplashContent(progress: _c.value),
           ),
         ),
       ),
@@ -93,35 +62,46 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-class _PulseLogo extends StatelessWidget {
+/// The splash composition (no timer) — reused by the real splash and the
+/// /screenshot/splash route. Gunungan emblem inside pulse rings, brand name,
+/// tagline, a tumpal trim.
+class SplashContent extends StatelessWidget {
   final double progress;
-  const _PulseLogo({required this.progress});
+  const SplashContent({super.key, this.progress = 1.0});
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 120,
-      height: 120,
-      child: Stack(
-        alignment: Alignment.center,
+    final p = progress.clamp(0.0, 1.0).toDouble();
+    final t = Curves.easeOutBack.transform(p);
+    return Opacity(
+      opacity: p,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          for (final r in [1.0, 0.7, 0.45])
-            Container(
-              width: 120 * r,
-              height: 120 * r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    color: AppColors.cyan.withValues(alpha: 0.25 + 0.4 * progress),
-                    width: 2),
-              ),
+          SizedBox(
+            width: 250,
+            height: 290,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Positioned.fill(child: Twinkles(count: 16, color: AppColors.gold)),
+                const PulseRings(color: AppColors.gold, size: 250),
+                Transform.scale(scale: 0.7 + 0.3 * t, child: const Gunungan(size: 168)),
+              ],
             ),
-          Container(
-            width: 56,
-            height: 56,
-            decoration: const BoxDecoration(
-                gradient: AppColors.brandGradient, shape: BoxShape.circle),
-            child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 34),
           ),
+          const SizedBox(height: 6),
+          ShaderMask(
+            shaderCallback: (r) => AppColors.brandGradient.createShader(r),
+            child: const Text(
+              K.appName,
+              style: TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(K.tagline, style: TextStyle(color: AppColors.textLo, fontSize: 14)),
+          const SizedBox(height: 18),
+          const SizedBox(width: 120, child: Tumpal(height: 10)),
         ],
       ),
     );
