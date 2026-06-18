@@ -1,5 +1,36 @@
 # Game Design — Beat Nusantara
 
+## Positioning & Scope — "Piano Tiles+"
+**Beat Nusantara = aksesibilitas Piano Tiles + variasi/kedalaman rhythm game
+modern (Proseka-lite) + identitas arcade Nusantara yang cute-premium.**
+Bukan kloning Piano Tiles polos. Bukan kloning Project Sekai penuh.
+
+Identitas yang dikejar:
+- **Mudah & cepat (rasa Piano Tiles):** not jatuh vertikal, ketuk lajur, satu
+  tangan, sesi pendek, langsung paham.
+- **Lebih kaya & juicy (Proseka-lite, secukupnya yang praktis):** 7 jenis not,
+  combo burst, Fever mode, grade SSS, hasil meriah, kalibrasi, kosmetik.
+- **Rasa lokal:** tema Nusantara, neon-budaya, microcopy Indonesia, mascot Melodi.
+
+**IN scope** (sudah ada di app): tap · hold · slide · flick · double · golden ·
+fever notes · combo + combo-punch · Fever mode (×2) · grade SSS–D · akurasi ·
+difficulty (Easy/Normal/Hard/Expert) · song mastery (skor terbaik per difficulty) ·
+result celebration · kosmetik (skin lajur, efek ketukan) · lencana ·
+aksesibilitas (Mode Santai, zona ketuk besar, kurangi efek, kalibrasi latency).
+
+**OUT of scope** (sengaja — biar simpel & gampang rilis):
+❌ gacha karakter/kartu · ❌ MV 3D · ❌ sistem cerita (untuk sekarang) ·
+❌ multiplayer / live · ❌ ekonomi idol/kartu kompleks · ❌ social system penuh ·
+❌ backend berat (semua state lokal).
+
+**"Sean test"** — dari **satu screenshot gameplay** harus langsung kebaca: not
+jatuh, hit line jelas, combo, fever meter, not warna-warni, feedback PERFECT, UI
+cute-premium. Layar gameplay + screenshot-mode sudah dirancang memenuhi ini.
+
+> Implementasi sudah sesuai arah ini — note variety lengkap, accessibility
+> first-class (Easy + Santai + zona besar), tanpa sistem berat. Pengembangan
+> lanjutan harus tetap di dalam IN-scope di atas.
+
 ## Loop inti
 Not jatuh vertikal menuju **hit line**. Pemain mengetuk lajur tepat waktu.
 Timing dinilai → score + combo + akurasi + HP + fever. Lagu selesai → layar hasil

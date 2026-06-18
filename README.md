@@ -3,6 +3,12 @@
 Game ritme (音ゲー) premium dengan rasa Nusantara — dibangun dengan Flutter,
 dirancang untuk App Store & Play Store. Modern arcade × neon-budaya lokal.
 
+**Arah desain: "Piano Tiles+"** — aksesibilitas Piano Tiles (mudah, cepat, satu
+tangan) di-upgrade jadi rhythm game lane modern *Proseka-lite* (7 jenis not, combo,
+Fever, grade SSS), dengan identitas arcade Nusantara yang cute-premium. Bukan
+kloning Piano Tiles polos, bukan kloning Project Sekai penuh. Detail & batasan
+scope: [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md#positioning--scope--piano-tiles).
+
 > Semua lagu, judul, dan nama artis di sini **fiktif/orisinal**. Audio demo
 > dihasilkan secara prosedural — tidak ada lagu/artis berhak cipta. Lihat
 > [docs/MUSIC_LICENSING.md](docs/MUSIC_LICENSING.md).
