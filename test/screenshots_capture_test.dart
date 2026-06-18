@@ -20,7 +20,8 @@ import 'package:beat_nusantara/features/screenshot/screenshot_gallery.dart';
 import 'package:beat_nusantara/services/ads/ads_service.dart';
 import 'package:beat_nusantara/services/audio/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
+import 'package:flutter/services.dart' show rootBundle, FontLoader;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
