@@ -1,0 +1,56 @@
+name: Preview Video
+
+# Renders a ~15s App Store preview reel from the REAL gameplay (frame by frame),
+# then encodes it with the song into an .mp4 you can download from any browser.
+# Heavy → manual trigger (or when the preview test/workflow changes).
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'test/preview_video_test.dart'
+      - '.github/workflows/preview.yml'
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Render preview frames (real gameplay)
+        run: flutter test test/preview_video_test.dart
+
+      - name: Encode mp4 (frames + song)
+        run: |
+          ffmpeg -y -framerate 24 -start_number 0 -i build/preview/frame_%04d.png \
+            -i assets/audio/songs/koplo_neon.wav \
+            -c:v libx264 -pix_fmt yuv420p -profile:v high \
+            -c:a aac -b:a 128k -shortest -movflags +faststart \
+            build/preview/beat_nusantara_preview.mp4
+          ls -la build/preview/*.mp4
+
+      - name: Upload preview video
+        uses: actions/upload-artifact@v4
+        with:
+          name: beat-nusantara-preview
+          path: build/preview/beat_nusantara_preview.mp4
+          if-no-files-found: error
