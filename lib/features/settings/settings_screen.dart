@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../services/audio/audio_service.dart';
 import '../../state/game_state.dart';
-import '../../widgets/glass_panel.dart';
+import '../../widgets/bouncy.dart';
+import '../../widgets/soft_card.dart';
 import '../screenshot/screenshot_gallery.dart';
 import 'calibration_screen.dart';
 
@@ -23,11 +24,10 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
             children: [
               Row(children: [
-                IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(context)),
-                const Text('Pengaturan',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                Bouncy(
+                    onTap: () => Navigator.pop(context),
+                    child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
+                Text('Pengaturan', style: AppText.title.copyWith(fontSize: 20)),
               ]),
               const SizedBox(height: 8),
               _group('Profil', [
@@ -101,12 +101,16 @@ class SettingsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 8),
-              child: Text(title,
+              padding: const EdgeInsets.only(left: 6, bottom: 8),
+              child: Text(title.toUpperCase(),
                   style: const TextStyle(
-                      fontWeight: FontWeight.w800, color: AppColors.textLo, fontSize: 13)),
+                      fontWeight: FontWeight.w800, color: AppColors.textLo, fontSize: 12, letterSpacing: 1)),
             ),
-            GlassPanel(padding: const EdgeInsets.symmetric(vertical: 4), child: Column(children: children)),
+            SoftCard(
+                accent: AppColors.indigo,
+                glowStrength: 0.16,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(children: children)),
           ],
         ),
       );

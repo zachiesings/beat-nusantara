@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -274,6 +275,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ),
                   // touch lanes
                   Positioned.fill(child: _inputLanes(gs)),
+                  _feverOverlay(),
                   // HUD
                   _hud(),
                   _judgmentPopup(),
@@ -331,6 +333,29 @@ class _GameplayScreenState extends State<GameplayScreen>
     );
   }
 
+  Widget _feverOverlay() {
+    return AnimatedBuilder(
+      animation: _frame,
+      builder: (_, __) {
+        final e = _engine!;
+        if (!e.feverActive) return const SizedBox.shrink();
+        final pulse = 0.5 + 0.5 * math.sin(e.songTimeMs / 140.0);
+        return IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                radius: 1.1,
+                colors: [Colors.transparent, AppColors.gold.withValues(alpha: 0.08 + 0.12 * pulse)],
+                stops: const [0.6, 1.0],
+              ),
+            ),
+            child: const SizedBox.expand(),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _judgmentPopup() {
     return AnimatedBuilder(
       animation: _frame,
@@ -350,15 +375,19 @@ class _GameplayScreenState extends State<GameplayScreen>
             child: Opacity(
               opacity: t.clamp(0.0, 1.0).toDouble(),
               child: Transform.translate(
-                offset: Offset(0, -10 * (1 - t)),
-                child: Center(
-                  child: Text(
-                    j.labelId,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                      color: j.color,
-                      shadows: [Shadow(color: j.color.withValues(alpha: 0.6), blurRadius: 12)],
+                offset: Offset(0, -16 * (1 - t)),
+                child: Transform.scale(
+                  scale: 0.7 + 0.5 * Curves.easeOutBack.transform((1 - t).clamp(0.0, 1.0).toDouble()),
+                  child: Center(
+                    child: Text(
+                      j.labelId,
+                      style: TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                        color: j.color,
+                        shadows: [Shadow(color: j.color.withValues(alpha: 0.8), blurRadius: 18)],
+                      ),
                     ),
                   ),
                 ),

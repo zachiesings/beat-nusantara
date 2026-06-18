@@ -6,9 +6,13 @@ import '../../game/scoring/judgment.dart';
 import '../../game/scoring/score_engine.dart';
 import '../../services/ads/ads_service.dart';
 import '../../state/game_state.dart';
-import '../../widgets/glass_panel.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/mascot.dart';
+import '../../widgets/pulse.dart';
 import '../../widgets/reward_ad_sheet.dart';
+import '../../widgets/soft_card.dart';
+import '../../widgets/sparkle.dart';
+import '../../widgets/stat_ring.dart';
 
 class ResultScreen extends StatefulWidget {
   final Song song;
@@ -28,8 +32,7 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
-        ..forward();
+      AnimationController(vsync: this, duration: AppDur.slow)..forward();
   bool _bonusClaimed = false;
 
   ResultSummary get r => widget.result;
@@ -54,72 +57,97 @@ class _ResultScreenState extends State<ResultScreen>
     }
   }
 
+  (String, Mood) _verdict() {
+    if (!r.cleared) return ('Yah, belum berhasil… ayo coba lagi! 💪', Mood.sleepy);
+    if (r.fullCombo) return ('Luar biasa! FULL COMBO! 🎉', Mood.cheer);
+    if (r.accuracy >= 95) return ('Keren banget! Nyaris sempurna! ✨', Mood.cheer);
+    if (r.miss <= 3) return ('Sedikit lagi Full Combo! 🔥', Mood.wink);
+    return ('Mantap, kamu berhasil! 🎶', Mood.happy);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cleared = r.cleared;
+    final (verdict, mood) = _verdict();
+    final celebrate = r.cleared && r.accuracy >= 85;
     return Scaffold(
-      body: NeonBackground(
-        dim: true,
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                Text(cleared ? 'LAGU SELESAI' : 'GAGAL',
-                    style: TextStyle(
-                        letterSpacing: 4,
-                        fontWeight: FontWeight.w800,
-                        color: cleared ? AppColors.cyan : AppColors.danger)),
-                const SizedBox(height: 4),
-                Text(widget.song.title,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
-                Text('${widget.difficulty}  •  ${widget.song.artistDisplayName}',
-                    style: const TextStyle(color: AppColors.textLo)),
-                const SizedBox(height: 16),
-                _gradeReveal(),
-                const SizedBox(height: 16),
-                _scoreBlock(),
-                const SizedBox(height: 14),
-                _judgeBreakdown(),
-                const SizedBox(height: 14),
-                _rewards(),
-                const SizedBox(height: 20),
-                GradientButton(
-                  label: 'Main lagi',
-                  icon: Icons.refresh,
-                  onTap: () => Navigator.pop(context),
+      body: Stack(
+        children: [
+          NeonBackground(
+            dim: true,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 30),
+                child: Column(
+                  children: [
+                    Text(r.cleared ? 'LAGU SELESAI' : 'COBA LAGI',
+                        style: TextStyle(
+                            letterSpacing: 5,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            color: r.cleared ? AppColors.cyan : AppColors.danger)),
+                    const SizedBox(height: 4),
+                    Text(widget.song.title, style: AppText.title, textAlign: TextAlign.center),
+                    Text('${widget.difficulty}  •  ${widget.song.artistDisplayName}',
+                        style: const TextStyle(color: AppColors.textLo)),
+                    const SizedBox(height: 14),
+                    _gradeReveal(),
+                    const SizedBox(height: 14),
+                    MascotBubble(text: verdict, mood: mood, color: r.grade.color, mascotSize: 58),
+                    const SizedBox(height: 16),
+                    _scoreBlock(),
+                    const SizedBox(height: 16),
+                    _statsRow(),
+                    const SizedBox(height: 14),
+                    _breakdown(),
+                    const SizedBox(height: 14),
+                    _rewards(),
+                    const SizedBox(height: 22),
+                    GradientButton(
+                      label: 'Main Lagi',
+                      icon: Icons.refresh_rounded,
+                      gradient: AppGradients.from(r.grade.color),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                      child: const Text('Kembali ke beranda', style: TextStyle(color: AppColors.textLo)),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.popUntil(context, (route) => route.isFirst),
-                  child: const Text('Selesai', style: TextStyle(color: AppColors.textLo)),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (celebrate) const Positioned.fill(child: CelebrationOverlay()),
+        ],
       ),
     );
   }
 
   Widget _gradeReveal() {
-    return ScaleTransition(
-      scale: CurvedAnimation(parent: _c, curve: Curves.elasticOut),
-      child: Container(
-        width: 140,
-        height: 140,
+    return SizedBox(
+      height: 168,
+      child: Stack(
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-              colors: [r.grade.color.withValues(alpha: 0.4), Colors.transparent]),
-          border: Border.all(color: r.grade.color, width: 3),
-        ),
-        child: Text(r.grade.label,
-            style: TextStyle(
-                fontSize: 56, fontWeight: FontWeight.w800, color: r.grade.color)),
+        children: [
+          PulseRings(color: r.grade.color, size: 168),
+          ScaleTransition(
+            scale: CurvedAnimation(parent: _c, curve: Curves.elasticOut),
+            child: Container(
+              width: 132,
+              height: 132,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [r.grade.color.withValues(alpha: 0.45), Colors.transparent]),
+                border: Border.all(color: r.grade.color, width: 3),
+                boxShadow: AppShadows.glow(r.grade.color, blur: 36, y: 0, a: 0.6),
+              ),
+              child: Text(r.grade.label,
+                  style: TextStyle(fontSize: 54, fontWeight: FontWeight.w800, color: r.grade.color)),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -127,51 +155,65 @@ class _ResultScreenState extends State<ResultScreen>
   Widget _scoreBlock() {
     return Column(
       children: [
-        Text('${r.score}',
-            style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800)),
-        const Text('SKOR', style: TextStyle(color: AppColors.textLo, letterSpacing: 3)),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _stat('Akurasi', '${r.accuracy.toStringAsFixed(2)}%'),
-            _stat('Combo Maks', '${r.maxCombo}'),
-            _stat('Full Combo', r.fullCombo ? 'YA' : '—',
-                color: r.fullCombo ? AppColors.gold : null),
-          ],
+        ShaderMask(
+          shaderCallback: (rect) => AppGradients.candy.createShader(rect),
+          child: Text('${r.score}',
+              style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: Colors.white)),
         ),
+        const Text('SKOR', style: TextStyle(color: AppColors.textLo, letterSpacing: 3, fontSize: 11)),
       ],
     );
   }
 
-  Widget _stat(String label, String value, {Color? color}) => Column(
+  Widget _statsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        StatRing(
+            progress: r.accuracy / 100,
+            value: '${r.accuracy.toStringAsFixed(1)}%',
+            label: 'Akurasi',
+            color: AppColors.cyan),
+        _miniStat('${r.maxCombo}', 'Combo Maks', AppColors.pink),
+        _miniStat(r.fullCombo ? 'FC' : '—', 'Full Combo', r.fullCombo ? AppColors.gold : AppColors.textLo),
+      ],
+    );
+  }
+
+  Widget _miniStat(String value, String label, Color color) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(value,
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.w800, color: color ?? AppColors.textHi)),
-          Text(label, style: const TextStyle(color: AppColors.textLo, fontSize: 11)),
+          SizedBox(
+            height: 92,
+            child: Center(
+              child: Text(value,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: color)),
+            ),
+          ),
+          Text(label, style: const TextStyle(color: AppColors.textLo, fontSize: 10)),
         ],
       );
 
-  Widget _judgeBreakdown() {
+  Widget _breakdown() {
     final rows = [
       ('Perfect', r.perfect, AppColors.gold),
       ('Hebat', r.great, AppColors.cyan),
       ('Oke', r.good, AppColors.teal),
       ('Lewat', r.miss, AppColors.danger),
     ];
-    return GlassPanel(
+    return SoftCard(
+      accent: AppColors.violet,
+      glowStrength: 0.2,
       child: Column(
         children: rows.map((e) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 5),
             child: Row(children: [
-              Container(width: 10, height: 10, decoration: BoxDecoration(color: e.$3, shape: BoxShape.circle)),
-              const SizedBox(width: 10),
-              Text(e.$1, style: const TextStyle(fontWeight: FontWeight.w600)),
+              Container(width: 12, height: 12, decoration: BoxDecoration(color: e.$3, shape: BoxShape.circle, boxShadow: AppShadows.glow(e.$3, blur: 8, y: 0, a: 0.7))),
+              const SizedBox(width: 12),
+              Text(e.$1, style: const TextStyle(fontWeight: FontWeight.w700)),
               const Spacer(),
-              Text('${e.$2}',
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text('${e.$2}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
             ]),
           );
         }).toList(),
@@ -180,28 +222,29 @@ class _ResultScreenState extends State<ResultScreen>
   }
 
   Widget _rewards() {
-    return GlassPanel(
+    return SoftCard(
+      accent: AppColors.gold,
+      glowStrength: 0.3,
       child: Column(children: [
-        Row(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.monetization_on, color: AppColors.gold),
-          const SizedBox(width: 10),
-          Text('+${r.coins} koin', style: const TextStyle(fontWeight: FontWeight.w800)),
-          const SizedBox(width: 16),
-          const Icon(Icons.bolt, color: AppColors.violet),
+          const SizedBox(width: 8),
+          Text('+${r.coins} koin', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          const SizedBox(width: 18),
+          const Icon(Icons.bolt_rounded, color: AppColors.violet),
           const SizedBox(width: 6),
-          Text('+${r.xp} XP', style: const TextStyle(fontWeight: FontWeight.w800)),
+          Text('+${r.xp} XP', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
         ]),
         const SizedBox(height: 12),
         if (!_bonusClaimed)
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(46),
+              minimumSize: const Size.fromHeight(48),
               side: const BorderSide(color: AppColors.gold),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
             ),
-            icon: const Icon(Icons.slow_motion_video, color: AppColors.gold),
-            label: const Text('Gandakan koin (iklan opsional)',
-                style: TextStyle(color: AppColors.gold)),
+            icon: const Icon(Icons.slow_motion_video_rounded, color: AppColors.gold),
+            label: const Text('Gandakan koin (iklan opsional)', style: TextStyle(color: AppColors.gold)),
             onPressed: _claimBonus,
           )
         else

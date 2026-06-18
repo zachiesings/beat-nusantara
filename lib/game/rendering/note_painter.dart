@@ -81,26 +81,52 @@ class NotePainter extends CustomPainter {
   }
 
   void _paintHitLine(Canvas c, Size size, double laneW, double hitY, int now) {
-    final line = Paint()
-      ..color = AppColors.cyan.withValues(alpha: 0.9)
-      ..strokeWidth = 3;
+    // glowing bar
     if (!reduceEffects) {
-      line.maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+      c.drawLine(
+          Offset(0, hitY),
+          Offset(size.width, hitY),
+          Paint()
+            ..color = AppColors.cyan.withValues(alpha: 0.5)
+            ..strokeWidth = 10
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
     }
-    c.drawLine(Offset(0, hitY), Offset(size.width, hitY), line);
-    // receptors
+    c.drawLine(Offset(0, hitY), Offset(size.width, hitY),
+        Paint()..color = AppColors.cyan..strokeWidth = 3);
+
     for (int i = 0; i < laneCount; i++) {
       final cx = (i + 0.5) * laneW;
       final col = AppColors.lanes[i % AppColors.lanes.length];
-      c.drawCircle(Offset(cx, hitY), laneW * 0.30,
-          Paint()..color = col.withValues(alpha: 0.18));
+      // recency of last hit on this lane → burst + pulse
+      final flash = laneFlash[i];
+      double age = 999;
+      if (flash != null) age = (now - flash).toDouble();
+      final fresh = age >= 0 && age < 220;
+      final pop = fresh ? (1 - age / 220) : 0.0;
+
+      c.drawCircle(Offset(cx, hitY), laneW * 0.30 * (1 + 0.15 * pop),
+          Paint()..color = col.withValues(alpha: 0.18 + 0.35 * pop));
       c.drawCircle(
           Offset(cx, hitY),
-          laneW * 0.30,
+          laneW * 0.30 * (1 + 0.15 * pop),
           Paint()
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 2
+            ..strokeWidth = 2 + 2 * pop
             ..color = col.withValues(alpha: 0.8));
+
+      // expanding hit burst ring + spark when freshly hit
+      if (fresh && !reduceEffects) {
+        final r = laneW * (0.30 + 0.45 * (1 - pop));
+        c.drawCircle(
+            Offset(cx, hitY),
+            r,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2.5 * pop
+              ..color = Colors.white.withValues(alpha: 0.7 * pop));
+        c.drawCircle(Offset(cx, hitY), laneW * 0.12 * pop,
+            Paint()..color = Colors.white.withValues(alpha: 0.8 * pop));
+      }
     }
   }
 

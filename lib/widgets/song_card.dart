@@ -3,9 +3,14 @@ import 'package:provider/provider.dart';
 import '../app/theme.dart';
 import '../game/models/song.dart';
 import '../state/game_state.dart';
+import 'bouncy.dart';
+import 'soft_card.dart';
 
-/// Premium song card: cover art, title/artist, BPM + genre, lock state with a
-/// CLEAR, non-FOMO unlock condition, best grade badge and favorite toggle.
+/// Collectible, premium song card. Two layouts:
+///  - compact (vertical poster) → horizontal scrollers
+///  - list (horizontal) → library lists
+/// Each card carries its song's own accent color (identity), a glossy cover,
+/// floating badges, favorite heart, grade badge, and a clear non-FOMO lock state.
 class SongCard extends StatelessWidget {
   final Song song;
   final VoidCallback onTap;
@@ -16,69 +21,33 @@ class SongCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final gs = context.watch<GameState>();
     final unlocked = gs.isUnlocked(song);
+    final accent = AppColors.accentFor(song.id);
     final best = song.availableDifficulties.isNotEmpty
         ? gs.best(song.id, song.availableDifficulties.first)
         : null;
-    final w = compact ? 156.0 : double.infinity;
+    return compact
+        ? _compact(context, gs, accent, unlocked, best)
+        : _list(context, gs, accent, unlocked, best);
+  }
 
-    return GestureDetector(
+  // ---------- vertical poster ----------
+  Widget _compact(BuildContext c, GameState gs, Color accent, bool unlocked, best) {
+    return Bouncy(
       onTap: onTap,
+      scale: 0.96,
       child: Container(
-        width: w,
-        margin: const EdgeInsets.only(bottom: 14),
+        width: 168,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.glassBorder),
-          color: AppColors.surface.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(color: accent.withValues(alpha: 0.35)),
+          boxShadow: AppShadows.glow(accent, blur: 22, y: 10, a: 0.32),
+          color: AppColors.surface,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: compact ? 1.4 : 2.6,
-                  child: Image.asset(song.coverAssetPath,
-                      fit: BoxFit.cover, errorBuilder: (_, __, ___) {
-                    return const ColoredBox(color: AppColors.surface);
-                  }),
-                ),
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, AppColors.ink.withValues(alpha: 0.85)],
-                      ),
-                    ),
-                  ),
-                ),
-                if (song.playable)
-                  const Positioned(
-                      top: 8, left: 8, child: _Tag('DEMO', AppColors.cyan)),
-                if (!unlocked)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.ink.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.lock, size: 16, color: AppColors.textLo),
-                    ),
-                  ),
-                if (best != null)
-                  Positioned(
-                    bottom: 8,
-                    right: 8,
-                    child: _GradeBadge(best.grade),
-                  ),
-              ],
-            ),
+            _cover(accent, unlocked, best, height: 132),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
               child: Column(
@@ -87,23 +56,17 @@ class SongCard extends StatelessWidget {
                   Text(song.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textHi)),
-                  const SizedBox(height: 2),
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5)),
                   Text(song.artistDisplayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.textLo, fontSize: 12)),
+                      style: const TextStyle(color: AppColors.textLo, fontSize: 11.5)),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _Pill('${song.bpm} BPM'),
-                      const SizedBox(width: 6),
-                      Flexible(child: _Pill(song.genre)),
-                      const Spacer(),
-                      _unlockHint(gs),
-                    ],
-                  ),
+                  Row(children: [
+                    _pill('${song.bpm} BPM', accent),
+                    const SizedBox(width: 6),
+                    _unlockHint(gs, accent),
+                  ]),
                 ],
               ),
             ),
@@ -113,12 +76,142 @@ class SongCard extends StatelessWidget {
     );
   }
 
-  Widget _unlockHint(GameState gs) {
+  // ---------- horizontal list card ----------
+  Widget _list(BuildContext c, GameState gs, Color accent, bool unlocked, best) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: SoftCard(
+        onTap: onTap,
+        accent: accent,
+        glowStrength: 0.26,
+        padding: const EdgeInsets.all(10),
+        radius: AppRadius.md,
+        child: Row(children: [
+          SizedBox(
+            width: 88,
+            height: 88,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              child: _cover(accent, unlocked, best, height: 88, thumb: true),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(children: [
+                  Expanded(
+                    child: Text(song.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15.5)),
+                  ),
+                  Icon(gs.favorites.contains(song.id) ? Icons.favorite : Icons.favorite_border,
+                      size: 18, color: AppColors.pink),
+                ]),
+                Text(song.artistDisplayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: AppColors.textLo, fontSize: 12)),
+                const SizedBox(height: 8),
+                Row(children: [
+                  _pill('${song.bpm} BPM', accent),
+                  const SizedBox(width: 6),
+                  Flexible(child: _pill(song.genre, accent, faint: true)),
+                  const Spacer(),
+                  _unlockHint(gs, accent),
+                ]),
+              ],
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  // ---------- cover with overlays ----------
+  Widget _cover(Color accent, bool unlocked, best, {required double height, bool thumb = false}) {
+    return Stack(
+      children: [
+        SizedBox(
+          height: height,
+          width: double.infinity,
+          child: Image.asset(song.coverAssetPath, fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => ColoredBox(color: accent.withValues(alpha: 0.4))),
+        ),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [accent.withValues(alpha: 0.0), AppColors.ink.withValues(alpha: thumb ? 0.4 : 0.8)],
+              ),
+            ),
+          ),
+        ),
+        if (song.playable && !thumb)
+          const Positioned(top: 8, left: 8, child: FloatingBadge(text: 'DEMO', icon: Icons.bolt, gradient: AppGradients.ocean)),
+        if (best != null)
+          Positioned(
+            bottom: 6,
+            right: 6,
+            child: Container(
+              width: 30,
+              height: 30,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: AppGradients.goldRush,
+                boxShadow: AppShadows.glow(AppColors.gold, blur: 12, y: 2, a: 0.6),
+              ),
+              child: Text(best.grade,
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 11, color: Colors.white)),
+            ),
+          ),
+        if (!unlocked)
+          Positioned.fill(
+            child: ClipRect(
+              child: Container(
+                color: AppColors.ink.withValues(alpha: 0.32),
+                alignment: Alignment.center,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.ink.withValues(alpha: 0.6),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.glassBorder),
+                  ),
+                  child: const Icon(Icons.lock, size: 16, color: AppColors.textHi),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _pill(String text, Color accent, {bool faint = false}) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: faint ? AppColors.glass : accent.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          border: Border.all(color: faint ? AppColors.glassBorder : accent.withValues(alpha: 0.4)),
+        ),
+        child: Text(text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: faint ? AppColors.textLo : accent)),
+      );
+
+  Widget _unlockHint(GameState gs, Color accent) {
     if (gs.isUnlocked(song)) {
       if (gs.isSessionTrial(song)) {
-        return const Icon(Icons.timelapse, size: 16, color: AppColors.cyan);
+        return const Icon(Icons.timelapse, size: 17, color: AppColors.cyan);
       }
-      return const Icon(Icons.play_circle_fill, size: 18, color: AppColors.teal);
+      return Icon(Icons.play_circle_fill, size: 19, color: accent);
     }
     final (icon, text, color) = switch (song.unlockType) {
       UnlockType.coins => (Icons.monetization_on, '${song.unlockCost}', AppColors.gold),
@@ -130,67 +223,8 @@ class SongCard extends StatelessWidget {
       Icon(icon, size: 14, color: color),
       if (text.isNotEmpty) ...[
         const SizedBox(width: 3),
-        Text(text, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+        Text(text, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w800)),
       ],
     ]);
-  }
-}
-
-class _Pill extends StatelessWidget {
-  final String text;
-  const _Pill(this.text);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.glass,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 10.5, color: AppColors.textHi)),
-    );
-  }
-}
-
-class _Tag extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _Tag(this.text, this.color);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color),
-      ),
-      child: Text(text,
-          style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w800)),
-    );
-  }
-}
-
-class _GradeBadge extends StatelessWidget {
-  final String grade;
-  const _GradeBadge(this.grade);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 34,
-      height: 34,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.ink.withValues(alpha: 0.8),
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.gold),
-      ),
-      child: Text(grade,
-          style: const TextStyle(
-              fontWeight: FontWeight.w800, fontSize: 12, color: AppColors.gold)),
-    );
   }
 }

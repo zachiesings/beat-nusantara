@@ -3,10 +3,15 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../data/missions.dart';
 import '../../data/song_catalog.dart';
+import '../../game/models/song.dart';
 import '../../state/game_state.dart';
-import '../../widgets/glass_panel.dart';
+import '../../widgets/bouncy.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/mascot.dart';
+import '../../widgets/pulse.dart';
+import '../../widgets/soft_card.dart';
 import '../../widgets/song_card.dart';
+import '../../widgets/waveform.dart';
 import '../about/about_screen.dart';
 import '../profile/profile_screen.dart';
 import '../rewards/rewards_screen.dart';
@@ -22,6 +27,7 @@ class HomeScreen extends StatelessWidget {
     final gs = context.watch<GameState>();
     final catalog = context.read<SongCatalog>();
     final featured = catalog.playable.first;
+    final doneCount = missions.where((m) => m.done(gs)).length;
 
     return Scaffold(
       body: NeonBackground(
@@ -30,23 +36,26 @@ class HomeScreen extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(child: _header(context, gs)),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 110),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    _featuredCard(context, featured),
-                    const SizedBox(height: 18),
+                    _hero(context, featured),
+                    const SizedBox(height: 16),
                     _quickActions(context),
                     const SizedBox(height: 22),
-                    _sectionTitle('Misi', Icons.flag),
-                    const SizedBox(height: 10),
-                    _missions(gs),
+                    _missionCard(context, gs, doneCount),
                     const SizedBox(height: 22),
-                    _sectionTitle('Untuk Kamu', Icons.auto_awesome),
-                    const SizedBox(height: 10),
+                    _sectionTitle('Untuk Kamu', '✨', AppColors.cyan),
+                    const SizedBox(height: 4),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 2, bottom: 10),
+                      child: Text('Pilihan hangat buat kamu hari ini',
+                          style: TextStyle(color: AppColors.textLo, fontSize: 12.5)),
+                    ),
                     _recommended(context, catalog),
-                    const SizedBox(height: 22),
-                    _sectionTitle('Kategori', Icons.category),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 24),
+                    _sectionTitle('Kategori', '🎧', AppColors.pink),
+                    const SizedBox(height: 12),
                     _categories(context, catalog),
                   ]),
                 ),
@@ -60,20 +69,21 @@ class HomeScreen extends StatelessWidget {
 
   Widget _header(BuildContext context, GameState gs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         children: [
-          GestureDetector(
+          Bouncy(
             onTap: () => _push(context, const ProfileScreen()),
             child: Container(
-              width: 46,
-              height: 46,
-              decoration: const BoxDecoration(
-                  gradient: AppColors.brandGradient, shape: BoxShape.circle),
-              alignment: Alignment.center,
-              child: Text(
-                gs.playerName.isNotEmpty ? gs.playerName[0].toUpperCase() : 'P',
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+              padding: const EdgeInsets.all(2.5),
+              decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppGradients.aurora),
+              child: CircleAvatar(
+                radius: 23,
+                backgroundColor: AppColors.surface,
+                child: Text(
+                  gs.playerName.isNotEmpty ? gs.playerName[0].toUpperCase() : 'P',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                ),
               ),
             ),
           ),
@@ -82,17 +92,21 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Halo, ${gs.playerName} 👋',
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
-                Text('Level ${gs.level}',
+                Text('Halo, ${gs.playerName}! 👋',
+                    maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.heading),
+                Text('Siap menari hari ini? 💫 Lv ${gs.level}',
                     style: const TextStyle(color: AppColors.textLo, fontSize: 12)),
               ],
             ),
           ),
           _coinChip(gs.coins),
-          IconButton(
-            icon: const Icon(Icons.settings, color: AppColors.textLo),
-            onPressed: () => _push(context, const SettingsScreen()),
+          const SizedBox(width: 4),
+          Bouncy(
+            onTap: () => _push(context, const SettingsScreen()),
+            child: const Padding(
+              padding: EdgeInsets.all(6),
+              child: Icon(Icons.settings_rounded, color: AppColors.textLo),
+            ),
           ),
         ],
       ),
@@ -103,8 +117,9 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: AppColors.glass,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
           border: Border.all(color: AppColors.gold.withValues(alpha: 0.5)),
+          boxShadow: AppShadows.glow(AppColors.gold, blur: 12, y: 3, a: 0.3),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           const Icon(Icons.monetization_on, color: AppColors.gold, size: 18),
@@ -114,79 +129,98 @@ class HomeScreen extends StatelessWidget {
         ]),
       );
 
-  Widget _featuredCard(BuildContext context, featured) {
-    return GlassPanel(
-      padding: const EdgeInsets.all(0),
+  Widget _hero(BuildContext context, Song featured) {
+    final accent = AppColors.accentFor(featured.id);
+    return SoftCard(
+      padding: EdgeInsets.zero,
+      accent: accent,
+      glowStrength: 0.5,
       onTap: () => _push(context, SongDetailScreen(song: featured)),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: Image.asset(featured.coverAssetPath,
-                height: 190, width: double.infinity, fit: BoxFit.cover),
-          ),
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [AppColors.ink.withValues(alpha: 0.85), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const _MiniTag('LAGU UNGGULAN'),
-                const SizedBox(height: 38),
-                Text(featured.title,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
-                Text(featured.artistDisplayName,
-                    style: const TextStyle(color: AppColors.textLo)),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: 150,
-                  child: GradientButton(
-                    label: 'Main Sekarang',
-                    icon: Icons.play_arrow_rounded,
-                    height: 46,
-                    onTap: () => _push(context, SongDetailScreen(song: featured)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: SizedBox(
+          height: 208,
+          child: Stack(
+            children: [
+              Positioned.fill(child: Image.asset(featured.coverAssetPath, fit: BoxFit.cover)),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [AppColors.ink.withValues(alpha: 0.92), accent.withValues(alpha: 0.25)],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                right: -30,
+                top: -10,
+                child: PulseRings(color: accent, size: 180),
+              ),
+              const Positioned(
+                  right: 28, top: 64, child: Icon(Icons.play_circle_fill, size: 56, color: Colors.white70)),
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const FloatingBadge(text: 'LAGU UNGGULAN', icon: Icons.star_rounded, gradient: AppGradients.candy),
+                    const Spacer(),
+                    Text(featured.title, style: AppText.title.copyWith(fontSize: 25)),
+                    Text(featured.artistDisplayName, style: const TextStyle(color: AppColors.textLo)),
+                    const SizedBox(height: 8),
+                    Opacity(opacity: 0.9, child: Waveform(gradient: AppGradients.from(accent), height: 26, bars: 30)),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 168,
+                      child: GradientButton(
+                        label: 'Main Sekarang',
+                        icon: Icons.play_arrow_rounded,
+                        height: 46,
+                        gradient: AppGradients.from(accent),
+                        onTap: () => _push(context, SongDetailScreen(song: featured)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _quickActions(BuildContext context) {
     final items = [
-      (Icons.library_music, 'Lagu', () => _push(context, const SongLibraryScreen())),
-      (Icons.card_giftcard, 'Hadiah', () => _push(context, const RewardsScreen())),
-      (Icons.bar_chart, 'Statistik', () => _push(context, const ProfileScreen())),
-      (Icons.info_outline, 'Tentang', () => _push(context, const AboutScreen())),
+      (Icons.library_music_rounded, 'Lagu', AppColors.cyan, () => _push(context, const SongLibraryScreen())),
+      (Icons.card_giftcard_rounded, 'Hadiah', AppColors.gold, () => _push(context, const RewardsScreen())),
+      (Icons.insights_rounded, 'Statistik', AppColors.mint, () => _push(context, const ProfileScreen())),
+      (Icons.favorite_rounded, 'Tentang', AppColors.pink, () => _push(context, const AboutScreen())),
     ];
     return Row(
       children: items.map((it) {
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: GlassPanel(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              onTap: it.$3,
-              child: Column(children: [
-                Icon(it.$1, color: AppColors.cyan),
-                const SizedBox(height: 6),
-                Text(it.$2, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600)),
-              ]),
+            child: Bouncy(
+              onTap: it.$4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  color: AppColors.surface.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(color: it.$3.withValues(alpha: 0.35)),
+                  boxShadow: AppShadows.glow(it.$3, blur: 14, y: 6, a: 0.22),
+                ),
+                child: Column(children: [
+                  Icon(it.$1, color: it.$3, size: 26),
+                  const SizedBox(height: 6),
+                  Text(it.$2, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
+                ]),
+              ),
             ),
           ),
         );
@@ -194,36 +228,53 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _missions(GameState gs) {
-    return Column(
-      children: missions.map((m) {
-        final done = m.done(gs);
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: GlassPanel(
-            padding: const EdgeInsets.all(12),
-            child: Row(children: [
-              Icon(done ? Icons.check_circle : Icons.radio_button_unchecked,
-                  color: done ? AppColors.teal : AppColors.textLo),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(m.title,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            decoration: done ? TextDecoration.lineThrough : null,
-                            color: done ? AppColors.textLo : AppColors.textHi)),
-                    Text(m.hint,
-                        style: const TextStyle(color: AppColors.textLo, fontSize: 12)),
-                  ],
-                ),
-              ),
-            ]),
+  Widget _missionCard(BuildContext context, GameState gs, int done) {
+    final allDone = done == missions.length;
+    return SoftCard(
+      accent: AppColors.gold,
+      glowStrength: 0.3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            _sectionTitle('Misi', '⚑', AppColors.gold),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                  color: AppColors.gold.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(AppRadius.pill)),
+              child: Text('$done/${missions.length}',
+                  style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.gold, fontSize: 12)),
+            ),
+          ]),
+          const SizedBox(height: 10),
+          MascotBubble(
+            mood: allDone ? Mood.cheer : Mood.happy,
+            color: AppColors.gold,
+            text: allDone ? 'Semua misi beres! Kamu hebat! 🎉' : 'Ayo kejar Full Combo hari ini! 🔥',
           ),
-        );
-      }).toList(),
+          const SizedBox(height: 6),
+          ...missions.take(2).map((m) {
+            final ok = m.done(gs);
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(children: [
+                Icon(ok ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+                    color: ok ? AppColors.teal : AppColors.textLo, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(m.title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: ok ? AppColors.textLo : AppColors.textHi,
+                          decoration: ok ? TextDecoration.lineThrough : null)),
+                ),
+              ]),
+            );
+          }),
+        ],
+      ),
     );
   }
 
@@ -233,15 +284,13 @@ class HomeScreen extends StatelessWidget {
       height: 248,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
         itemCount: list.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (_, i) => SizedBox(
-          width: 170,
-          child: SongCard(
-            song: list[i],
-            compact: true,
-            onTap: () => _push(context, SongDetailScreen(song: list[i])),
-          ),
+        separatorBuilder: (_, __) => const SizedBox(width: 14),
+        itemBuilder: (_, i) => SongCard(
+          song: list[i],
+          compact: true,
+          onTap: () => _push(context, SongDetailScreen(song: list[i])),
         ),
       ),
     );
@@ -249,50 +298,53 @@ class HomeScreen extends StatelessWidget {
 
   Widget _categories(BuildContext context, SongCatalog catalog) {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 9,
+      runSpacing: 9,
       children: catalog.categories.map((c) {
-        return GestureDetector(
+        final g = AppGradients.forCategory(c);
+        final accent = g.colors.first;
+        return Bouncy(
           onTap: () => _push(context, SongLibraryScreen(initialCategory: c)),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.glass,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.glassBorder),
+              gradient: LinearGradient(
+                  colors: g.colors.map((x) => x.withValues(alpha: 0.22)).toList()),
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              border: Border.all(color: accent.withValues(alpha: 0.5)),
             ),
-            child: Text(c, style: const TextStyle(fontWeight: FontWeight.w600)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Container(width: 8, height: 8, decoration: BoxDecoration(color: accent, shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              Text(c, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+            ]),
           ),
         );
       }).toList(),
     );
   }
 
-  static Widget _sectionTitle(String t, IconData icon) => Row(children: [
-        Icon(icon, size: 18, color: AppColors.pink),
-        const SizedBox(width: 8),
-        Text(t, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-      ]);
+  static Widget _sectionTitle(String t, String emoji, Color color) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('$emoji ', style: const TextStyle(fontSize: 16)),
+          Text(t, style: AppText.heading.copyWith(fontSize: 19)),
+        ],
+      );
 
-  static void _push(BuildContext context, Widget page) =>
-      Navigator.push(context, MaterialPageRoute(builder: (_) => page));
-}
-
-class _MiniTag extends StatelessWidget {
-  final String text;
-  const _MiniTag(this.text);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppColors.cyan.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.cyan),
-      ),
-      child: Text(text,
-          style: const TextStyle(
-              fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.cyan)),
-    );
-  }
+  static void _push(BuildContext context, Widget page) => Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: AppDur.med,
+          pageBuilder: (_, a, __) => page,
+          transitionsBuilder: (_, a, __, child) => FadeTransition(
+            opacity: a,
+            child: SlideTransition(
+              position: Tween(begin: const Offset(0, 0.04), end: Offset.zero)
+                  .animate(CurvedAnimation(parent: a, curve: Curves.easeOut)),
+              child: child,
+            ),
+          ),
+        ),
+      );
 }

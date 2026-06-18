@@ -4,6 +4,8 @@ import '../../app/theme.dart';
 import '../../data/song_catalog.dart';
 import '../../game/models/song.dart';
 import '../../state/game_state.dart';
+import '../../widgets/bouncy.dart';
+import '../../widgets/neon_chip.dart';
 import '../../widgets/song_card.dart';
 import '../song_detail/song_detail_screen.dart';
 
@@ -52,31 +54,39 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
     }
     if (_favOnly) list = list.where((s) => gs.favorites.contains(s.id)).toList();
     if (!_showLocked) list = list.where(gs.isUnlocked).toList();
-    if (_sortByBpm) {
-      list = [...list]..sort((a, b) => a.bpm.compareTo(b.bpm));
-    }
+    if (_sortByBpm) list = [...list]..sort((a, b) => a.bpm.compareTo(b.bpm));
+
+    final showHits = _cat == 'Semua' && _query.isEmpty && !_favOnly;
 
     return Scaffold(
       body: NeonBackground(
         child: SafeArea(
-          child: Column(
-            children: [
-              _topBar(context),
-              _search(),
-              _categoryChips(cats),
-              _filterRow(),
-              Expanded(
-                child: list.isEmpty
-                    ? const Center(
-                        child: Text('Tidak ada lagu.',
-                            style: TextStyle(color: AppColors.textLo)))
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                        itemCount: list.length,
-                        itemBuilder: (_, i) => SongCard(
-                          song: list[i],
-                          onTap: () => Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => SongDetailScreen(song: list[i]))),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _topBar(context),
+                    _search(),
+                    _categoryChips(cats),
+                    const SizedBox(height: 12),
+                    _filterRow(),
+                    if (showHits) _hits(context, catalog),
+                  ],
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 100),
+                sliver: list.isEmpty
+                    ? const SliverToBoxAdapter(child: _Empty())
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, i) => SongCard(
+                            song: list[i],
+                            onTap: () => Navigator.push(context,
+                                MaterialPageRoute(builder: (_) => SongDetailScreen(song: list[i]))),
+                          ),
+                          childCount: list.length,
                         ),
                       ),
               ),
@@ -88,95 +98,122 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
   }
 
   Widget _topBar(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+        padding: const EdgeInsets.fromLTRB(6, 8, 16, 0),
         child: Row(children: [
-          IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context)),
-          const Text('Perpustakaan Lagu',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+          Bouncy(
+              onTap: () => Navigator.pop(context),
+              child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
+          Text('Perpustakaan Lagu', style: AppText.title),
         ]),
       );
 
   Widget _search() => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: TextField(
-          onChanged: (v) => setState(() => _query = v),
-          decoration: InputDecoration(
-            hintText: 'Cari lagu, artis, genre…',
-            prefixIcon: const Icon(Icons.search, color: AppColors.textLo),
-            filled: true,
-            fillColor: AppColors.glass,
-            contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.glass,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.glassBorder),
+          ),
+          child: TextField(
+            onChanged: (v) => setState(() => _query = v),
+            decoration: const InputDecoration(
+              hintText: 'Cari lagu, artis, genre…',
+              prefixIcon: Icon(Icons.search_rounded, color: AppColors.cyan),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 14),
+            ),
           ),
         ),
       );
 
   Widget _categoryChips(List<String> cats) => SizedBox(
-        height: 40,
+        height: 44,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: cats.length,
           separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemBuilder: (_, i) {
-            final on = cats[i] == _cat;
-            return GestureDetector(
+          itemBuilder: (_, i) => Center(
+            child: NeonChip(
+              label: cats[i],
+              selected: cats[i] == _cat,
+              gradient: AppGradients.forCategory(cats[i]),
               onTap: () => setState(() => _cat = cats[i]),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  gradient: on ? AppColors.brandGradient : null,
-                  color: on ? null : AppColors.glass,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.glassBorder),
-                ),
-                child: Text(cats[i],
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: on ? Colors.white : AppColors.textLo)),
-              ),
-            );
-          },
+            ),
+          ),
         ),
       );
 
   Widget _filterRow() => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
-          _toggle('Favorit', _favOnly, () => setState(() => _favOnly = !_favOnly),
-              icon: Icons.favorite),
+          NeonChip(
+              label: 'Favorit',
+              icon: Icons.favorite_rounded,
+              selected: _favOnly,
+              gradient: AppGradients.sunset,
+              onTap: () => setState(() => _favOnly = !_favOnly)),
           const SizedBox(width: 8),
-          _toggle('Terkunci', _showLocked, () => setState(() => _showLocked = !_showLocked),
-              icon: Icons.lock_open),
+          NeonChip(
+              label: 'Terkunci',
+              icon: Icons.lock_open_rounded,
+              selected: _showLocked,
+              gradient: AppGradients.aurora,
+              onTap: () => setState(() => _showLocked = !_showLocked)),
           const SizedBox(width: 8),
-          _toggle('BPM', _sortByBpm, () => setState(() => _sortByBpm = !_sortByBpm),
-              icon: Icons.speed),
+          NeonChip(
+              label: 'BPM',
+              icon: Icons.speed_rounded,
+              selected: _sortByBpm,
+              gradient: AppGradients.ocean,
+              onTap: () => setState(() => _sortByBpm = !_sortByBpm)),
         ]),
       );
 
-  Widget _toggle(String label, bool on, VoidCallback onTap, {required IconData icon}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(
-          color: on ? AppColors.cyan.withValues(alpha: 0.2) : AppColors.glass,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: on ? AppColors.cyan : AppColors.glassBorder),
+  Widget _hits(BuildContext context, SongCatalog catalog) {
+    final hits = catalog.playable;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(18, 18, 16, 10),
+          child: Text('Lagi Hits 🔥', style: AppText.heading.copyWith(fontSize: 18)),
         ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, size: 14, color: on ? AppColors.cyan : AppColors.textLo),
-          const SizedBox(width: 6),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: on ? AppColors.cyan : AppColors.textLo,
-                  fontWeight: FontWeight.w600)),
-        ]),
+        SizedBox(
+          height: 248,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: hits.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 14),
+            itemBuilder: (_, i) => SongCard(
+              song: hits[i],
+              compact: true,
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => SongDetailScreen(song: hits[i]))),
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(18, 18, 16, 0),
+          child: Text('Semua Lagu', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+        ),
+      ],
+    );
+  }
+}
+
+class _Empty extends StatelessWidget {
+  const _Empty();
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(top: 40),
+      child: Center(
+        child: Text('Tidak ada lagu di sini 🎵',
+            style: TextStyle(color: AppColors.textLo)),
       ),
     );
   }
