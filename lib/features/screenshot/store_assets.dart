@@ -78,7 +78,9 @@ Widget storeShot(BuildContext ctx, String name, {required String kicker, require
               stops: const [0.0, 0.55, 1.0],
             ),
           ),
-          child: Column(
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -108,6 +110,7 @@ Widget storeShot(BuildContext ctx, String name, {required String kicker, require
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),
