@@ -156,21 +156,54 @@ class NotePainter extends CustomPainter {
 
     if (n.holding) return; // head already at the line; only body remains
 
-    final glow = !reduceEffects && (n.type == NoteType.fever || n.type == NoteType.golden);
-    final body = Paint()..color = col;
-    if (glow) body.maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    final h = laneW * 0.36;
 
-    final rect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(cx, y), width: w, height: laneW * 0.34),
-      const Radius.circular(12),
-    );
-    c.drawRRect(rect, body);
+    // motion trail (a fading comet tail above the falling note)
+    if (!reduceEffects) {
+      final trailRect = Rect.fromLTRB(cx - w * 0.26, y - h * 2.4, cx + w * 0.26, y);
+      c.drawRRect(
+        RRect.fromRectAndRadius(trailRect, Radius.circular(w * 0.26)),
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [col.withValues(alpha: 0.0), col.withValues(alpha: 0.35)],
+          ).createShader(trailRect),
+      );
+      // soft outer glow
+      c.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromCenter(center: Offset(cx, y), width: w * 1.18, height: h * 1.3),
+            Radius.circular(w * 0.3)),
+        Paint()
+          ..color = col.withValues(alpha: n.type == NoteType.fever || n.type == NoteType.golden ? 0.5 : 0.28)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+      );
+    }
+
+    final rect = Rect.fromCenter(center: Offset(cx, y), width: w, height: h);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(13));
+    // glossy gradient body (lighter top → color → darker base)
     c.drawRRect(
-        rect,
+      rrect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color.lerp(col, Colors.white, 0.5)!, col, Color.lerp(col, Colors.black, 0.25)!],
+        ).createShader(rect),
+    );
+    // top highlight
+    c.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(rect.left + 4, rect.top + 3, rect.width - 8, h * 0.3), const Radius.circular(8)),
+        Paint()..color = Colors.white.withValues(alpha: 0.45));
+    c.drawRRect(
+        rrect,
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5
-          ..color = Colors.white.withValues(alpha: 0.7));
+          ..color = Colors.white.withValues(alpha: 0.85));
 
     // type adornments
     switch (n.type) {

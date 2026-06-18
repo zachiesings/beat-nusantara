@@ -6,10 +6,12 @@ import '../../game/scoring/judgment.dart';
 import '../../game/scoring/score_engine.dart';
 import '../../services/ads/ads_service.dart';
 import '../../state/game_state.dart';
+import '../../widgets/count_up.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/mascot.dart';
 import '../../widgets/pulse.dart';
 import '../../widgets/reward_ad_sheet.dart';
+import '../../widgets/shapes.dart';
 import '../../widgets/soft_card.dart';
 import '../../widgets/sparkle.dart';
 import '../../widgets/stat_ring.dart';
@@ -130,7 +132,12 @@ class _ResultScreenState extends State<ResultScreen>
       child: Stack(
         alignment: Alignment.center,
         children: [
+          Positioned.fill(child: Twinkles(count: 12, color: r.grade.color)),
           PulseRings(color: r.grade.color, size: 168),
+          if (r.fullCombo)
+            const Positioned(
+                bottom: -2,
+                child: Sticker(text: 'FULL COMBO', icon: Icons.bolt_rounded, gradient: AppGradients.goldRush, angle: -0.06)),
           ScaleTransition(
             scale: CurvedAnimation(parent: _c, curve: Curves.elasticOut),
             child: Container(
@@ -157,8 +164,11 @@ class _ResultScreenState extends State<ResultScreen>
       children: [
         ShaderMask(
           shaderCallback: (rect) => AppGradients.candy.createShader(rect),
-          child: Text('${r.score}',
-              style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: Colors.white)),
+          child: CountUp(
+            value: r.score,
+            duration: const Duration(milliseconds: 1100),
+            style: const TextStyle(fontSize: 46, fontWeight: FontWeight.w800, color: Colors.white),
+          ),
         ),
         const Text('SKOR', style: TextStyle(color: AppColors.textLo, letterSpacing: 3, fontSize: 11)),
       ],
@@ -229,7 +239,11 @@ class _ResultScreenState extends State<ResultScreen>
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.monetization_on, color: AppColors.gold),
           const SizedBox(width: 8),
-          Text('+${r.coins} koin', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+          CountUp(
+              value: r.coins,
+              prefix: '+',
+              suffix: ' koin',
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
           const SizedBox(width: 18),
           const Icon(Icons.bolt_rounded, color: AppColors.violet),
           const SizedBox(width: 6),

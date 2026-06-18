@@ -4,6 +4,8 @@ import '../app/theme.dart';
 import '../game/models/song.dart';
 import '../state/game_state.dart';
 import 'bouncy.dart';
+import 'holo.dart';
+import 'shapes.dart';
 import 'soft_card.dart';
 
 /// Collectible, premium song card. Two layouts:
@@ -138,8 +140,13 @@ class SongCard extends StatelessWidget {
         SizedBox(
           height: height,
           width: double.infinity,
-          child: Image.asset(song.coverAssetPath, fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => ColoredBox(color: accent.withValues(alpha: 0.4))),
+          child: song.playable
+              ? HoloSheen(
+                  radius: 0,
+                  child: Image.asset(song.coverAssetPath, fit: BoxFit.cover, width: double.infinity,
+                      errorBuilder: (_, __, ___) => ColoredBox(color: accent.withValues(alpha: 0.4))))
+              : Image.asset(song.coverAssetPath, fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => ColoredBox(color: accent.withValues(alpha: 0.4))),
         ),
         Positioned.fill(
           child: DecoratedBox(
@@ -153,7 +160,8 @@ class SongCard extends StatelessWidget {
           ),
         ),
         if (song.playable && !thumb)
-          const Positioned(top: 8, left: 8, child: FloatingBadge(text: 'DEMO', icon: Icons.bolt, gradient: AppGradients.ocean)),
+          const Positioned(
+              top: 10, left: 8, child: Sticker(text: 'DEMO', icon: Icons.bolt_rounded, gradient: AppGradients.ocean)),
         if (best != null)
           Positioned(
             bottom: 6,

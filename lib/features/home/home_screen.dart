@@ -7,8 +7,10 @@ import '../../game/models/song.dart';
 import '../../state/game_state.dart';
 import '../../widgets/bouncy.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/holo.dart';
 import '../../widgets/mascot.dart';
 import '../../widgets/pulse.dart';
+import '../../widgets/shapes.dart';
 import '../../widgets/soft_card.dart';
 import '../../widgets/song_card.dart';
 import '../../widgets/waveform.dart';
@@ -142,7 +144,12 @@ class HomeScreen extends StatelessWidget {
           height: 208,
           child: Stack(
             children: [
-              Positioned.fill(child: Image.asset(featured.coverAssetPath, fit: BoxFit.cover)),
+              Positioned.fill(
+                child: HoloSheen(
+                    radius: 0,
+                    intensity: 0.7,
+                    child: Image.asset(featured.coverAssetPath, fit: BoxFit.cover)),
+              ),
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -154,6 +161,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const Positioned.fill(child: Twinkles(count: 9)),
               Positioned(
                 right: -30,
                 top: -10,
@@ -166,7 +174,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const FloatingBadge(text: 'LAGU UNGGULAN', icon: Icons.star_rounded, gradient: AppGradients.candy),
+                    const Sticker(text: 'UNGGULAN', icon: Icons.star_rounded, gradient: AppGradients.candy, angle: -0.05, fontSize: 11),
                     const Spacer(),
                     Text(featured.title, style: AppText.title.copyWith(fontSize: 25)),
                     Text(featured.artistDisplayName, style: const TextStyle(color: AppColors.textLo)),

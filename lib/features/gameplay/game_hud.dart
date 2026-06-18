@@ -75,7 +75,13 @@ class GameHud extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              _miniStat('COMBO', '$combo', AppColors.pink),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('COMBO', style: TextStyle(fontSize: 9, color: AppColors.textLo)),
+                  ComboCounter(value: combo),
+                ],
+              ),
               const SizedBox(width: 10),
               Expanded(child: _hpBar(hp)),
             ],
@@ -86,15 +92,6 @@ class GameHud extends StatelessWidget {
       ),
     );
   }
-
-  Widget _miniStat(String label, String value, Color color) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 9, color: AppColors.textLo)),
-          Text(value,
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: color)),
-        ],
-      );
 
   Widget _hpBar(double v) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +123,7 @@ class GameHud extends StatelessWidget {
         ),
       ),
       const SizedBox(width: 6),
-      Text(feverActive ? 'FEVER!' : '',
+      Text(feverActive ? 'FEVER ×2!' : '',
           style: const TextStyle(
               color: AppColors.gold, fontWeight: FontWeight.w800, fontSize: 11)),
     ]);
@@ -143,3 +140,47 @@ class GameHud extends StatelessWidget {
         ]),
       );
 }
+
+/// Combo number that "punches" (scale pop) every time it increases — the most
+/// satisfying micro-reward in a rhythm game.
+class ComboCounter extends StatefulWidget {
+  final int value;
+  const ComboCounter({super.key, required this.value});
+  @override
+  State<ComboCounter> createState() => _ComboCounterState();
+}
+
+class _ComboCounterState extends State<ComboCounter> with SingleTickerProviderStateMixin {
+  late final AnimationController _c =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 220), value: 1);
+
+  @override
+  void didUpdateWidget(ComboCounter old) {
+    super.didUpdateWidget(old);
+    if (widget.value > old.value) _c.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (_, child) {
+        final pop = 1 + 0.45 * (1 - Curves.easeOut.transform(_c.value));
+        return Transform.scale(scale: pop, alignment: Alignment.centerLeft, child: child);
+      },
+      child: Text('${widget.value}',
+          style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 20,
+              color: AppColors.pink,
+              shadows: [Shadow(color: AppColors.pink, blurRadius: 10)])),
+    );
+  }
+}
+

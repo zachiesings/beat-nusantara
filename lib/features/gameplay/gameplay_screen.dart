@@ -40,11 +40,13 @@ class GameplayScreen extends StatefulWidget {
 }
 
 class _GameplayScreenState extends State<GameplayScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final Stopwatch _sw = Stopwatch();
   final ValueNotifier<int> _frame = ValueNotifier(0);
   final Map<int, int> _laneFlash = {};
   late final Ticker _ticker;
+  late final AnimationController _shake =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 320));
 
   Chart? _chart;
   GameEngine? _engine;
@@ -131,6 +133,8 @@ class _GameplayScreenState extends State<GameplayScreen>
         Haptics.light();
       case Judgment.miss:
         _audio.playSfx('miss');
+        _shake.forward(from: 0);
+        Haptics.medium();
     }
   }
 
@@ -240,6 +244,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   @override
   void dispose() {
     _ticker.dispose();
+    _shake.dispose();
     _frame.dispose();
     _audio.stopSong();
     super.dispose();
@@ -259,17 +264,25 @@ class _GameplayScreenState extends State<GameplayScreen>
             ? const Center(child: CircularProgressIndicator(color: AppColors.cyan))
             : Stack(
                 children: [
-                  // playfield
+                  // playfield (shakes briefly on a miss)
                   Positioned.fill(
-                    child: CustomPaint(
-                      painter: NotePainter(
-                        engine: _engine!,
-                        approachMs: _approachMs,
-                        laneCount: _engine!.laneCount,
-                        laneFlash: _laneFlash,
-                        reduceEffects: gs.reduceEffects,
-                        highContrast: gs.highContrast,
-                        repaint: _frame,
+                    child: AnimatedBuilder(
+                      animation: _shake,
+                      builder: (_, child) {
+                        final t = _shake.value;
+                        final dx = t == 0 ? 0.0 : math.sin(t * math.pi * 4) * 9 * (1 - t);
+                        return Transform.translate(offset: Offset(dx, 0), child: child);
+                      },
+                      child: CustomPaint(
+                        painter: NotePainter(
+                          engine: _engine!,
+                          approachMs: _approachMs,
+                          laneCount: _engine!.laneCount,
+                          laneFlash: _laneFlash,
+                          reduceEffects: gs.reduceEffects,
+                          highContrast: gs.highContrast,
+                          repaint: _frame,
+                        ),
                       ),
                     ),
                   ),
