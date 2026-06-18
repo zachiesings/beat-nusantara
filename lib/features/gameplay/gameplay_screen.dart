@@ -121,6 +121,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     _running = true;
     _sw.start();
     _ticker.start();
+    _audio.pauseMenuMusic(); // hush the menu loop while playing
     _audio.playSong(widget.song.audioAssetPath);
   }
 
@@ -278,6 +279,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     _flash.dispose();
     _frame.dispose();
     _audio.stopSong();
+    _audio.resumeMenuMusic(); // back to the menu loop
     super.dispose();
   }
 

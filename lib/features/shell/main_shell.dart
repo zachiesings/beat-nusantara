@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/audio/audio_service.dart';
 import '../../widgets/beat_nav_bar.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
@@ -31,6 +33,20 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   late int _tab = widget.initialTab;
+  AudioService? _audio;
+
+  @override
+  void initState() {
+    super.initState();
+    _audio = context.read<AudioService>();
+    _audio!.startMenuMusic(); // soft menu ambience
+  }
+
+  @override
+  void dispose() {
+    _audio?.stopMenuMusic();
+    super.dispose();
+  }
 
   void _go(int i) {
     if (i != _tab) setState(() => _tab = i);

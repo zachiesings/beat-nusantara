@@ -22,7 +22,7 @@ import 'package:beat_nusantara/services/ads/ads_service.dart';
 import 'package:beat_nusantara/services/audio/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
-import 'package:flutter/services.dart' show rootBundle, FontLoader;
+import 'package:flutter/services.dart' show rootBundle, FontLoader, MethodChannel;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
@@ -76,10 +76,30 @@ Future<void> _loadFonts() async {
   } catch (_) {/* no emoji font available — captures will show boxes for emoji */}
 }
 
+/// audioplayers has no platform impl in the headless test runner. The menu music
+/// (MainShell) + any SFX would throw MissingPluginException. Mock the channels so
+/// audio calls are silent no-ops and the captures stay clean.
+void _silenceAudioplayers() {
+  final m = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+  for (final name in const [
+    'xyz.luan/audioplayers',
+    'xyz.luan/audioplayers.global',
+    'xyz.luan/audioplayers.global/events',
+    'xyz.luan/audioplayers/events/music',
+    'xyz.luan/audioplayers/events/sfx',
+    'xyz.luan/audioplayers/events/bgm',
+  ]) {
+    m.setMockMethodCallHandler(MethodChannel(name), (call) async => call.method == 'create' ? 1 : null);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(_loadFonts);
+  setUpAll(() async {
+    _silenceAudioplayers();
+    await _loadFonts();
+  });
 
   for (final name in screenshotRoutes) {
     testWidgets('capture $name.png', (tester) async {

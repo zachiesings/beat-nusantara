@@ -8,12 +8,15 @@ class AudioService {
   // (so it's safe in tests / screenshot capture; audio only inits on first play).
   AudioPlayer? _musicP;
   AudioPlayer? _sfxP;
+  AudioPlayer? _bgmP; // soft looping menu music
   AudioPlayer get _music => _musicP ??= AudioPlayer(playerId: 'music');
   AudioPlayer get _sfx => _sfxP ??= AudioPlayer(playerId: 'sfx');
+  AudioPlayer get _bgm => _bgmP ??= AudioPlayer(playerId: 'bgm');
 
   bool musicEnabled = true;
   bool sfxEnabled = true;
   double musicVolume = 0.9;
+  bool _bgmOn = false;
 
   /// audioplayers' AssetSource is relative to the `assets/` root, so strip it.
   String _src(String assetPath) =>
@@ -57,8 +60,44 @@ class AudioService {
     } catch (_) {}
   }
 
+  // ---- soft looping menu music (separate channel from the in-game song) ----
+  Future<void> startMenuMusic() async {
+    if (!musicEnabled || _bgmOn) return;
+    try {
+      await _bgm.setReleaseMode(ReleaseMode.loop);
+      await _bgm.setVolume(0.45);
+      await _bgm.play(AssetSource('audio/bgm/menu_loop.wav'));
+      _bgmOn = true;
+    } catch (_) {}
+  }
+
+  Future<void> stopMenuMusic() async {
+    _bgmOn = false;
+    try {
+      await _bgmP?.stop();
+    } catch (_) {}
+  }
+
+  Future<void> pauseMenuMusic() async {
+    try {
+      await _bgmP?.pause();
+    } catch (_) {}
+  }
+
+  Future<void> resumeMenuMusic() async {
+    if (!musicEnabled) return;
+    try {
+      if (_bgmOn) {
+        await _bgm.resume();
+      } else {
+        await startMenuMusic();
+      }
+    } catch (_) {}
+  }
+
   Future<void> dispose() async {
     await _musicP?.dispose();
     await _sfxP?.dispose();
+    await _bgmP?.dispose();
   }
 }

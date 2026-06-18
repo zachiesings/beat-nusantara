@@ -271,6 +271,32 @@ def _pick_type(s, steps, rng, lanes, beat):
     return "tap", 0
 
 
+def build_menu():
+    """Soft, loopable menu ambience — gentle pentatonic pads + sparse gamelan
+    plinks. Calm, premium, Nusantara. ~32s loop."""
+    dur = 32.0
+    buf = [0.0] * int(dur * SR)
+    rng = random.Random(777)
+    root = 57  # A3
+    scale = SCALES["minor_pent"]
+    chords = [[0, 2, 4], [4, 1, 3], [0, 2, 3], [2, 4, 0]]
+    for bar in range(int(dur / 4)):
+        t0 = bar * 4.0
+        for deg in chords[bar % len(chords)]:
+            f = midi_to_hz(root + scale[deg % len(scale)])
+            add_tone(buf, t0, 4.3, f, vol=0.13, kind="sine", attack=0.7, release=1.4)
+            add_tone(buf, t0, 4.3, f * 2, vol=0.05, kind="sine", attack=0.9, release=1.4)
+    steps = int(dur / 2.0)
+    for i in range(steps):
+        if rng.random() < 0.5:
+            t0 = i * 2.0 + rng.uniform(0.0, 0.25)
+            deg = rng.randrange(len(scale))
+            f = midi_to_hz(root + 12 + scale[deg])
+            add_metallic(buf, t0, 1.6, f, 0.10, [1, 2.76, 5.40], decay=4, shimmer=0.003)
+    write_wav(os.path.join(ROOT, "assets/audio/bgm/menu_loop.wav"), buf)
+    print("✔ menu_loop  %5.1fs (soft ambient loop)" % dur)
+
+
 def main():
     # --- SFX (short, original) ---
     hit = [0.0] * int(0.10 * SR)
@@ -317,6 +343,8 @@ def main():
     for t0, f in [(0.0, 494), (0.17, 415), (0.34, 349)]:
         add_metallic(lose, t0, 0.55, f, 0.26, [1, 2.7, 5.1], decay=8, shimmer=0.004)
     write_wav(os.path.join(ROOT, "assets/audio/sfx/lose.wav"), lose)
+
+    build_menu()  # soft menu background loop
 
     manifest_fragment = []
     for spec in SONGS:

@@ -72,6 +72,11 @@ class SettingsScreen extends StatelessWidget {
                 _switch('Musik', gs.music, (v) {
                   gs.setToggle('music', v);
                   audio.musicEnabled = v;
+                  if (v) {
+                    audio.startMenuMusic();
+                  } else {
+                    audio.stopMenuMusic();
+                  }
                 }),
                 _switch('Efek suara', gs.sfx, (v) {
                   gs.setToggle('sfx', v);
