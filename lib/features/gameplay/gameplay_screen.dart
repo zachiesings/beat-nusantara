@@ -230,6 +230,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     final gs = context.read<GameState>();
     final result = _engine!.buildResult();
     gs.recordResult(widget.song.id, widget.difficulty, result);
+    _audio.playSfx(result.cleared ? 'win' : 'lose'); // gamelan cadence
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

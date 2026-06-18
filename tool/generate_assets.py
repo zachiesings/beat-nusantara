@@ -298,6 +298,26 @@ def main():
     add_metallic(fever, 0.02, 0.9, 392, 0.18, [1, 2.7, 5.1], decay=5, shimmer=0.012)
     write_wav(os.path.join(ROOT, "assets/audio/sfx/fever.wav"), fever)
 
+    # unlock — bright ascending bonang flourish ("kebuka!")
+    unlock = [0.0] * int(0.75 * SR)
+    for t0, f in [(0.0, 587), (0.09, 740), (0.19, 988)]:
+        add_metallic(unlock, t0, 0.45, f, 0.42, [1, 2.76, 5.40], decay=10, shimmer=0.004)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/unlock.wav"), unlock)
+
+    # win — triumphant gong + ascending arpeggio cadence
+    win = [0.0] * int(2.0 * SR)
+    add_metallic(win, 0, 1.85, 110, 0.5, [1, 2.4, 3.8, 5.9], decay=2.0, shimmer=0.006)
+    for t0, f in [(0.0, 494), (0.12, 659), (0.24, 784), (0.36, 988), (0.5, 1175)]:
+        add_metallic(win, t0, 0.6, f, 0.30, [1, 2.76, 5.40, 8.9], decay=7, shimmer=0.004)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/win.wav"), win)
+
+    # lose — low gong + gentle descending phrase (soft, never harsh)
+    lose = [0.0] * int(1.5 * SR)
+    add_metallic(lose, 0, 1.35, 87, 0.45, [1, 2.4, 3.8], decay=2.6, shimmer=0.006)
+    for t0, f in [(0.0, 494), (0.17, 415), (0.34, 349)]:
+        add_metallic(lose, t0, 0.55, f, 0.26, [1, 2.7, 5.1], decay=8, shimmer=0.004)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/lose.wav"), lose)
+
     manifest_fragment = []
     for spec in SONGS:
         dur_s, charts, counts = build_song(spec)

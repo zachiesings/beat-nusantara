@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../data/missions.dart';
 import '../../services/ads/ads_service.dart';
+import '../../services/audio/audio_service.dart';
 import '../../state/game_state.dart';
 import '../../widgets/bouncy.dart';
 import '../../widgets/mascot.dart';
@@ -197,7 +198,13 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
     final can = gs.coins >= c.coins;
     return Bouncy(
-      onTap: can ? () { gs.addCoins(-c.coins); gs.grantCosmetic(c.id); } : null,
+      onTap: can
+          ? () {
+              gs.addCoins(-c.coins);
+              gs.grantCosmetic(c.id);
+              context.read<AudioService>().playSfx('unlock');
+            }
+          : null,
       child: _pill('${c.coins} koin', Icons.monetization_on, can ? AppColors.gold : AppColors.textLo),
     );
   }
@@ -246,7 +253,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
   Future<void> _unlockViaAd(BuildContext context, GameState gs, _Cosmetic c) async {
     final granted = await showRewardAdSheet(context, kind: RewardKind.cosmetic, title: 'Buka "${c.name}"', reward: 'Kosmetik ${c.name} permanen');
-    if (granted) gs.grantCosmetic(c.id);
+    if (granted) {
+      gs.grantCosmetic(c.id);
+      if (context.mounted) context.read<AudioService>().playSfx('unlock');
+    }
   }
 
   // -------- collectible medal shelf --------

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../game/models/song.dart';
 import '../../services/ads/ads_service.dart';
+import '../../services/audio/audio_service.dart';
 import '../../state/game_state.dart';
 import '../../widgets/glass_panel.dart';
 import '../../widgets/gradient_button.dart';
@@ -224,6 +225,7 @@ class _SongDetailScreenState extends State<SongDetailScreen> {
               onTap: gs.canAfford(song)
                   ? () {
                       gs.unlockWithCoins(song);
+                      context.read<AudioService>().playSfx('unlock');
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Lagu terbuka! 🎉')));
                     }
@@ -261,6 +263,7 @@ class _SongDetailScreenState extends State<SongDetailScreen> {
     );
     if (granted) {
       gs.grantSessionTrial(song);
+      if (context.mounted) context.read<AudioService>().playSfx('unlock');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Trial sesi aktif untuk lagu ini.')));
