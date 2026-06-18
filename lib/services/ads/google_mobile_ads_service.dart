@@ -41,7 +41,9 @@ class GoogleMobileAdsService implements AdsService {
     final completer = Completer<bool>();
     await RewardedAd.load(
       adUnitId: _unitId,
-      request: const AdRequest(),
+      // Non-personalized → no cross-app tracking → no ATT prompt needed, and
+      // App Privacy can declare "Not used to track you". See APP_PRIVACY_ANSWERS.md.
+      request: const AdRequest(nonPersonalizedAds: true),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
           var rewarded = false;

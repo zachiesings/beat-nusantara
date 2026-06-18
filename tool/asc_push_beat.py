@@ -154,19 +154,24 @@ def main():
     _, vlocs = call("GET", f"/v1/appStoreVersions/{ver_id}/appStoreVersionLocalizations?limit=50")
     vhave = {l["attributes"]["locale"]: l["id"] for l in vlocs.get("data", [])}
     vloc_id = {}
+    is_first = editable["attributes"]["versionString"] == "1.0"
     for loc, m in META.items():
+        # whatsNew is only valid on UPDATES — Apple rejects it on the first version.
         attrs = {"description": m["description"], "keywords": m["keywords"],
-                 "promotionalText": m["promotionalText"], "whatsNew": m["whatsNew"]}
+                 "promotionalText": m["promotionalText"]}
+        if not is_first:
+            attrs["whatsNew"] = m["whatsNew"]
         if loc in vhave:
-            call("PATCH", f"/v1/appStoreVersionLocalizations/{vhave[loc]}",
+            st, res = call("PATCH", f"/v1/appStoreVersionLocalizations/{vhave[loc]}",
                  {"data": {"type": "appStoreVersionLocalizations", "id": vhave[loc], "attributes": attrs}})
             vloc_id[loc] = vhave[loc]
         else:
-            _, cr = call("POST", "/v1/appStoreVersionLocalizations", {"data": {"type": "appStoreVersionLocalizations",
+            st, res = call("POST", "/v1/appStoreVersionLocalizations", {"data": {"type": "appStoreVersionLocalizations",
                   "attributes": {**attrs, "locale": loc},
                   "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": ver_id}}}}})
-            vloc_id[loc] = cr["data"]["id"]
-        print("  metadata set:", loc)
+            vloc_id[loc] = res["data"]["id"] if st < 300 else vhave.get(loc)
+        ok = "OK" if st < 300 else "FAIL " + (res.get("errors", [{}])[0].get("detail", "")[:100])
+        print(f"  metadata {loc}: {ok}")
 
     # ---- Screenshots (6.7" set) on the primary locale ----
     primary = "id"
