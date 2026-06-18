@@ -8,7 +8,6 @@ import '../../state/game_state.dart';
 import '../../widgets/bouncy.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/holo.dart';
-import '../../widgets/mascot.dart';
 import '../../widgets/pulse.dart';
 import '../../widgets/shapes.dart';
 import '../../widgets/soft_card.dart';

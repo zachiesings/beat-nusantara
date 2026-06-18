@@ -7,7 +7,6 @@ import '../../core/constants.dart';
 import '../../core/haptics.dart';
 import '../../game/chart_loader/chart_loader.dart';
 import '../../game/engine/game_engine.dart';
-import '../../game/models/chart.dart';
 import '../../game/models/song.dart';
 import '../../game/rendering/note_painter.dart';
 import '../../game/scoring/judgment.dart';
@@ -49,7 +48,6 @@ class _GameplayScreenState extends State<GameplayScreen>
   late final AnimationController _shake =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 320));
 
-  Chart? _chart;
   GameEngine? _engine;
   late double _approachMs;
   late AudioService _audio;
@@ -83,7 +81,6 @@ class _GameplayScreenState extends State<GameplayScreen>
       ..onFail = _onFail
       ..onFinish = _onFinish;
     setState(() {
-      _chart = chart;
       _engine = engine;
       _loading = false;
     });

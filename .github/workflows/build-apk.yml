@@ -42,7 +42,9 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
 
       - name: Tests
-        run: flutter test
+        run: |
+          rm -f test/widget_test.dart   # remove the stub flutter-create generates (refs MyApp)
+          flutter test
 
       - name: Build APK (release)
         run: flutter build apk --release

@@ -223,7 +223,6 @@ class AppTheme {
             (s) => s.contains(WidgetState.selected) ? AppColors.violet : AppColors.surfaceHi),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       ),
-      fontFamily: font,
     );
   }
 }
