@@ -18,6 +18,7 @@ import '../about/about_screen.dart';
 import '../profile/profile_screen.dart';
 import '../rewards/rewards_screen.dart';
 import '../settings/settings_screen.dart';
+import '../shell/main_shell.dart';
 import '../song_detail/song_detail_screen.dart';
 import '../song_library/song_library_screen.dart';
 
@@ -51,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     const Padding(
                       padding: EdgeInsets.only(left: 2, bottom: 10),
-                      child: Text('Pilihan hangat buat kamu hari ini',
+                      child: Text('Beat pilihan hari ini ✨',
                           style: TextStyle(color: AppColors.textLo, fontSize: 12.5)),
                     ),
                     _recommended(context, catalog),
@@ -75,7 +76,7 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         children: [
           Bouncy(
-            onTap: () => _push(context, const ProfileScreen()),
+            onTap: () => _goTab(context, 3, const ProfileScreen()),
             child: Container(
               padding: const EdgeInsets.all(2.5),
               decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppGradients.aurora),
@@ -96,7 +97,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Text('Halo, ${gs.playerName}! 👋',
                     maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.heading),
-                Text('Siap menari hari ini? 💫 Lv ${gs.level}',
+                Text('Yuk, gas beat hari ini! 💫 Lv ${gs.level}',
                     style: const TextStyle(color: AppColors.textLo, fontSize: 12)),
               ],
             ),
@@ -184,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(
                       width: 168,
                       child: GradientButton(
-                        label: 'Main Sekarang',
+                        label: 'Yuk, Gas!',
                         icon: Icons.play_arrow_rounded,
                         height: 46,
                         gradient: AppGradients.from(accent),
@@ -203,9 +204,9 @@ class HomeScreen extends StatelessWidget {
 
   Widget _quickActions(BuildContext context) {
     final items = [
-      (Icons.library_music_rounded, 'Lagu', AppColors.cyan, () => _push(context, const SongLibraryScreen())),
-      (Icons.card_giftcard_rounded, 'Hadiah', AppColors.gold, () => _push(context, const RewardsScreen())),
-      (Icons.insights_rounded, 'Statistik', AppColors.mint, () => _push(context, const ProfileScreen())),
+      (Icons.library_music_rounded, 'Lagu', AppColors.cyan, () => _goTab(context, 1, const SongLibraryScreen())),
+      (Icons.card_giftcard_rounded, 'Hadiah', AppColors.gold, () => _goTab(context, 2, const RewardsScreen())),
+      (Icons.insights_rounded, 'Statistik', AppColors.mint, () => _goTab(context, 3, const ProfileScreen())),
       (Icons.favorite_rounded, 'Tentang', AppColors.pink, () => _push(context, const AboutScreen())),
     ];
     return Row(
@@ -216,16 +217,45 @@ class HomeScreen extends StatelessWidget {
             child: Bouncy(
               onTap: it.$4,
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 13),
                 decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.6),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [it.$3.withValues(alpha: 0.22), AppColors.surface.withValues(alpha: 0.5)],
+                  ),
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(color: it.$3.withValues(alpha: 0.35)),
-                  boxShadow: AppShadows.glow(it.$3, blur: 14, y: 6, a: 0.22),
+                  border: Border.all(color: it.$3.withValues(alpha: 0.4)),
+                  boxShadow: AppShadows.glow(it.$3, blur: 14, y: 6, a: 0.25),
                 ),
                 child: Column(children: [
-                  Icon(it.$1, color: it.$3, size: 26),
-                  const SizedBox(height: 6),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: AppGradients.from(it.$3),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: AppShadows.glow(it.$3, blur: 10, y: 3, a: 0.5),
+                    ),
+                    child: Stack(children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          height: 18,
+                          margin: const EdgeInsets.fromLTRB(4, 3, 4, 0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                              Colors.white.withValues(alpha: 0.35),
+                              Colors.white.withValues(alpha: 0.0),
+                            ]),
+                          ),
+                        ),
+                      ),
+                      Center(child: Icon(it.$1, color: Colors.white, size: 22)),
+                    ]),
+                  ),
+                  const SizedBox(height: 7),
                   Text(it.$2, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
                 ]),
               ),
@@ -339,6 +369,15 @@ class HomeScreen extends StatelessWidget {
           Text(t, style: AppText.heading.copyWith(fontSize: 19)),
         ],
       );
+
+  static void _goTab(BuildContext context, int tab, Widget fallback) {
+    final shell = ShellScope.maybeOf(context);
+    if (shell != null) {
+      shell.go(tab);
+    } else {
+      _push(context, fallback);
+    }
+  }
 
   static void _push(BuildContext context, Widget page) => Navigator.push(
         context,

@@ -4,7 +4,7 @@ import '../../app/theme.dart';
 import '../../state/game_state.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/mascot.dart';
-import '../home/home_screen.dart';
+import '../shell/main_shell.dart';
 
 class _Page {
   final Mood mood;
@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final gs = context.read<GameState>();
     if (_nameCtrl.text.trim().isNotEmpty) gs.setName(_nameCtrl.text);
     gs.completeOnboarding();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainShell()));
   }
 
   @override

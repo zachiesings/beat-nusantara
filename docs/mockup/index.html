@@ -88,6 +88,12 @@
   .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
   .confetti i{position:absolute;top:-12px;width:7px;height:12px;border-radius:2px;animation:fall linear infinite}
   @keyframes fall{to{transform:translateY(680px) rotate(540deg)}}
+  .navbar{position:absolute;left:16px;right:16px;bottom:14px;height:58px;border-radius:999px;
+    background:rgba(30,27,71,.82);border:1px solid var(--border);backdrop-filter:blur(12px);
+    display:flex;align-items:center;justify-content:space-around;padding:0 6px;
+    box-shadow:0 14px 32px rgba(139,92,246,.36);z-index:30}
+  .navbar .it{display:flex;align-items:center;gap:6px;color:var(--lo);font-weight:800;font-size:12.5px;padding:9px 12px;border-radius:999px}
+  .navbar .it.on{color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.3)}
   footer{margin-top:54px;text-align:center;color:var(--lo);font-size:13px;line-height:1.7}
   code{background:var(--glass);padding:2px 6px;border-radius:6px}
 </style>
@@ -303,6 +309,23 @@
   // result confetti
   (function(){var c=document.getElementById('confetti');if(!c)return;var cols=['#FF5C9A','#3DE7FF','#FFCB45','#6BF2C9','#FF7E67'];
     for(var i=0;i<60;i++){var p=document.createElement('i');p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%5];p.style.animationDuration=(2+Math.random()*2)+'s';p.style.animationDelay=(Math.random()*2)+'s';c.appendChild(p);} })();
+  // floating bottom nav on home/library/reward (matches the Flutter app shell)
+  (function(){
+    var grads={Home:'linear-gradient(120deg,#3DE7FF,#36E0B0)',Lagu:'linear-gradient(120deg,#FF5C9A,#FF7E67)',Hadiah:'linear-gradient(120deg,#FFCB45,#FF7E67)',Profil:'linear-gradient(120deg,#8B5CF6,#FF5C9A)'};
+    var active={Home:'Home',Library:'Lagu',Reward:'Hadiah'};
+    var icons={Home:'⌂',Lagu:'♪',Hadiah:'🎁',Profil:'☺'};
+    document.querySelectorAll('.col').forEach(function(col){
+      var h=col.querySelector('h3'); if(!h) return; var on=active[h.textContent.trim()]; if(!on) return;
+      var screen=col.querySelector('.screen'); if(!screen) return;
+      var nav=document.createElement('div'); nav.className='navbar';
+      ['Home','Lagu','Hadiah','Profil'].forEach(function(k){
+        var it=document.createElement('div'); it.className='it'+(k===on?' on':'');
+        if(k===on){ it.style.background=grads[k]; it.innerHTML=icons[k]+' '+k; } else { it.textContent=icons[k]; }
+        nav.appendChild(it);
+      });
+      screen.appendChild(nav);
+    });
+  })();
 </script>
 </body>
 </html>

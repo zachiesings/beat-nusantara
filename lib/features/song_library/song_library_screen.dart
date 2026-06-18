@@ -11,7 +11,8 @@ import '../song_detail/song_detail_screen.dart';
 
 class SongLibraryScreen extends StatefulWidget {
   final String? initialCategory;
-  const SongLibraryScreen({super.key, this.initialCategory});
+  final bool embedded; // true when shown as a shell tab (no back arrow)
+  const SongLibraryScreen({super.key, this.initialCategory, this.embedded = false});
   @override
   State<SongLibraryScreen> createState() => _SongLibraryScreenState();
 }
@@ -76,7 +77,7 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 100),
+                padding: EdgeInsets.fromLTRB(16, 10, 16, widget.embedded ? 120 : 100),
                 sliver: list.isEmpty
                     ? const SliverToBoxAdapter(child: _Empty())
                     : SliverList(
@@ -98,11 +99,12 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
   }
 
   Widget _topBar(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(6, 8, 16, 0),
+        padding: EdgeInsets.fromLTRB(widget.embedded ? 18 : 6, 12, 16, 0),
         child: Row(children: [
-          Bouncy(
-              onTap: () => Navigator.pop(context),
-              child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
+          if (!widget.embedded)
+            Bouncy(
+                onTap: () => Navigator.pop(context),
+                child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
           Text('Perpustakaan Lagu', style: AppText.title),
         ]),
       );

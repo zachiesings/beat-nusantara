@@ -10,7 +10,8 @@ import '../../widgets/soft_card.dart';
 import '../../widgets/stat_ring.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final bool embedded;
+  const ProfileScreen({super.key, this.embedded = false});
 
   String _rank(int level) {
     if (level >= 10) return 'Maestro Nusantara';
@@ -41,12 +42,15 @@ class ProfileScreen extends StatelessWidget {
       body: NeonBackground(
         child: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+            padding: EdgeInsets.fromLTRB(16, embedded ? 14 : 8, 16, embedded ? 120 : 40),
             children: [
               Row(children: [
-                Bouncy(
-                    onTap: () => Navigator.pop(context),
-                    child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
+                if (!embedded)
+                  Bouncy(
+                      onTap: () => Navigator.pop(context),
+                      child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded)))
+                else
+                  const SizedBox(width: 4),
                 Text('Profil & Statistik', style: AppText.title.copyWith(fontSize: 20)),
               ]),
               const SizedBox(height: 8),

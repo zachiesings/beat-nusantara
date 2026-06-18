@@ -30,7 +30,8 @@ const _cosmetics = <_Cosmetic>[
 ];
 
 class RewardsScreen extends StatelessWidget {
-  const RewardsScreen({super.key});
+  final bool embedded;
+  const RewardsScreen({super.key, this.embedded = false});
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +44,15 @@ class RewardsScreen extends StatelessWidget {
       body: NeonBackground(
         child: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+            padding: EdgeInsets.fromLTRB(16, embedded ? 14 : 8, 16, embedded ? 120 : 40),
             children: [
               Row(children: [
-                Bouncy(
-                    onTap: () => Navigator.pop(context),
-                    child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
+                if (!embedded)
+                  Bouncy(
+                      onTap: () => Navigator.pop(context),
+                      child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded)))
+                else
+                  const SizedBox(width: 4),
                 Text('Hadiah & Kosmetik', style: AppText.title.copyWith(fontSize: 20)),
                 const Spacer(),
                 _coin(gs.coins),
@@ -57,7 +61,7 @@ class RewardsScreen extends StatelessWidget {
               const MascotBubble(
                 color: AppColors.gold,
                 mood: Mood.cheer,
-                text: 'Kumpulkan kosmetik lucu! Semua dari koin atau iklan opsional — tanpa bayar. ✨',
+                text: 'Hadiah kecil buat beat besar 🎁 Semua dari koin atau iklan opsional — tanpa bayar.',
               ),
               const SizedBox(height: 18),
               _section('Skin Lajur', '🎚️'),

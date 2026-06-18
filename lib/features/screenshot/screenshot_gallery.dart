@@ -4,10 +4,8 @@ import '../../app/theme.dart';
 import '../../data/song_catalog.dart';
 import '../../state/game_state.dart';
 import '../../widgets/glass_panel.dart';
-import '../home/home_screen.dart';
 import '../results/result_screen.dart';
-import '../rewards/rewards_screen.dart';
-import '../song_library/song_library_screen.dart';
+import '../shell/main_shell.dart';
 import 'demo_data.dart';
 import 'screenshot_gameplay.dart';
 
@@ -26,12 +24,13 @@ Widget screenshotScreen(BuildContext context, String name) {
       ChangeNotifierProvider<GameState>.value(value: demo, child: child);
 
   switch (name) {
+    // home/library/reward render inside the shell so the floating nav shows
     case 'home':
-      return wrap(const HomeScreen());
+      return wrap(const MainShell(initialTab: 0));
     case 'library':
-      return wrap(const SongLibraryScreen());
+      return wrap(const MainShell(initialTab: 1));
     case 'reward':
-      return wrap(const RewardsScreen());
+      return wrap(const MainShell(initialTab: 2));
     case 'gameplay':
       return wrap(const ScreenshotGameplay());
     case 'result':

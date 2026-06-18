@@ -68,11 +68,11 @@ class _ResultScreenState extends State<ResultScreen>
   }
 
   (String, Mood) _verdict() {
-    if (!r.cleared) return ('Yah, belum berhasil… ayo coba lagi! 💪', Mood.sleepy);
-    if (r.fullCombo) return ('Luar biasa! FULL COMBO! 🎉', Mood.cheer);
-    if (r.accuracy >= 95) return ('Keren banget! Nyaris sempurna! ✨', Mood.cheer);
-    if (r.miss <= 3) return ('Sedikit lagi Full Combo! 🔥', Mood.wink);
-    return ('Mantap, kamu berhasil! 🎶', Mood.happy);
+    if (!r.cleared) return ('Yah, belum berhasil… coba lagi ya! 💪', Mood.sleepy);
+    if (r.fullCombo) return ('Keren banget! Full Combo! 🎉', Mood.cheer);
+    if (r.accuracy >= 95) return ('Dikit lagi sempurna! ✨', Mood.cheer);
+    if (r.miss <= 3) return ('Ayo kejar Full Combo! 🔥', Mood.wink);
+    return ('Keren, ritmemu makin rapi! 🎶', Mood.happy);
   }
 
   @override

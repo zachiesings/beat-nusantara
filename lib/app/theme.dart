@@ -284,6 +284,23 @@ class _LivingBgPainter extends CustomPainter {
           ]).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r)),
       );
     }
+    // diagonal rhythm streaks (energy + a touch of asymmetry)
+    canvas.save();
+    canvas.translate(size.width * 0.5, size.height * 0.42);
+    canvas.rotate(-0.7);
+    for (int i = 0; i < 5; i++) {
+      final base = (i / 5 + t * 0.35) % 1.0;
+      final x = (base * 2.0 - 1.0) * size.width;
+      final col = AppColors.lanes[i % AppColors.lanes.length];
+      canvas.drawRect(
+        Rect.fromLTWH(x, -size.height, 3, size.height * 2),
+        Paint()
+          ..color = col.withValues(alpha: 0.06)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+    canvas.restore();
+
     // batik diamond grid (very faint)
     final grid = Paint()
       ..color = const Color(0x0AFFFFFF)

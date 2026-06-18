@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../core/constants.dart';
 import '../../state/game_state.dart';
-import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../shell/main_shell.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen>
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 450),
         pageBuilder: (_, __, ___) =>
-            done ? const HomeScreen() : const OnboardingScreen(),
+            done ? const MainShell() : const OnboardingScreen(),
         transitionsBuilder: (_, a, __, child) =>
             FadeTransition(opacity: a, child: child),
       ),
