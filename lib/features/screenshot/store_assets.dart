@@ -94,7 +94,7 @@ Widget storeShot(BuildContext ctx, String name, {required String kicker, require
               ),
               const SizedBox(height: 12),
               ShaderMask(
-                shaderCallback: (r) => AppGradients.brandGradient.createShader(r),
+                shaderCallback: (r) => AppGradients.sunset.createShader(r),
                 child: Text(
                   headline,
                   textAlign: TextAlign.center,
