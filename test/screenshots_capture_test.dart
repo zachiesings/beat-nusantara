@@ -30,6 +30,16 @@ import 'package:provider/provider.dart';
 const _physical = Size(1290, 2796);
 const _dpr = 3.0;
 
+/// App theme + emoji as a text fallback so 👋✨🎁 resolve to NotoColorEmoji
+/// (loaded in setUpAll). Without the fallback in the textTheme the engine never
+/// reaches the emoji font for those codepoints.
+ThemeData _captureTheme() {
+  final base = AppTheme.dark();
+  return base.copyWith(
+    textTheme: base.textTheme.apply(fontFamilyFallback: const ['NotoColorEmoji']),
+  );
+}
+
 Future<void> _loadFonts() async {
   final loader = FontLoader('Jakarta');
   for (final a in const [
@@ -95,7 +105,7 @@ void main() {
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.dark(),
+            theme: _captureTheme(),
             home: RepaintBoundary(
               key: boundaryKey,
               child: Builder(builder: (ctx) => screenshotScreen(ctx, name)),
