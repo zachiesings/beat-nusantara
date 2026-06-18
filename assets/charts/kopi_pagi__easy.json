@@ -1,0 +1,204 @@
+{
+ "songId": "kopi_pagi",
+ "difficulty": "Easy",
+ "bpm": 84,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 0
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 714
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 1428,
+   "endTimeMs": 2499
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 1785
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 2142
+  },
+  {
+   "type": "slide",
+   "lane": 3,
+   "startTimeMs": 2857,
+   "endTimeMs": 3571
+  },
+  {
+   "type": "flick",
+   "lane": 1,
+   "startTimeMs": 3571,
+   "direction": "up"
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 5357
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 6428
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 6785
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 7142,
+   "endTimeMs": 8213
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 7857
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 8928
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 9285,
+   "direction": "up"
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 11071
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 12500
+  },
+  {
+   "type": "slide",
+   "lane": 3,
+   "startTimeMs": 14285,
+   "endTimeMs": 14999
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 15000,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 15714,
+   "endTimeMs": 16785
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 18214
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 18571,
+   "endTimeMs": 19642
+  },
+  {
+   "type": "flick",
+   "lane": 2,
+   "startTimeMs": 20714,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 21428,
+   "endTimeMs": 22499
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 23928
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 26428,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 27142,
+   "endTimeMs": 28213
+  },
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 28571
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 29285
+  },
+  {
+   "type": "slide",
+   "lane": 0,
+   "startTimeMs": 31428,
+   "endTimeMs": 32142
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 32857,
+   "endTimeMs": 33928
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 33571
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 33928
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 35357
+  },
+  {
+   "type": "flick",
+   "lane": 2,
+   "startTimeMs": 37857,
+   "direction": "up"
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 39285
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 39642
+  }
+ ]
+}

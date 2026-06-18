@@ -15,21 +15,6 @@
    "startTimeMs": 214
   },
   {
-   "type": "double",
-   "lane": 1,
-   "startTimeMs": 428
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 428
-  },
-  {
-   "type": "tap",
-   "lane": 0,
-   "startTimeMs": 642
-  },
-  {
    "type": "hold",
    "lane": 1,
    "startTimeMs": 857,
@@ -62,15 +47,15 @@
    "endTimeMs": 2142
   },
   {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 1928
+  },
+  {
    "type": "flick",
    "lane": 1,
    "startTimeMs": 2142,
    "direction": "up"
-  },
-  {
-   "type": "tap",
-   "lane": 0,
-   "startTimeMs": 2357
   },
   {
    "type": "hold",
@@ -99,6 +84,11 @@
    "startTimeMs": 3428
   },
   {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 3642
+  },
+  {
    "type": "double",
    "lane": 1,
    "startTimeMs": 3857
@@ -112,6 +102,12 @@
    "type": "tap",
    "lane": 0,
    "startTimeMs": 4071
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 4285,
+   "endTimeMs": 4927
   },
   {
    "type": "tap",
@@ -187,19 +183,15 @@
    "startTimeMs": 7071
   },
   {
-   "type": "double",
-   "lane": 1,
-   "startTimeMs": 7285
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 7285
-  },
-  {
    "type": "tap",
    "lane": 0,
    "startTimeMs": 7500
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 7714,
+   "endTimeMs": 8356
   },
   {
    "type": "tap",
@@ -306,10 +298,9 @@
    "startTimeMs": 11571
   },
   {
-   "type": "slide",
-   "lane": 1,
-   "startTimeMs": 12000,
-   "endTimeMs": 12428
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 11785
   },
   {
    "type": "tap",
@@ -344,24 +335,14 @@
    "startTimeMs": 13285
   },
   {
-   "type": "golden",
-   "lane": 0,
-   "startTimeMs": 13500
-  },
-  {
    "type": "fever",
    "lane": 1,
    "startTimeMs": 13714
   },
   {
-   "type": "double",
-   "lane": 1,
-   "startTimeMs": 14142
-  },
-  {
    "type": "tap",
-   "lane": 3,
-   "startTimeMs": 14142
+   "lane": 0,
+   "startTimeMs": 14357
   },
   {
    "type": "hold",
@@ -388,12 +369,6 @@
    "type": "golden",
    "lane": 0,
    "startTimeMs": 15214
-  },
-  {
-   "type": "slide",
-   "lane": 1,
-   "startTimeMs": 15428,
-   "endTimeMs": 15856
   },
   {
    "type": "tap",
@@ -423,6 +398,11 @@
    "startTimeMs": 16500
   },
   {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 16714
+  },
+  {
    "type": "golden",
    "lane": 0,
    "startTimeMs": 16928
@@ -446,11 +426,6 @@
    "type": "tap",
    "lane": 3,
    "startTimeMs": 17571
-  },
-  {
-   "type": "tap",
-   "lane": 0,
-   "startTimeMs": 17785
   },
   {
    "type": "hold",
@@ -517,20 +492,34 @@
    "startTimeMs": 20142
   },
   {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 20357
+  },
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 20571
+  },
+  {
    "type": "tap",
    "lane": 3,
    "startTimeMs": 20785
   },
   {
+   "type": "double",
+   "lane": 1,
+   "startTimeMs": 21000
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 21000
+  },
+  {
    "type": "tap",
    "lane": 0,
    "startTimeMs": 21214
-  },
-  {
-   "type": "hold",
-   "lane": 1,
-   "startTimeMs": 21428,
-   "endTimeMs": 22070
   },
   {
    "type": "tap",
@@ -559,6 +548,11 @@
    "endTimeMs": 22713
   },
   {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 22500
+  },
+  {
    "type": "flick",
    "lane": 1,
    "startTimeMs": 22714,
@@ -570,20 +564,9 @@
    "startTimeMs": 22928
   },
   {
-   "type": "hold",
-   "lane": 1,
-   "startTimeMs": 23142,
-   "endTimeMs": 23784
-  },
-  {
    "type": "tap",
    "lane": 3,
    "startTimeMs": 23357
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 23571
   },
   {
    "type": "golden",
@@ -627,9 +610,20 @@
    "startTimeMs": 25071
   },
   {
-   "type": "golden",
-   "lane": 0,
-   "startTimeMs": 25500
+   "type": "double",
+   "lane": 1,
+   "startTimeMs": 25285
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 25285
+  },
+  {
+   "type": "slide",
+   "lane": 1,
+   "startTimeMs": 25714,
+   "endTimeMs": 26142
   },
   {
    "type": "tap",
@@ -669,19 +663,30 @@
    "startTimeMs": 27214
   },
   {
-   "type": "fever",
-   "lane": 1,
-   "startTimeMs": 27428
-  },
-  {
    "type": "tap",
    "lane": 3,
    "startTimeMs": 27642
   },
   {
+   "type": "double",
+   "lane": 1,
+   "startTimeMs": 27857
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 27857
+  },
+  {
    "type": "tap",
    "lane": 0,
    "startTimeMs": 28071
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 28285,
+   "endTimeMs": 28927
   },
   {
    "type": "tap",
@@ -719,11 +724,6 @@
    "lane": 1,
    "startTimeMs": 29571,
    "direction": "up"
-  },
-  {
-   "type": "tap",
-   "lane": 0,
-   "startTimeMs": 29785
   },
   {
    "type": "hold",
@@ -861,6 +861,11 @@
    "startTimeMs": 34714
   },
   {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 34928
+  },
+  {
    "type": "hold",
    "lane": 1,
    "startTimeMs": 35142,
@@ -882,10 +887,20 @@
    "startTimeMs": 35571
   },
   {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 35785
+  },
+  {
    "type": "slide",
    "lane": 1,
    "startTimeMs": 36000,
    "endTimeMs": 36428
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 36214
   },
   {
    "type": "flick",
@@ -906,6 +921,11 @@
   },
   {
    "type": "tap",
+   "lane": 3,
+   "startTimeMs": 37071
+  },
+  {
+   "type": "tap",
    "lane": 1,
    "startTimeMs": 37285
   },
@@ -913,6 +933,11 @@
    "type": "golden",
    "lane": 0,
    "startTimeMs": 37500
+  },
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 37714
   },
   {
    "type": "tap",

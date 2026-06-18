@@ -125,39 +125,28 @@ DIRS = ["left", "right", "up", "down"]
 # ----------------------------------------------------------------------------
 
 SONGS = [
-    {
-        "id": "senja_jakarta",
-        "title": "Senja di Jakarta",
-        "artist": "Lampu Kota",          # fictional act
-        "genre": "Lo-Fi Pasar Malam",
-        "region": "Nusantara",
-        "bpm": 88, "bars": 20, "root": 57,  # A3
-        "scale": "minor_pent", "kind": "tri",
-        "lanes": 4, "energy": 0.45,
-        "diffs": ["Easy", "Normal"],
-    },
-    {
-        "id": "gamelan_pulse",
-        "title": "Gamelan Pulse",
-        "artist": "Sekar Sintetik",
-        "genre": "Gamelan Electronic",
-        "region": "Jawa",
-        "bpm": 124, "bars": 24, "root": 60,  # C4
-        "scale": "pelog_ish", "kind": "square",
-        "lanes": 4, "energy": 0.7,
-        "diffs": ["Normal", "Hard"],
-    },
-    {
-        "id": "koplo_neon",
-        "title": "Koplo Neon",
-        "artist": "DJ Senja",
-        "genre": "Dangdut / Koplo EDM",
-        "region": "Nusantara",
-        "bpm": 140, "bars": 24, "root": 62,  # D4
-        "scale": "dorian", "kind": "saw",
-        "lanes": 5, "energy": 0.95,
-        "diffs": ["Normal", "Hard", "Expert"],
-    },
+    # the 3 original demos (kept)
+    {"id": "senja_jakarta", "bpm": 88, "bars": 20, "root": 57, "scale": "minor_pent", "kind": "tri", "lanes": 4, "energy": 0.45, "diffs": ["Easy", "Normal"]},
+    {"id": "gamelan_pulse", "bpm": 124, "bars": 24, "root": 60, "scale": "pelog_ish", "kind": "square", "lanes": 4, "energy": 0.7, "diffs": ["Normal", "Hard"]},
+    {"id": "koplo_neon", "bpm": 140, "bars": 24, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 0.95, "diffs": ["Normal", "Hard", "Expert"]},
+    # 17 more (all original, license-safe) — ids match assets/song_manifest.json
+    {"id": "melati_senja", "bpm": 102, "bars": 16, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.55, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "hujan_neon", "bpm": 116, "bars": 16, "root": 62, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.6, "diffs": ["Normal", "Hard"]},
+    {"id": "sambal_bass", "bpm": 145, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 0.9, "diffs": ["Normal", "Hard"]},
+    {"id": "goyang_galaksi", "bpm": 128, "bars": 16, "root": 60, "scale": "dorian", "kind": "saw", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
+    {"id": "sasando_drift", "bpm": 120, "bars": 16, "root": 60, "scale": "pelog_ish", "kind": "tri", "lanes": 4, "energy": 0.65, "diffs": ["Normal", "Hard"]},
+    {"id": "angklung_arcade", "bpm": 130, "bars": 16, "root": 64, "scale": "major_pent", "kind": "square", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
+    {"id": "tokyo_kilat", "bpm": 150, "bars": 16, "root": 64, "scale": "major_pent", "kind": "saw", "lanes": 5, "energy": 0.9, "diffs": ["Normal", "Hard", "Expert"]},
+    {"id": "seoul_mirror", "bpm": 124, "bars": 16, "root": 57, "scale": "minor_pent", "kind": "square", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
+    {"id": "midnight_avenue", "bpm": 118, "bars": 16, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.6, "diffs": ["Normal", "Hard"]},
+    {"id": "concrete_flow", "bpm": 92, "bars": 16, "root": 55, "scale": "minor_pent", "kind": "square", "lanes": 4, "energy": 0.55, "diffs": ["Normal", "Hard"]},
+    {"id": "voltage", "bpm": 128, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 4, "energy": 0.85, "diffs": ["Normal", "Hard"]},
+    {"id": "deep_jakarta", "bpm": 122, "bars": 16, "root": 57, "scale": "minor_pent", "kind": "saw", "lanes": 4, "energy": 0.75, "diffs": ["Normal", "Hard"]},
+    {"id": "phonk_pasar", "bpm": 138, "bars": 16, "root": 55, "scale": "minor_pent", "kind": "square", "lanes": 5, "energy": 0.9, "diffs": ["Hard", "Expert"]},
+    {"id": "hyper_melati", "bpm": 160, "bars": 16, "root": 64, "scale": "major_pent", "kind": "saw", "lanes": 5, "energy": 0.95, "diffs": ["Hard", "Expert"]},
+    {"id": "ombak_tenang", "bpm": 80, "bars": 14, "root": 57, "scale": "minor_pent", "kind": "tri", "lanes": 4, "energy": 0.4, "diffs": ["Easy", "Normal"]},
+    {"id": "kopi_pagi", "bpm": 84, "bars": 14, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.42, "diffs": ["Easy", "Normal"]},
+    {"id": "garuda_rising", "bpm": 174, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 1.0, "diffs": ["Hard", "Expert"]},
 ]
 
 DIFF_DENSITY = {"Easy": 0.5, "Normal": 0.72, "Hard": 0.9, "Expert": 1.0}
@@ -280,7 +269,7 @@ def main():
     for spec in SONGS:
         dur_s, charts, counts = build_song(spec)
         manifest_fragment.append({
-            "id": spec["id"], "title": spec["title"], "durationMs": int(dur_s * 1000),
+            "id": spec["id"], "durationMs": int(dur_s * 1000),
             "charts": charts, "noteCounts": counts,
         })
         print("✔ %-16s %4d bpm  %5.1fs  notes=%s" % (

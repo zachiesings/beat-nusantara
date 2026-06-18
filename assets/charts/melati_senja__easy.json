@@ -1,0 +1,226 @@
+{
+ "songId": "melati_senja",
+ "difficulty": "Easy",
+ "bpm": 102,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 0
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 1176,
+   "endTimeMs": 2058
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 1764
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 2941,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 5882,
+   "endTimeMs": 6764
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 6470
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 8529
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 8823
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 9705
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 10000
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 10588,
+   "endTimeMs": 11470
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 10882
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 11176
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 12941,
+   "endTimeMs": 13823
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 13235
+  },
+  {
+   "type": "fever",
+   "lane": 2,
+   "startTimeMs": 14117
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 15294,
+   "endTimeMs": 16176
+  },
+  {
+   "type": "slide",
+   "lane": 1,
+   "startTimeMs": 16470,
+   "endTimeMs": 17058
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 16764
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 17058,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 17647,
+   "endTimeMs": 18529
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 18235
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 19411
+  },
+  {
+   "type": "slide",
+   "lane": 3,
+   "startTimeMs": 21176,
+   "endTimeMs": 21764
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 22352,
+   "endTimeMs": 23234
+  },
+  {
+   "type": "fever",
+   "lane": 0,
+   "startTimeMs": 23529
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 24705,
+   "endTimeMs": 25587
+  },
+  {
+   "type": "slide",
+   "lane": 1,
+   "startTimeMs": 25882,
+   "endTimeMs": 26470
+  },
+  {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 27941
+  },
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 28235
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 30000
+  },
+  {
+   "type": "slide",
+   "lane": 3,
+   "startTimeMs": 30588,
+   "endTimeMs": 31176
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 30882
+  },
+  {
+   "type": "flick",
+   "lane": 2,
+   "startTimeMs": 31176,
+   "direction": "up"
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 31470
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 31764,
+   "endTimeMs": 32646
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 33235
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 34705
+  },
+  {
+   "type": "slide",
+   "lane": 2,
+   "startTimeMs": 35294,
+   "endTimeMs": 35882
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 36470,
+   "endTimeMs": 37352
+  }
+ ]
+}

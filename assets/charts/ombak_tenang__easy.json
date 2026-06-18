@@ -1,0 +1,176 @@
+{
+ "songId": "ombak_tenang",
+ "difficulty": "Easy",
+ "bpm": 80,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 750
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 2250
+  },
+  {
+   "type": "slide",
+   "lane": 0,
+   "startTimeMs": 3000,
+   "endTimeMs": 3750
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 3375
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 5250
+  },
+  {
+   "type": "fever",
+   "lane": 1,
+   "startTimeMs": 6000
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 7500,
+   "endTimeMs": 8625
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 8250
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 10500,
+   "endTimeMs": 11625
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 10875
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 11250
+  },
+  {
+   "type": "fever",
+   "lane": 0,
+   "startTimeMs": 12000
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 13500,
+   "endTimeMs": 14625
+  },
+  {
+   "type": "flick",
+   "lane": 2,
+   "startTimeMs": 15750,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 16500,
+   "endTimeMs": 17625
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 17250
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 18750
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 20250
+  },
+  {
+   "type": "slide",
+   "lane": 0,
+   "startTimeMs": 21000,
+   "endTimeMs": 21750
+  },
+  {
+   "type": "flick",
+   "lane": 2,
+   "startTimeMs": 21750,
+   "direction": "up"
+  },
+  {
+   "type": "fever",
+   "lane": 3,
+   "startTimeMs": 24000
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 28500,
+   "endTimeMs": 29625
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 29250
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 30750
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 31500,
+   "endTimeMs": 32625
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 32250
+  },
+  {
+   "type": "flick",
+   "lane": 0,
+   "startTimeMs": 33750,
+   "direction": "up"
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 37500,
+   "endTimeMs": 38625
+  },
+  {
+   "type": "flick",
+   "lane": 1,
+   "startTimeMs": 39750,
+   "direction": "up"
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 41250
+  },
+  {
+   "type": "golden",
+   "lane": 2,
+   "startTimeMs": 41625
+  }
+ ]
+}
