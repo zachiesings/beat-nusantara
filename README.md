@@ -87,6 +87,18 @@ python3 tool/generate_images.py
 
 Tidak perlu ubah kode. Untuk lagu berlisensi, lihat docs/MUSIC_LICENSING.md.
 
+## Screenshot & marketing
+
+Mode screenshot deterministik (widget asli, data fiktif stabil) untuk App Store:
+
+```bash
+flutter run --dart-define=SCREENSHOT=gameplay   # home | library | gameplay | result | reward
+```
+Atau in-app (debug): **Settings → Developer → Mode Screenshot**.
+
+Pratinjau cepat tanpa build: buka **`docs/mockup/index.html`** di browser
+(mockup HTML semua layar). Aturan visual & prompt Nano Banana ada di docs.
+
 ## Dokumentasi
 
 - [GAME_DESIGN.md](docs/GAME_DESIGN.md) — mekanik, format chart, scoring
@@ -94,3 +106,7 @@ Tidak perlu ubah kode. Untuk lagu berlisensi, lihat docs/MUSIC_LICENSING.md.
 - [ADMOB_NOTES.md](docs/ADMOB_NOTES.md) — aktifkan AdMob asli (kode drop-in)
 - [APP_STORE_REVIEW_NOTES.md](docs/APP_STORE_REVIEW_NOTES.md) — catatan untuk review Apple
 - [CODEMAGIC_SETUP.md](docs/CODEMAGIC_SETUP.md) — build iOS di cloud
+- [AI_VISUAL_WORKFLOW.md](docs/AI_VISUAL_WORKFLOW.md) — aturan visual (real vs AI)
+- [SCREENSHOT_DIRECTION.md](docs/SCREENSHOT_DIRECTION.md) — apa & bagaimana menangkap
+- [APP_ICON_DIRECTION.md](docs/APP_ICON_DIRECTION.md) — arah ikon final
+- [PROMO_ASSET_PROMPTS.md](docs/PROMO_ASSET_PROMPTS.md) — prompt Nano Banana (dekoratif)

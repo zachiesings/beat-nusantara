@@ -16,6 +16,7 @@ import '../../state/game_state.dart';
 import '../../widgets/glass_panel.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/reward_ad_sheet.dart';
+import 'game_hud.dart';
 import '../results/result_screen.dart';
 
 class GameplayScreen extends StatefulWidget {
@@ -312,119 +313,23 @@ class _GameplayScreenState extends State<GameplayScreen>
         builder: (_, __) {
           final e = _engine!;
           final b = e.board;
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(14, 6, 14, 0),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                        icon: const Icon(Icons.pause_circle, size: 30, color: AppColors.textHi),
-                        onPressed: _pause),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.song.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700, fontSize: 13)),
-                          Text('${widget.difficulty} • ${widget.modeLabel}',
-                              style: const TextStyle(color: AppColors.textLo, fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('${b.score}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 22, color: AppColors.textHi)),
-                        Text('${b.accuracy.toStringAsFixed(1)}%',
-                            style: const TextStyle(color: AppColors.textLo, fontSize: 11)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                _bar(e.progress, AppColors.cyan, height: 4),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _miniStat('COMBO', '${b.combo}', AppColors.pink),
-                    const SizedBox(width: 10),
-                    Expanded(child: _hpBar(b.hp / K.hpMax)),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                _feverBar(e),
-              ],
-            ),
+          return GameHud(
+            title: widget.song.title,
+            difficulty: widget.difficulty,
+            mode: widget.modeLabel,
+            score: b.score,
+            accuracy: b.accuracy,
+            combo: b.combo,
+            hp: b.hp / K.hpMax,
+            fever: e.fever,
+            feverActive: e.feverActive,
+            progress: e.progress,
+            onPause: _pause,
           );
         },
       ),
     );
   }
-
-  Widget _miniStat(String label, String value, Color color) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 9, color: AppColors.textLo)),
-          Text(value,
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: color)),
-        ],
-      );
-
-  Widget _hpBar(double v) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('HP', style: TextStyle(fontSize: 9, color: AppColors.textLo)),
-          const SizedBox(height: 2),
-          _bar(v.clamp(0.0, 1.0).toDouble(), v > 0.3 ? AppColors.teal : AppColors.danger, height: 8),
-        ],
-      );
-
-  Widget _feverBar(GameEngine e) {
-    final active = e.feverActive;
-    return Row(children: [
-      Icon(Icons.local_fire_department,
-          size: 18, color: active ? AppColors.gold : AppColors.textLo),
-      const SizedBox(width: 6),
-      Expanded(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: Stack(children: [
-            Container(height: 8, color: AppColors.glass),
-            FractionallySizedBox(
-              widthFactor: active ? 1.0 : e.fever.clamp(0.0, 1.0).toDouble(),
-              child: Container(
-                height: 8,
-                decoration: const BoxDecoration(gradient: AppColors.feverGradient),
-              ),
-            ),
-          ]),
-        ),
-      ),
-      const SizedBox(width: 6),
-      Text(active ? 'FEVER!' : '',
-          style: const TextStyle(
-              color: AppColors.gold, fontWeight: FontWeight.w800, fontSize: 11)),
-    ]);
-  }
-
-  Widget _bar(double v, Color color, {double height = 6}) => ClipRRect(
-        borderRadius: BorderRadius.circular(height),
-        child: Stack(children: [
-          Container(height: height, color: AppColors.glass),
-          FractionallySizedBox(
-            widthFactor: v.clamp(0.0, 1.0).toDouble(),
-            child: Container(height: height, color: color),
-          ),
-        ]),
-      );
 
   Widget _judgmentPopup() {
     return AnimatedBuilder(

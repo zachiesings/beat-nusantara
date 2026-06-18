@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/theme.dart';
 import '../../services/audio/audio_service.dart';
 import '../../state/game_state.dart';
 import '../../widgets/glass_panel.dart';
+import '../screenshot/screenshot_gallery.dart';
 import 'calibration_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -75,6 +77,17 @@ class SettingsScreen extends StatelessWidget {
                   audio.sfxEnabled = v;
                 }),
               ]),
+              if (kDebugMode)
+                _group('Developer', [
+                  ListTile(
+                    leading: const Icon(Icons.photo_camera, color: AppColors.gold),
+                    title: const Text('Mode Screenshot'),
+                    subtitle: const Text('Layar demo deterministik untuk App Store'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const ScreenshotGallery())),
+                  ),
+                ]),
             ],
           ),
         ),

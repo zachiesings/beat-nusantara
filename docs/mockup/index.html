@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beat Nusantara — App Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0B0B18; --ink2:#14132A; --surface:#1B1A33; --glass:rgba(255,255,255,.13);
+    --border:rgba(255,255,255,.20); --violet:#7C3AED; --pink:#EC4899; --cyan:#22D3EE;
+    --gold:#FBBF24; --teal:#2DD4BF; --hi:#F5F3FF; --lo:#A9A7C4; --danger:#FB7185;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:
+     radial-gradient(900px 600px at 10% -10%, rgba(124,58,237,.35), transparent),
+     radial-gradient(900px 700px at 110% 110%, rgba(34,211,238,.30), transparent),
+     linear-gradient(180deg,var(--ink),var(--ink2));
+     color:var(--hi);min-height:100vh;padding:40px 20px 80px}
+  .wrap{max-width:1280px;margin:0 auto}
+  header.page{text-align:center;margin-bottom:8px}
+  header.page h1{font-size:40px;font-weight:800;letter-spacing:-1px;
+     background:linear-gradient(120deg,var(--violet),var(--pink),var(--cyan));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  header.page p{color:var(--lo);margin-top:6px}
+  .badge{display:inline-block;margin-top:14px;padding:8px 14px;border:1px solid var(--border);
+     border-radius:999px;color:var(--lo);font-size:13px;background:var(--glass)}
+  .grid{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;margin-top:40px}
+  .col{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .col h3{font-size:14px;color:var(--lo);font-weight:700;text-transform:uppercase;letter-spacing:2px}
+  /* phone */
+  .phone{width:300px;height:640px;border-radius:42px;background:var(--ink);
+     border:10px solid #000;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);
+     position:relative;overflow:hidden}
+  .phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);
+     width:120px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:50}
+  .screen{position:absolute;inset:0;overflow:hidden;
+     background:radial-gradient(420px 300px at -10% -10%, rgba(124,58,237,.35), transparent),
+     radial-gradient(420px 320px at 120% 120%, rgba(34,211,238,.28), transparent),
+     linear-gradient(180deg,var(--ink),var(--ink2))}
+  .pad{padding:38px 16px 16px}
+  .row{display:flex;align-items:center;gap:10px}
+  .glass{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:14px}
+  .pill{background:var(--glass);border-radius:8px;padding:3px 8px;font-size:10px;color:var(--hi)}
+  .btn{height:46px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;
+     font-weight:800;color:#fff;background:linear-gradient(120deg,var(--violet),var(--pink),var(--cyan));
+     box-shadow:0 8px 24px rgba(124,58,237,.45)}
+  .avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+     font-weight:800;font-size:20px;background:linear-gradient(120deg,var(--violet),var(--pink),var(--cyan))}
+  .coin{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:var(--glass);
+     border:1px solid rgba(251,191,36,.5);color:var(--gold);font-weight:800;font-size:13px}
+  .chip{padding:7px 13px;border-radius:999px;font-weight:700;font-size:12px;border:1px solid var(--border);color:var(--lo)}
+  .chip.on{background:linear-gradient(120deg,var(--violet),var(--pink),var(--cyan));color:#fff;border:none}
+  .muted{color:var(--lo)}
+  .small{font-size:11px} .xs{font-size:10px}
+  .cover{width:100%;height:100%;object-fit:cover}
+  .songcard{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:rgba(27,26,51,.55)}
+  .songcard .cv{position:relative;height:78px}
+  .songcard .cv .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(11,11,24,.85))}
+  .lock{position:absolute;top:6px;right:6px;background:rgba(11,11,24,.7);border-radius:8px;padding:3px 5px;font-size:11px;color:var(--lo)}
+  .demo{position:absolute;top:6px;left:6px;border:1px solid var(--cyan);color:var(--cyan);border-radius:8px;padding:2px 6px;font-size:9px;font-weight:800}
+  .grade{position:absolute;bottom:6px;right:6px;width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);
+     color:var(--gold);font-weight:800;font-size:10px;display:flex;align-items:center;justify-content:center;background:rgba(11,11,24,.8)}
+  .bar{height:7px;border-radius:7px;background:var(--glass);overflow:hidden}
+  .bar > i{display:block;height:100%}
+  /* gameplay */
+  .field{position:absolute;inset:0}
+  .lane{position:absolute;top:0;bottom:0;border-left:1px solid var(--border)}
+  .note{position:absolute;height:18px;border-radius:9px;border:1.5px solid rgba(255,255,255,.7)}
+  .hitline{position:absolute;left:0;right:0;height:3px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .recept{position:absolute;width:34px;height:34px;border-radius:50%;border:2px solid;transform:translate(-50%,-50%)}
+  .sectitle{font-weight:800;font-size:16px;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+  footer{margin-top:50px;text-align:center;color:var(--lo);font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <h1>Beat Nusantara</h1>
+    <p>Pratinjau aplikasi (mockup HTML) — game ritme premium, rasa Nusantara 🇮🇩</p>
+    <div class="badge">⚠️ Ini mockup preview. Screenshot final App Store ditangkap dari app Flutter asli (mode screenshot).</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- HOME -->
+    <div class="col"><h3>Home</h3>
+    <div class="phone"><div class="notch"></div><div class="screen"><div class="pad">
+      <div class="row">
+        <div class="avatar">A</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:16px">Halo, Andini 👋</div>
+          <div class="muted small">Level 7</div>
+        </div>
+        <div class="coin">🪙 1.480</div>
+      </div>
+      <div class="glass" style="padding:0;margin-top:14px;position:relative;height:150px;overflow:hidden">
+        <img class="cover" src="../../assets/images/cover_senja_jakarta.png" alt="">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,11,24,.85),transparent)"></div>
+        <div style="position:absolute;left:16px;bottom:14px">
+          <div class="demo" style="position:static;display:inline-block">LAGU UNGGULAN</div>
+          <div style="font-size:22px;font-weight:800;margin-top:30px">Senja di Jakarta</div>
+          <div class="muted small">Lampu Kota</div>
+          <div class="btn" style="width:140px;height:38px;margin-top:8px">▶ Main Sekarang</div>
+        </div>
+      </div>
+      <div class="row" style="gap:8px;margin-top:14px">
+        <div class="glass" style="flex:1;text-align:center;padding:12px 4px"><div style="color:var(--cyan)">♬</div><div class="xs">Lagu</div></div>
+        <div class="glass" style="flex:1;text-align:center;padding:12px 4px"><div style="color:var(--cyan)">🎁</div><div class="xs">Hadiah</div></div>
+        <div class="glass" style="flex:1;text-align:center;padding:12px 4px"><div style="color:var(--cyan)">📊</div><div class="xs">Statistik</div></div>
+        <div class="glass" style="flex:1;text-align:center;padding:12px 4px"><div style="color:var(--cyan)">ⓘ</div><div class="xs">Tentang</div></div>
+      </div>
+      <div class="sectitle" style="color:var(--hi)"><span style="color:var(--pink)">⚑</span> Misi</div>
+      <div class="glass row" style="padding:10px"><span style="color:var(--teal)">✓</span><div><div class="small" style="font-weight:700">Full Combo</div><div class="xs muted">Selesaikan satu lagu tanpa Miss</div></div></div>
+    </div></div></div></div>
+
+    <!-- LIBRARY -->
+    <div class="col"><h3>Library</h3>
+    <div class="phone"><div class="notch"></div><div class="screen"><div class="pad">
+      <div class="row"><span style="font-size:18px">←</span><div style="font-weight:800;font-size:18px">Perpustakaan Lagu</div></div>
+      <div class="glass row" style="margin-top:10px;padding:11px 12px"><span class="muted">🔍</span><span class="muted small">Cari lagu, artis, genre…</span></div>
+      <div class="row" style="gap:7px;margin-top:12px;flex-wrap:nowrap;overflow:hidden">
+        <div class="chip on">Semua</div><div class="chip">Untuk Kamu</div><div class="chip">Pop</div><div class="chip">Koplo</div>
+      </div>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+        <div class="songcard"><div class="cv"><img class="cover" src="../../assets/images/cover_koplo_neon.png"><div class="grad"></div><div class="demo">DEMO</div><div class="grade">SS</div></div>
+          <div style="padding:8px 10px"><div style="font-weight:800;font-size:13px">Koplo Neon</div><div class="xs muted">DJ Senja</div>
+          <div class="row" style="margin-top:6px;gap:5px"><span class="pill">140 BPM</span><span class="pill">Dangdut/Koplo</span></div></div></div>
+        <div class="songcard"><div class="cv"><img class="cover" src="../../assets/images/cover_gamelan_pulse.png"><div class="grad"></div><div class="demo">DEMO</div><div class="grade">S</div></div>
+          <div style="padding:8px 10px"><div style="font-weight:800;font-size:13px">Gamelan Pulse</div><div class="xs muted">Sekar Sintetik</div>
+          <div class="row" style="margin-top:6px;gap:5px"><span class="pill">124 BPM</span><span class="pill">Gamelan Electronic</span></div></div></div>
+        <div class="songcard"><div class="cv"><img class="cover" src="../../assets/images/cover_locked.png"><div class="grad"></div><div class="lock">🔒</div></div>
+          <div style="padding:8px 10px"><div style="font-weight:800;font-size:13px">Tokyo Kilat</div><div class="xs muted">Hikari Nine · 🪙200</div></div></div>
+      </div>
+    </div></div></div></div>
+
+    <!-- GAMEPLAY -->
+    <div class="col"><h3>Gameplay</h3>
+    <div class="phone"><div class="notch"></div><div class="screen">
+      <div class="field" id="field"></div>
+      <div class="pad" style="position:relative;z-index:10">
+        <div class="row" style="align-items:flex-start">
+          <span style="font-size:24px">⏸</span>
+          <div style="flex:1;margin-left:4px"><div class="small" style="font-weight:700">Koplo Neon</div><div class="xs muted">Expert • Speed</div></div>
+          <div style="text-align:right"><div style="font-weight:800;font-size:22px">1.284.500</div><div class="xs muted">99.1%</div></div>
+        </div>
+        <div class="bar" style="height:4px;margin-top:6px"><i style="width:52%;background:var(--cyan)"></i></div>
+        <div class="row" style="margin-top:8px">
+          <div><div class="xs muted">COMBO</div><div style="font-weight:800;font-size:18px;color:var(--pink)">247</div></div>
+          <div style="flex:1;margin-left:10px"><div class="xs muted">HP</div><div class="bar" style="margin-top:2px"><i style="width:88%;background:var(--teal)"></i></div></div>
+        </div>
+        <div class="row" style="margin-top:6px;gap:6px"><span style="color:var(--gold)">🔥</span>
+          <div class="bar" style="flex:1"><i style="width:100%;background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet))"></i></div>
+          <span class="xs" style="color:var(--gold);font-weight:800">FEVER!</span></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;text-align:center;top:430px;z-index:9;
+         font-size:30px;font-weight:800;color:var(--gold);text-shadow:0 0 14px var(--gold)">PERFECT</div>
+    </div></div></div>
+
+    <!-- RESULT -->
+    <div class="col"><h3>Result</h3>
+    <div class="phone"><div class="notch"></div><div class="screen"><div class="pad" style="text-align:center">
+      <div class="small" style="letter-spacing:4px;font-weight:800;color:var(--cyan);margin-top:6px">LAGU SELESAI</div>
+      <div style="font-size:22px;font-weight:800">Koplo Neon</div>
+      <div class="muted small">Expert • DJ Senja</div>
+      <div style="width:130px;height:130px;border-radius:50%;margin:16px auto;display:flex;align-items:center;justify-content:center;
+         border:3px solid var(--gold);background:radial-gradient(circle,rgba(251,191,36,.4),transparent)">
+        <span style="font-size:54px;font-weight:800;color:var(--gold)">SSS</span></div>
+      <div style="font-size:38px;font-weight:800">942.300</div>
+      <div class="muted small" style="letter-spacing:3px">SKOR</div>
+      <div class="row" style="justify-content:space-around;margin-top:12px">
+        <div><div style="font-weight:800">98.64%</div><div class="xs muted">Akurasi</div></div>
+        <div><div style="font-weight:800">410</div><div class="xs muted">Combo Maks</div></div>
+        <div><div style="font-weight:800;color:var(--gold)">YA</div><div class="xs muted">Full Combo</div></div>
+      </div>
+      <div class="glass" style="margin-top:14px;text-align:left">
+        <div class="row" style="justify-content:space-between"><span>🟡 Perfect</span><b>388</b></div>
+        <div class="row" style="justify-content:space-between;margin-top:4px"><span>🔵 Hebat</span><b>18</b></div>
+        <div class="row" style="justify-content:space-between;margin-top:4px"><span>🟢 Oke</span><b>4</b></div>
+        <div class="row" style="justify-content:space-between;margin-top:4px"><span>🔴 Lewat</span><b>0</b></div>
+      </div>
+      <div class="glass row" style="margin-top:12px;justify-content:center;gap:18px"><span>🪙 +320 koin</span><span>⚡ +540 XP</span></div>
+    </div></div></div></div>
+
+    <!-- REWARD -->
+    <div class="col"><h3>Reward</h3>
+    <div class="phone"><div class="notch"></div><div class="screen"><div class="pad">
+      <div class="row"><span style="font-size:18px">←</span><div style="font-weight:800;font-size:17px">Hadiah & Kosmetik</div><div style="flex:1"></div><span class="coin" style="padding:4px 10px">🪙 1.480</span></div>
+      <div class="glass small muted" style="margin-top:10px">Semua kosmetik dari koin (main gratis) atau iklan opsional. Tanpa mata uang berbayar.</div>
+      <div class="sectitle">Skin Lajur</div>
+      <div class="glass row" style="padding:10px"><div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(120deg,var(--pink),var(--gold))"></div><div style="flex:1;margin-left:12px;font-weight:700">Senja</div><span class="chip on" style="padding:5px 12px">Dipakai</span></div>
+      <div class="glass row" style="padding:10px;margin-top:8px"><div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(120deg,var(--cyan),var(--teal))"></div><div style="flex:1;margin-left:12px;font-weight:700">Samudra</div><span class="chip">Pakai</span></div>
+      <div class="sectitle">Efek Ketukan</div>
+      <div class="glass row" style="padding:10px"><div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(120deg,var(--gold),var(--cyan))"></div><div style="flex:1;margin-left:12px;font-weight:700">Bintang</div><span class="chip on" style="padding:5px 12px">Dipakai</span></div>
+      <div class="sectitle">Lencana</div>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <span class="chip" style="border-color:var(--gold);color:var(--gold)">🏅 Full Combo</span>
+        <span class="chip" style="border-color:var(--gold);color:var(--gold)">🏅 Akurasi 90%+</span>
+      </div>
+    </div></div></div></div>
+
+  </div>
+
+  <footer>
+    Mockup pratinjau — dibuat dari layout &amp; tema asli aplikasi (warna, font Plus Jakarta Sans, cover art asli).<br>
+    Screenshot final untuk App Store <b>harus</b> ditangkap dari aplikasi Flutter yang berjalan (mode screenshot) — lihat
+    <code>docs/SCREENSHOT_DIRECTION.md</code>. Tidak ada lagu/artis berhak cipta; semua fiktif.
+  </footer>
+</div>
+
+<script>
+  // Render falling notes for the gameplay phone (decorative, matches lane colors).
+  (function(){
+    var field = document.getElementById('field');
+    if(!field) return;
+    var W = 300, H = 640, lanes = 5, laneW = W/lanes;
+    var colors = ['#7C3AED','#EC4899','#22D3EE','#2DD4BF','#FBBF24'];
+    var hitY = H*(1-0.18);
+    // lane separators
+    for(var i=1;i<lanes;i++){ var l=document.createElement('div'); l.className='lane'; l.style.left=(i*laneW)+'px'; field.appendChild(l); }
+    // hit line + receptors
+    var hl=document.createElement('div'); hl.className='hitline'; hl.style.top=hitY+'px'; field.appendChild(hl);
+    for(var i=0;i<lanes;i++){ var r=document.createElement('div'); r.className='recept';
+      r.style.left=((i+0.5)*laneW)+'px'; r.style.top=hitY+'px'; r.style.borderColor=colors[i]; r.style.background=colors[i]+'30'; field.appendChild(r); }
+    // notes (lane, yFraction, type)
+    var notes=[[0,.30],[2,.22],[1,.46],[3,.40],[4,.15,'gold'],[2,.62],[0,.55],[3,.70,'gold'],[1,.78],[4,.50]];
+    notes.forEach(function(n){
+      var e=document.createElement('div'); e.className='note';
+      var w=laneW*0.7; e.style.width=w+'px'; e.style.left=((n[0]+0.5)*laneW - w/2)+'px';
+      e.style.top=(n[1]*hitY)+'px';
+      e.style.background = n[2]==='gold' ? '#FBBF24' : colors[n[0]];
+      if(n[2]==='gold'){ e.style.boxShadow='0 0 12px #FBBF24'; }
+      field.appendChild(e);
+    });
+    // a hold note
+    var hold=document.createElement('div'); hold.className='note';
+    hold.style.left=((1.5)*laneW - laneW*0.22)+'px'; hold.style.width=(laneW*0.44)+'px';
+    hold.style.top=(.30*hitY)+'px'; hold.style.height=(.20*hitY)+'px';
+    hold.style.background='rgba(34,211,238,.35)'; hold.style.borderColor='#22D3EE'; field.appendChild(hold);
+  })();
+</script>
+</body>
+</html>
