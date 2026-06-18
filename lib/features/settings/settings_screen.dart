@@ -19,6 +19,7 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.parang,
         child: SafeArea(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),

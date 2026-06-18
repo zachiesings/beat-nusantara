@@ -238,13 +238,16 @@ class AppTheme {
   }
 }
 
-/// A living background: deep gradient + slowly drifting neon blobs + faint
-/// floating note sparks + low-opacity batik diamonds. One controller, cheap
-/// CustomPaint — gives every screen motion language without per-screen work.
+/// Batik motifs — each screen can wear a different traditional pattern.
+enum BatikMotif { kawung, parang, ceplok, truntum, megaMendung }
+
+/// A living background: warm batik-night gradient + drifting gold glows + a
+/// detailed, per-screen batik motif (static & cached). One controller.
 class NeonBackground extends StatefulWidget {
   final Widget child;
   final bool dim;
-  const NeonBackground({super.key, required this.child, this.dim = false});
+  final BatikMotif motif;
+  const NeonBackground({super.key, required this.child, this.dim = false, this.motif = BatikMotif.kawung});
 
   @override
   State<NeonBackground> createState() => _NeonBackgroundState();
@@ -284,7 +287,7 @@ class _NeonBackgroundState extends State<NeonBackground>
           ),
           // detailed batik motif (static → painted once & cached, so the rich
           // kawung/ceplok/isen detail costs nothing per frame)
-          const Positioned.fill(child: RepaintBoundary(child: CustomPaint(painter: _BatikPainter()))),
+          Positioned.fill(child: RepaintBoundary(child: CustomPaint(painter: _BatikPainter(widget.motif)))),
           if (widget.dim) const Positioned.fill(child: ColoredBox(color: Color(0x73000000))),
           widget.child,
         ],
@@ -339,54 +342,156 @@ class _GlowPainter extends CustomPainter {
   bool shouldRepaint(covariant _GlowPainter old) => old.t != t;
 }
 
-/// Detailed batik motif — a true KAWUNG lattice (four diagonal petals per unit)
-/// inside CEPLOK rings, with a center jewel and ISEN-ISEN (cecek) filler dots.
-/// Static & cached, so all this hand-drawn density is essentially free.
+/// Detailed batik motifs, one per screen. Static & cached, so the hand-drawn
+/// density is essentially free per frame.
 class _BatikPainter extends CustomPainter {
-  const _BatikPainter();
+  final BatikMotif motif;
+  const _BatikPainter(this.motif);
+
+  Paint _stroke(double a, double w) => Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = w
+    ..strokeCap = StrokeCap.round
+    ..color = AppColors.gold.withValues(alpha: a);
+  Paint _fill(double a) => Paint()..color = AppColors.gold.withValues(alpha: a);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final petal = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.1
-      ..color = AppColors.gold.withValues(alpha: 0.10);
-    final faint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
-      ..color = AppColors.gold.withValues(alpha: 0.055);
-    final jewel = Paint()..color = AppColors.gold.withValues(alpha: 0.09);
-    final cecek = Paint()..color = AppColors.goldLt.withValues(alpha: 0.06);
+    switch (motif) {
+      case BatikMotif.kawung:
+        _kawung(canvas, size);
+      case BatikMotif.parang:
+        _parang(canvas, size);
+      case BatikMotif.ceplok:
+        _ceplok(canvas, size);
+      case BatikMotif.truntum:
+        _truntum(canvas, size);
+      case BatikMotif.megaMendung:
+        _megaMendung(canvas, size);
+    }
+  }
 
-    const gap = 64.0;
-    const r = gap * 0.5;
+  // KAWUNG — four diagonal petals in a ceplok ring + center jewel + isen cecek.
+  void _kawung(Canvas c, Size size) {
+    final petal = _stroke(0.10, 1.1), faint = _stroke(0.055, 0.9);
+    final jewel = _fill(0.09);
+    final cecekP = Paint()..color = AppColors.goldLt.withValues(alpha: 0.06);
+    const gap = 64.0, r = gap * 0.5;
     for (double y = -gap; y < size.height + gap; y += gap) {
       for (double x = -gap; x < size.width + gap; x += gap) {
         final center = Offset(x + gap / 2, y + gap / 2);
-        // ceplok ring framing the unit
-        canvas.drawCircle(center, r * 0.94, faint);
-        // four diagonal kawung petals (double-stroked)
+        c.drawCircle(center, r * 0.94, faint);
         for (int k = 0; k < 4; k++) {
           final ang = math.pi / 4 + k * math.pi / 2;
           final oc = center + Offset(math.cos(ang), math.sin(ang)) * (r * 0.46);
-          canvas.save();
-          canvas.translate(oc.dx, oc.dy);
-          canvas.rotate(ang);
-          canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 1.02, height: r * 0.5), petal);
-          canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 0.62, height: r * 0.28), faint);
-          canvas.restore();
+          c.save();
+          c.translate(oc.dx, oc.dy);
+          c.rotate(ang);
+          c.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 1.02, height: r * 0.5), petal);
+          c.drawOval(Rect.fromCenter(center: Offset.zero, width: r * 0.62, height: r * 0.28), faint);
+          c.restore();
         }
-        // center jewel
-        canvas.drawCircle(center, 2.4, jewel);
-        // isen-isen cecek dots in the N/E/S/W gaps between units
+        c.drawCircle(center, 2.4, jewel);
         for (int k = 0; k < 4; k++) {
           final ang = k * math.pi / 2;
-          canvas.drawCircle(center + Offset(math.cos(ang), math.sin(ang)) * r, 1.3, cecek);
+          c.drawCircle(center + Offset(math.cos(ang), math.sin(ang)) * r, 1.3, cecekP);
         }
       }
     }
   }
 
+  // PARANG — diagonal flowing "lereng" rows with mlinjon diamonds.
+  void _parang(Canvas c, Size size) {
+    final stroke = _stroke(0.09, 1.3), faint = _stroke(0.05, 0.9);
+    c.save();
+    c.translate(size.width / 2, size.height / 2);
+    c.rotate(-math.pi / 4);
+    final diag = math.sqrt(size.width * size.width + size.height * size.height);
+    const gap = 46.0;
+    for (double row = -diag; row < diag; row += gap) {
+      final path = Path()..moveTo(-diag, row);
+      for (double x = -diag; x < diag; x += 24) {
+        path.quadraticBezierTo(x + 12, row + 11, x + 24, row);
+      }
+      c.drawPath(path, stroke);
+      for (double x = -diag; x < diag; x += gap) {
+        c.drawPath(
+          Path()
+            ..moveTo(x, row + gap / 2)
+            ..lineTo(x + 5, row + gap / 2 - 5)
+            ..lineTo(x + 10, row + gap / 2)
+            ..lineTo(x + 5, row + gap / 2 + 5)
+            ..close(),
+          faint,
+        );
+      }
+    }
+    c.restore();
+  }
+
+  // CEPLOK — grid of geometric medallions (rings + inscribed diamond + petals).
+  void _ceplok(Canvas c, Size size) {
+    final stroke = _stroke(0.09, 1.1), faint = _stroke(0.05, 0.9), jewel = _fill(0.08);
+    const gap = 60.0, r = gap * 0.5;
+    for (double y = -gap; y < size.height + gap; y += gap) {
+      for (double x = -gap; x < size.width + gap; x += gap) {
+        final ct = Offset(x + gap / 2, y + gap / 2);
+        c.drawCircle(ct, r * 0.9, stroke);
+        c.drawCircle(ct, r * 0.55, faint);
+        c.drawPath(
+          Path()
+            ..moveTo(ct.dx, ct.dy - r * 0.9)
+            ..lineTo(ct.dx + r * 0.9, ct.dy)
+            ..lineTo(ct.dx, ct.dy + r * 0.9)
+            ..lineTo(ct.dx - r * 0.9, ct.dy)
+            ..close(),
+          faint,
+        );
+        for (int k = 0; k < 4; k++) {
+          final ang = math.pi / 4 + k * math.pi / 2;
+          c.drawCircle(ct + Offset(math.cos(ang), math.sin(ang)) * (r * 0.66), 2, jewel);
+        }
+        c.drawCircle(ct, 2.4, jewel);
+      }
+    }
+  }
+
+  // TRUNTUM — a field of small eight-point stars / flowers (celebratory).
+  void _truntum(Canvas c, Size size) {
+    final stroke = _stroke(0.08, 1.0), jewel = _fill(0.09);
+    const gap = 44.0;
+    var rowi = 0;
+    for (double y = -gap; y < size.height + gap; y += gap, rowi++) {
+      final off = rowi.isEven ? 0.0 : gap / 2;
+      for (double x = -gap; x < size.width + gap; x += gap) {
+        final cx = x + off, cy = y;
+        const rr = 7.0, d = rr * 0.7;
+        c.drawLine(Offset(cx - rr, cy), Offset(cx + rr, cy), stroke);
+        c.drawLine(Offset(cx, cy - rr), Offset(cx, cy + rr), stroke);
+        c.drawLine(Offset(cx - d, cy - d), Offset(cx + d, cy + d), stroke);
+        c.drawLine(Offset(cx - d, cy + d), Offset(cx + d, cy - d), stroke);
+        c.drawCircle(Offset(cx, cy), 1.6, jewel);
+      }
+    }
+  }
+
+  // MEGA MENDUNG — rows of nested cloud scallops (Cirebon).
+  void _megaMendung(Canvas c, Size size) {
+    final stroke = _stroke(0.085, 1.3), faint = _stroke(0.05, 1.0);
+    const gap = 56.0, bump = 28.0;
+    for (double y = 0; y < size.height + gap; y += gap) {
+      for (int layer = 0; layer < 3; layer++) {
+        final yy = y + layer * 4.5;
+        final p = layer == 0 ? stroke : faint;
+        final path = Path()..moveTo(-bump, yy);
+        for (double x = -bump; x < size.width + bump; x += bump) {
+          path.arcToPoint(Offset(x + bump, yy), radius: const Radius.circular(bump / 2), clockwise: false);
+        }
+        c.drawPath(path, p);
+      }
+    }
+  }
+
   @override
-  bool shouldRepaint(covariant _BatikPainter old) => false;
+  bool shouldRepaint(covariant _BatikPainter old) => old.motif != motif;
 }

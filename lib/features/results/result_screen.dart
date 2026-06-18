@@ -80,6 +80,7 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
         children: [
           NeonBackground(
             dim: true,
+            motif: BatikMotif.truntum,
             child: SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 30),

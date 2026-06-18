@@ -68,6 +68,7 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
 
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.ceplok,
         child: SafeArea(
           bottom: false,
           child: CustomScrollView(

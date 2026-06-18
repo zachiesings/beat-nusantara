@@ -53,6 +53,7 @@ class _SongDetailScreenState extends State<SongDetailScreen> {
 
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.ceplok,
         child: SafeArea(
           child: Column(
             children: [

@@ -72,6 +72,7 @@ class _CalibrationScreenState extends State<CalibrationScreen>
     final scale = 0.7 + 0.3 * (1 - _pulse.value);
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.parang,
         child: SafeArea(
           child: Column(
             children: [

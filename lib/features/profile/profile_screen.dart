@@ -40,6 +40,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.parang,
         child: SafeArea(
           child: ListView(
             padding: EdgeInsets.fromLTRB(16, embedded ? 14 : 8, 16, embedded ? 120 : 40),

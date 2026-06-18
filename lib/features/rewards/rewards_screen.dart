@@ -47,6 +47,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     final gs = context.watch<GameState>();
     return Scaffold(
       body: NeonBackground(
+        motif: BatikMotif.megaMendung,
         child: SafeArea(
           bottom: false,
           child: Column(
