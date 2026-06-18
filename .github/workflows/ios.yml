@@ -43,8 +43,10 @@ jobs:
       - name: Generate platform folders
         run: flutter create --org com.beatnusantara --project-name beat_nusantara --platforms=android,ios .
 
-      - name: Force deterministic bundle id
-        run: find ios -name project.pbxproj -exec sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/PRODUCT_BUNDLE_IDENTIFIER = $BUNDLE_ID;/g" {} +
+      - name: Force bundle id + iPhone-only (no iPad screenshots needed)
+        run: |
+          find ios -name project.pbxproj -exec sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/PRODUCT_BUNDLE_IDENTIFIER = $BUNDLE_ID;/g" {} +
+          find ios -name project.pbxproj -exec sed -i '' 's/TARGETED_DEVICE_FAMILY = "1,2";/TARGETED_DEVICE_FAMILY = "1";/g' {} +
 
       - name: Configure Info.plist (AdMob id + export compliance)
         run: |
