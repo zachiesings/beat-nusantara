@@ -29,6 +29,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Disable Swift Package Manager (google_mobile_ads is CocoaPods-only)
+        run: flutter config --no-enable-swift-package-manager
+
       - name: Install codemagic-cli-tools
         run: pip3 install --break-system-packages codemagic-cli-tools || pip3 install codemagic-cli-tools
 
