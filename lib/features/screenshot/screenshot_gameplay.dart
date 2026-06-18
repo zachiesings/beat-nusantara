@@ -56,8 +56,9 @@ class _ScreenshotGameplayState extends State<ScreenshotGameplay> {
                       // wider approach window → more notes on screen, prettier still frame
                       approachMs: 2400,
                       laneCount: e.laneCount,
-                      laneFlash: const {2: _frozenMs}, // glow one lane like a fresh hit
+                      laneFlash: const {2: _frozenMs}, // gold burst on a fresh hit
                       laneMiss: const {},
+                      lanePress: const {0: _frozenMs, 4: _frozenMs}, // tap ripple on two lanes
                       reduceEffects: false,
                       highContrast: false,
                       repaint: _repaint,

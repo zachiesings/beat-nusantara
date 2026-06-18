@@ -44,9 +44,19 @@ class _GameplayScreenState extends State<GameplayScreen>
   final ValueNotifier<int> _frame = ValueNotifier(0);
   final Map<int, int> _laneFlash = {};
   final Map<int, int> _laneMiss = {};
+  final Map<int, int> _lanePress = {}; // every tap lights the lane (ripple)
   late final Ticker _ticker;
   late final AnimationController _shake =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 320));
+  late final AnimationController _banner =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 850));
+  String _bannerText = '';
+  bool _wasFever = false;
+
+  void _showBanner(String text) {
+    _bannerText = text;
+    _banner.forward(from: 0);
+  }
 
   GameEngine? _engine;
   late double _approachMs;
@@ -116,6 +126,14 @@ class _GameplayScreenState extends State<GameplayScreen>
     if (!_running || _paused) return;
     final ms = _sw.elapsedMilliseconds;
     _engine!.update(ms);
+    // FEVER banner when it kicks in
+    if (_engine!.feverActive && !_wasFever) {
+      _wasFever = true;
+      _showBanner('FEVER ×2!');
+      Haptics.heavy();
+    } else if (!_engine!.feverActive) {
+      _wasFever = false;
+    }
     _frame.value++;
   }
 
@@ -135,12 +153,18 @@ class _GameplayScreenState extends State<GameplayScreen>
         _shake.forward(from: 0);
         Haptics.medium();
     }
+    // COMBO milestone banner (every 25)
+    final combo = _engine!.board.combo;
+    if (j != Judgment.miss && combo >= 25 && combo % 25 == 0) {
+      _showBanner('$combo COMBO!');
+    }
   }
 
   void _press(int lane) {
     final e = _engine;
     if (e == null || !_running || _paused) return;
     e.songTimeMs = _sw.elapsedMilliseconds; // tighten input timing
+    _lanePress[lane] = e.songTimeMs; // light the lane on every tap
     e.pressLane(lane);
   }
 
@@ -244,6 +268,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   void dispose() {
     _ticker.dispose();
     _shake.dispose();
+    _banner.dispose();
     _frame.dispose();
     _audio.stopSong();
     super.dispose();
@@ -263,6 +288,18 @@ class _GameplayScreenState extends State<GameplayScreen>
             ? const Center(child: CircularProgressIndicator(color: AppColors.cyan))
             : Stack(
                 children: [
+                  // warm batik-night backdrop (no longer flat black)
+                  const Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [AppColors.ink2, AppColors.navy],
+                        ),
+                      ),
+                    ),
+                  ),
                   // playfield (shakes briefly on a miss)
                   Positioned.fill(
                     child: AnimatedBuilder(
@@ -279,6 +316,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                           laneCount: _engine!.laneCount,
                           laneFlash: _laneFlash,
                           laneMiss: _laneMiss,
+                          lanePress: _lanePress,
                           reduceEffects: gs.reduceEffects,
                           highContrast: gs.highContrast,
                           repaint: _frame,
@@ -292,6 +330,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                   // HUD
                   _hud(),
                   _judgmentPopup(),
+                  _comboBanner(),
                   if (_countdown > 0) _countdownOverlay(),
                   if (_paused) _pauseOverlay(),
                   if (_showRevive) _reviveOverlay(),
@@ -363,6 +402,47 @@ class _GameplayScreenState extends State<GameplayScreen>
               ),
             ),
             child: const SizedBox.expand(),
+          ),
+        );
+      },
+    );
+  }
+
+  // big "128 COMBO!" / "FEVER ×2!" banner that pops in then fades
+  Widget _comboBanner() {
+    return AnimatedBuilder(
+      animation: _banner,
+      builder: (_, __) {
+        final v = _banner.value;
+        if (_bannerText.isEmpty || v >= 1) return const SizedBox.shrink();
+        final opacity = (v < 0.7 ? 1.0 : (1 - v) / 0.3).clamp(0.0, 1.0).toDouble();
+        final scale = 0.6 + 0.5 * Curves.easeOutBack.transform((v / 0.5).clamp(0.0, 1.0).toDouble());
+        return Positioned(
+          top: MediaQuery.of(context).size.height * 0.28,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Opacity(
+              opacity: opacity,
+              child: Transform.scale(
+                scale: scale,
+                child: Center(
+                  child: ShaderMask(
+                    shaderCallback: (r) => AppGradients.candy.createShader(r),
+                    child: Text(
+                      _bannerText,
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 1,
+                        shadows: [Shadow(color: AppColors.gold, blurRadius: 22)],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       },

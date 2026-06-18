@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../app/theme.dart';
 import '../../core/constants.dart';
@@ -13,6 +14,7 @@ class NotePainter extends CustomPainter {
   final int laneCount;
   final Map<int, int> laneFlash; // lane -> clockMs of last hit (for glow)
   final Map<int, int> laneMiss; // lane -> clockMs of last miss (for red flash)
+  final Map<int, int> lanePress; // lane -> clockMs of last tap (ripple feedback)
   final bool reduceEffects;
   final bool highContrast;
 
@@ -22,6 +24,7 @@ class NotePainter extends CustomPainter {
     required this.laneCount,
     required this.laneFlash,
     required this.laneMiss,
+    required this.lanePress,
     required this.reduceEffects,
     required this.highContrast,
     required Listenable repaint,
@@ -52,13 +55,19 @@ class NotePainter extends CustomPainter {
   }
 
   void _paintLanes(Canvas c, Size size, double laneW, double hitY, int now, bool fever) {
-    final sep = Paint()
-      ..color = highContrast ? Colors.white24 : AppColors.glassBorder
-      ..strokeWidth = 1;
+    // songket gold lane dividers (brighter toward the hit line)
     for (int i = 0; i <= laneCount; i++) {
-      c.drawLine(Offset(i * laneW, 0), Offset(i * laneW, size.height), sep);
+      final r = Rect.fromLTWH(i * laneW - 1, 0, 2, size.height);
+      c.drawRect(
+        r,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.gold.withValues(alpha: 0.0), AppColors.gold.withValues(alpha: highContrast ? 0.5 : 0.22)],
+          ).createShader(r),
+      );
     }
-    // lane tint with vertical depth (stronger toward the hit line) + fever boost
     for (int i = 0; i < laneCount; i++) {
       final col = AppColors.lanes[i % AppColors.lanes.length];
       final flash = laneFlash[i];
@@ -83,6 +92,27 @@ class NotePainter extends CustomPainter {
             stops: const [0.0, 0.5, 1.0],
           ).createShader(rect),
       );
+
+      // TAP RIPPLE — pressing a lane lights it gold from the hit line up,
+      // even with no note there → the screen always answers your touch.
+      final press = lanePress[i];
+      if (press != null) {
+        final age = now - press;
+        if (age >= 0 && age < 300) {
+          final p = 1 - age / 300;
+          c.drawRect(
+            rect,
+            Paint()
+              ..shader = LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [AppColors.goldLt.withValues(alpha: 0.26 * p), AppColors.gold.withValues(alpha: 0.0)],
+                stops: const [0.0, 0.55],
+              ).createShader(rect),
+          );
+        }
+      }
+
       // miss flash — clear but soft red, never harsh
       final miss = laneMiss[i];
       if (miss != null) {
@@ -104,51 +134,71 @@ class NotePainter extends CustomPainter {
   }
 
   void _paintHitLine(Canvas c, Size size, double laneW, double hitY, int now) {
-    // glowing bar
+    // gong "denyut": a pulse synced to the song's BPM (gamelan heartbeat)
+    final beatMs = engine.chart.bpm > 0 ? 60000.0 / engine.chart.bpm : 500.0;
+    final beat = 1 - (engine.songTimeMs % beatMs) / beatMs; // 1 right on the beat → 0
+
+    // glowing gold hit bar (pulses on the beat)
     if (!reduceEffects) {
       c.drawLine(
           Offset(0, hitY),
           Offset(size.width, hitY),
           Paint()
-            ..color = AppColors.cyan.withValues(alpha: 0.5)
-            ..strokeWidth = 10
+            ..color = AppColors.gold.withValues(alpha: 0.35 + 0.3 * beat)
+            ..strokeWidth = 9 + 7 * beat
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
     }
     c.drawLine(Offset(0, hitY), Offset(size.width, hitY),
-        Paint()..color = AppColors.cyan..strokeWidth = 3);
+        Paint()..color = AppColors.goldLt..strokeWidth = 2.5);
 
     for (int i = 0; i < laneCount; i++) {
       final cx = (i + 0.5) * laneW;
+      final center = Offset(cx, hitY);
       final col = AppColors.lanes[i % AppColors.lanes.length];
-      // recency of last hit on this lane → burst + pulse
       final flash = laneFlash[i];
       double age = 999;
       if (flash != null) age = (now - flash).toDouble();
-      final fresh = age >= 0 && age < 220;
-      final pop = fresh ? (1 - age / 220) : 0.0;
+      final fresh = age >= 0 && age < 240;
+      final pop = fresh ? (1 - age / 240) : 0.0;
 
-      c.drawCircle(Offset(cx, hitY), laneW * 0.30 * (1 + 0.15 * pop),
-          Paint()..color = col.withValues(alpha: 0.18 + 0.35 * pop));
-      c.drawCircle(
-          Offset(cx, hitY),
-          laneW * 0.30 * (1 + 0.15 * pop),
+      final baseR = laneW * 0.30;
+      final r = baseR * (1 + 0.14 * pop + 0.05 * beat);
+
+      // BONANG gong: gold disc + rim + lane-colour accent + center "pencu" knob
+      c.drawCircle(center, r,
+          Paint()..color = AppColors.gold.withValues(alpha: 0.10 + 0.10 * beat + 0.30 * pop));
+      c.drawCircle(center, r,
           Paint()
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 2 + 2 * pop
-            ..color = col.withValues(alpha: 0.8));
+            ..strokeWidth = 2.2 + 2 * pop
+            ..color = AppColors.goldLt.withValues(alpha: 0.7));
+      c.drawCircle(center, r * 0.66,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2
+            ..color = col.withValues(alpha: 0.55 + 0.4 * pop));
+      c.drawCircle(center, r * 0.26,
+          Paint()..color = AppColors.gold.withValues(alpha: 0.5 + 0.45 * pop));
 
-      // expanding hit burst ring + spark when freshly hit
+      // GOLD BURST on a fresh hit — expanding ring + 8 rays + white core
       if (fresh && !reduceEffects) {
-        final r = laneW * (0.30 + 0.45 * (1 - pop));
         c.drawCircle(
-            Offset(cx, hitY),
-            r,
+            center,
+            baseR * (0.4 + 0.7 * (1 - pop)),
             Paint()
               ..style = PaintingStyle.stroke
-              ..strokeWidth = 2.5 * pop
-              ..color = Colors.white.withValues(alpha: 0.7 * pop));
-        c.drawCircle(Offset(cx, hitY), laneW * 0.12 * pop,
-            Paint()..color = Colors.white.withValues(alpha: 0.8 * pop));
+              ..strokeWidth = 3 * pop
+              ..color = AppColors.goldLt.withValues(alpha: 0.85 * pop));
+        final ray = Paint()
+          ..strokeWidth = 2.5 * pop
+          ..strokeCap = StrokeCap.round
+          ..color = AppColors.gold.withValues(alpha: 0.8 * pop);
+        for (int k = 0; k < 8; k++) {
+          final a = k * math.pi / 4;
+          final d = Offset(math.cos(a), math.sin(a));
+          c.drawLine(center + d * (r * 0.7), center + d * (r + laneW * 0.55 * (1 - pop)), ray);
+        }
+        c.drawCircle(center, laneW * 0.12 * pop, Paint()..color = Colors.white.withValues(alpha: 0.9 * pop));
       }
     }
   }
