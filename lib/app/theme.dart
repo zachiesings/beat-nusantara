@@ -2,65 +2,67 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// ============================================================================
-/// DESIGN SYSTEM — "Cute Premium Rhythm Arcade, rasa Nusantara"
-/// Deep indigo/navy base, juicy neon accents (pink, cyan, gold, coral, mint),
-/// big rounded shapes, colored glows, animated life. Tokens here; components in
-/// lib/widgets/*.
+/// DESIGN SYSTEM — "Batik Premium Nusantara"
+/// Deep batik-night (warm indigo/aubergine) base, prada-gold hero accent, senja
+/// terracotta + marun (maroon) + wedelan indigo + gamelan jade. Kawung-batik
+/// background motif, gold glows. Premium & cute, but rooted in tradition —
+/// not cyber-neon. Tokens here; components in lib/widgets/*.
 /// ============================================================================
 
 class AppColors {
-  // base (deep, premium, a touch warmer/indigo than pure black)
-  static const navy = Color(0xFF06061A);
-  static const ink = Color(0xFF0B0A20);
-  static const ink2 = Color(0xFF16133A);
-  static const surface = Color(0xFF1E1B47);
-  static const surfaceHi = Color(0xFF2A2560);
+  // base — "malam batik": warm deep indigo/aubergine, not cold black
+  static const navy = Color(0xFF0E0A16);
+  static const ink = Color(0xFF1A1126);
+  static const ink2 = Color(0xFF2A1830);
+  static const surface = Color(0xFF33203C);
+  static const surfaceHi = Color(0xFF43294C);
   static const glass = Color(0x1FFFFFFF);
   static const glassHi = Color(0x33FFFFFF);
   static const glassBorder = Color(0x2EFFFFFF);
 
-  // accents (brighter + cuter than before)
-  static const violet = Color(0xFF8B5CF6);
-  static const indigo = Color(0xFF6366F1);
-  static const pink = Color(0xFFFF5C9A);
-  static const cyan = Color(0xFF3DE7FF);
-  static const gold = Color(0xFFFFCB45);
-  static const teal = Color(0xFF36E0B0);
-  static const mint = Color(0xFF6BF2C9);
-  static const coral = Color(0xFFFF7E67);
-  static const danger = Color(0xFFFF6B81);
+  // accents — batik / songket / gamelan palette
+  static const gold = Color(0xFFF2B73C);   // prada gold (hero)
+  static const goldLt = Color(0xFFFCD675);
+  static const coral = Color(0xFFE8744C);  // senja terracotta
+  static const maroon = Color(0xFFB23A4E); // marun batik
+  static const pink = Color(0xFFE76A93);   // rose (softer)
+  static const indigo = Color(0xFF5B4BC4); // wedelan indigo
+  static const violet = Color(0xFF7E55C6);
+  static const teal = Color(0xFF2FA987);   // gamelan jade
+  static const mint = Color(0xFF74D8B0);
+  static const cyan = Color(0xFF45C6D4);   // kingfisher (minor accent only)
+  static const danger = Color(0xFFE0566C);
 
-  static const textHi = Color(0xFFF6F3FF);
-  static const textLo = Color(0xFFAEA9D6);
+  static const textHi = Color(0xFFF7EFE2); // kuning gading / cream
+  static const textLo = Color(0xFFC1B0B6); // warm taupe
 
-  /// Lane accent colors (cycled for 4 / 5 lane modes).
-  static const lanes = [violet, pink, cyan, mint, gold];
+  /// Lane accent colors (cycled for 4 / 5 lane modes) — spread hues, warm-led.
+  static const lanes = [indigo, coral, gold, teal, pink];
 
-  // Kept for backwards-compat with existing screens.
+  // Primary brand gradient = "senja emas" (golden dusk). Used on most CTAs.
   static const brandGradient = LinearGradient(
-    colors: [violet, pink, cyan],
+    colors: [gold, coral, maroon],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   static const feverGradient = LinearGradient(
-    colors: [gold, coral, pink],
+    colors: [goldLt, gold, coral],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
 
-  /// Color mood per library category — Koplo = warm coral/gold, Gamelan = teal,
-  /// Chill = cyan/mint, Challenge = magenta-violet, etc. Gives the library genre
-  /// identity instead of a uniform palette.
+  /// Color mood per library category — gamelan gold, koplo terracotta, chill
+  /// jade, challenge marun. Genre identity in batik tones.
   static Color moodFor(String category) {
     switch (category) {
       case 'Koplo/Dangdut':
         return coral;
       case 'Nusantara Beats':
-        return teal;
+        return gold;
       case 'Chill':
-        return cyan;
+        return teal;
       case 'Challenge':
-        return pink;
+        return maroon;
       case 'Pop Indonesia':
         return pink;
       case 'EDM':
@@ -68,13 +70,13 @@ class AppColors {
       case 'Global Hits Inspired':
         return violet;
       default:
-        return cyan;
+        return gold;
     }
   }
 
-  /// A cute, stable per-song accent (hash → palette) so cards get identity.
+  /// A stable per-song accent (hash → palette) so cards get identity.
   static Color accentFor(String id) {
-    const pal = [pink, cyan, gold, mint, coral, violet, teal, indigo];
+    const pal = [gold, coral, maroon, teal, indigo, pink, violet];
     var h = 0;
     for (final c in id.codeUnits) {
       h = (h * 31 + c) & 0x7fffffff;
@@ -85,26 +87,31 @@ class AppColors {
 
 /// Reusable gradients with personality.
 class AppGradients {
+  // royal batik (indigo → marun → emas)
   static const aurora = LinearGradient(
-      colors: [AppColors.violet, AppColors.indigo, AppColors.cyan],
+      colors: [AppColors.indigo, AppColors.maroon, AppColors.gold],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
+  // songket gold-thread warmth
   static const candy = LinearGradient(
       colors: [AppColors.pink, AppColors.coral, AppColors.gold],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
+  // senja Nusantara (dusk)
   static const sunset = LinearGradient(
-      colors: [AppColors.coral, AppColors.pink, AppColors.violet],
+      colors: [AppColors.maroon, AppColors.coral, AppColors.gold],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
+  // gamelan water (jade)
   static const ocean = LinearGradient(
-      colors: [AppColors.cyan, AppColors.teal, AppColors.mint],
+      colors: [AppColors.teal, AppColors.cyan, AppColors.mint],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
   static const goldRush = LinearGradient(
-      colors: [AppColors.gold, AppColors.coral],
+      colors: [AppColors.goldLt, AppColors.coral],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
+  // wedelan indigo dream
   static const dream = LinearGradient(
       colors: [AppColors.indigo, AppColors.violet, AppColors.pink],
       begin: Alignment.topLeft, end: Alignment.bottomRight);
 
-  /// Each library category gets its own identity.
+  /// Each library category gets its own batik identity.
   static LinearGradient forCategory(String c) {
     switch (c) {
       case 'Untuk Kamu':
@@ -114,7 +121,9 @@ class AppGradients {
       case 'Koplo/Dangdut':
         return sunset;
       case 'Nusantara Beats':
-        return ocean;
+        return const LinearGradient(
+            colors: [AppColors.gold, AppColors.teal],
+            begin: Alignment.topLeft, end: Alignment.bottomRight);
       case 'Global Hits Inspired':
         return dream;
       case 'EDM':
@@ -126,7 +135,9 @@ class AppGradients {
             colors: [AppColors.teal, AppColors.mint],
             begin: Alignment.topLeft, end: Alignment.bottomRight);
       case 'Challenge':
-        return goldRush;
+        return const LinearGradient(
+            colors: [AppColors.maroon, AppColors.gold],
+            begin: Alignment.topLeft, end: Alignment.bottomRight);
       default:
         return AppColors.brandGradient;
     }
@@ -282,75 +293,68 @@ class _LivingBgPainter extends CustomPainter {
   final double t;
   _LivingBgPainter(this.t);
 
+  // warm batik glows (gold / marun / indigo / jade), drifting
   static const _blobs = [
-    (AppColors.violet, 0.18, 0.10, 360.0, 0.0),
-    (AppColors.cyan, 0.88, 0.86, 380.0, 0.5),
-    (AppColors.pink, 0.92, 0.18, 300.0, 0.25),
-    (AppColors.mint, 0.10, 0.7, 280.0, 0.75),
+    (AppColors.gold, 0.16, 0.10, 360.0, 0.0),
+    (AppColors.maroon, 0.90, 0.86, 380.0, 0.5),
+    (AppColors.indigo, 0.92, 0.16, 300.0, 0.25),
+    (AppColors.teal, 0.08, 0.72, 280.0, 0.75),
   ];
 
   @override
   void paint(Canvas canvas, Size size) {
-    // drifting glows
     for (final b in _blobs) {
       final phase = (t + b.$5) * 2 * math.pi;
-      final cx = b.$2 * size.width + math.sin(phase) * 26;
-      final cy = b.$3 * size.height + math.cos(phase) * 26;
+      final cx = b.$2 * size.width + math.sin(phase) * 24;
+      final cy = b.$3 * size.height + math.cos(phase) * 24;
       final r = b.$4;
       canvas.drawCircle(
         Offset(cx, cy),
         r,
         Paint()
           ..shader = RadialGradient(colors: [
-            b.$1.withValues(alpha: 0.34),
+            b.$1.withValues(alpha: 0.26),
             b.$1.withValues(alpha: 0.0),
           ]).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r)),
       );
     }
-    // diagonal rhythm streaks (energy + a touch of asymmetry)
-    canvas.save();
-    canvas.translate(size.width * 0.5, size.height * 0.42);
-    canvas.rotate(-0.7);
-    for (int i = 0; i < 5; i++) {
-      final base = (i / 5 + t * 0.35) % 1.0;
-      final x = (base * 2.0 - 1.0) * size.width;
-      final col = AppColors.lanes[i % AppColors.lanes.length];
-      canvas.drawRect(
-        Rect.fromLTWH(x, -size.height, 3, size.height * 2),
-        Paint()
-          ..color = col.withValues(alpha: 0.06)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-      );
-    }
-    canvas.restore();
 
-    // batik diamond grid (very faint)
-    final grid = Paint()
-      ..color = const Color(0x0AFFFFFF)
+    // KAWUNG batik lattice — interlocking quatrefoils in faint prada gold.
+    final line = Paint()
+      ..color = AppColors.gold.withValues(alpha: 0.07)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    const gap = 50.0;
+      ..strokeWidth = 1.2;
+    final dot = Paint()..color = AppColors.gold.withValues(alpha: 0.06);
+    const gap = 60.0;
+    const r = gap * 0.5;
     for (double y = -gap; y < size.height + gap; y += gap) {
       for (double x = -gap; x < size.width + gap; x += gap) {
-        final p = Path()
-          ..moveTo(x + gap / 2, y)
-          ..lineTo(x + gap, y + gap / 2)
-          ..lineTo(x + gap / 2, y + gap)
-          ..lineTo(x, y + gap / 2)
-          ..close();
-        canvas.drawPath(p, grid);
+        final cx = x + gap / 2, cy = y + gap / 2;
+        // four petals (kawung): wide ovals L/R, tall ovals U/D
+        for (final d in const [Offset(1, 0), Offset(-1, 0), Offset(0, 1), Offset(0, -1)]) {
+          final oc = Offset(cx + d.dx * r * 0.5, cy + d.dy * r * 0.5);
+          canvas.drawOval(
+            Rect.fromCenter(
+                center: oc,
+                width: d.dx != 0 ? r * 1.05 : r * 0.58,
+                height: d.dy != 0 ? r * 1.05 : r * 0.58),
+            line,
+          );
+        }
+        canvas.drawCircle(Offset(cx, cy), 1.6, dot);
       }
     }
-    // floating note sparks rising slowly
+
+    // floating prada-gold specks rising slowly (warm, not multicolour neon)
     final spark = Paint();
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 12; i++) {
       final seed = i * 0.137;
       final x = ((seed + 0.05) % 1.0) * size.width;
       final prog = (t * (0.4 + seed) + seed) % 1.0;
       final y = size.height * (1.05 - prog);
-      final a = (math.sin(prog * math.pi)) * 0.22;
-      final rad = 2.0 + (i % 3);
-      spark.color = AppColors.lanes[i % 5].withValues(alpha: a);
+      final a = math.sin(prog * math.pi) * 0.20;
+      final rad = 1.6 + (i % 3);
+      spark.color = (i.isEven ? AppColors.gold : AppColors.goldLt).withValues(alpha: a);
       canvas.drawCircle(Offset(x, y), rad, spark);
     }
   }
