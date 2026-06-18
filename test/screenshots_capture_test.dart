@@ -40,6 +40,16 @@ Future<void> _loadFonts() async {
     loader.addFont(rootBundle.load(a));
   }
   await loader.load();
+
+  // Material Icons (bundled via uses-material-design: true) — without this every
+  // Icon() renders as an empty box in the headless test renderer.
+  for (final path in const ['fonts/MaterialIcons-Regular.otf', 'packages/flutter/fonts/MaterialIcons-Regular.otf']) {
+    try {
+      final mi = FontLoader('MaterialIcons')..addFont(rootBundle.load(path));
+      await mi.load();
+      break;
+    } catch (_) {/* try next path */}
+  }
 }
 
 void main() {
