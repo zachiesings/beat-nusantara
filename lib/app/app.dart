@@ -16,6 +16,12 @@ class BeatNusantaraApp extends StatelessWidget {
       title: 'Beat Nusantara',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(),
+      // Literal named routes so each screenshot state is reachable as
+      // /screenshot/home, /screenshot/library, … (handy for flutter drive /
+      // integration_test capture). They reuse the SAME real widgets + demo data.
+      routes: {
+        for (final r in screenshotRoutes) '/screenshot/$r': (ctx) => screenshotScreen(ctx, r),
+      },
       home: _screenshot.isEmpty
           ? const SplashScreen()
           : Builder(builder: (ctx) => screenshotScreen(ctx, _screenshot)),
