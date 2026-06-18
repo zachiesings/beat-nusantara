@@ -1,0 +1,39 @@
+name: Store Assets
+
+# Renders the new app icon (1024) + 5 branded App Store screenshots from the real
+# app, for the 4.3(a) re-submission. Download the artifact, then commit the icon
+# and push the screenshots to App Store Connect.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'lib/features/screenshot/store_assets.dart'
+      - 'test/store_assets_test.dart'
+      - '.github/workflows/store-assets.yml'
+
+jobs:
+  store:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Generate platform folders
+        run: flutter create --org com.beatnusantara --project-name beat_nusantara --platforms=android,ios .
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Fonts for headless text
+        run: |
+          mkdir -p ~/.fonts
+          cp assets/fonts/*.ttf ~/.fonts/ || true
+      - name: Render store assets
+        run: flutter test test/store_assets_test.dart
+      - name: Upload store assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: beat-store-assets
+          path: build/store/*.png
+          if-no-files-found: error
