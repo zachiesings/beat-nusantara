@@ -358,7 +358,7 @@ class HomeScreen extends StatelessWidget {
   Widget _missions(BuildContext context, GameState gs) {
     const accents = [AppColors.pink, AppColors.cyan, AppColors.gold, AppColors.mint];
     return SizedBox(
-      height: 158,
+      height: 172,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -411,7 +411,7 @@ class HomeScreen extends StatelessWidget {
                   Text(m.hint,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.textLo, fontSize: 11.5, height: 1.25)),
+                      style: const TextStyle(color: AppColors.textLo, fontSize: 11, height: 1.2)),
                   const SizedBox(height: 10),
                   if (done)
                     Container(
