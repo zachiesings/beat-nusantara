@@ -1,8 +1,9 @@
 name: Screenshots
 
-# Renders the 5 screenshot-mode screens to real PNGs (no device/emulator) and
-# uploads them as an artifact you can download from any browser — incl. iPhone.
-# Run: Actions tab → "Screenshots" → Run workflow (or push to main).
+# Renders the 5 screenshot-mode screens to real PNGs (no device/emulator),
+# uploads them as a downloadable artifact AND auto-commits them into
+# marketing/screenshots/6.7/ so that folder always holds the latest UI.
+# Runs on push to main (when UI/assets change) or manually.
 on:
   workflow_dispatch:
   push:
@@ -12,6 +13,9 @@ on:
       - 'assets/**'
       - 'test/screenshots_capture_test.dart'
       - '.github/workflows/screenshots.yml'
+
+permissions:
+  contents: write   # needed to commit the refreshed screenshots back
 
 jobs:
   capture:
@@ -43,12 +47,28 @@ jobs:
       - name: Capture screenshots (home/library/gameplay/result/reward .png)
         run: flutter test test/screenshots_capture_test.dart
 
-      - name: List output
-        run: ls -la build/screenshots || true
+      - name: Refresh marketing/screenshots/6.7
+        run: |
+          mkdir -p marketing/screenshots/6.7
+          cp build/screenshots/*.png marketing/screenshots/6.7/
+          ls -la marketing/screenshots/6.7
 
-      - name: Upload screenshots
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: beat-nusantara-screenshots
           path: build/screenshots/*.png
           if-no-files-found: error
+
+      - name: Commit refreshed screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add marketing/screenshots/6.7/*.png
+          if git diff --cached --quiet; then
+            echo "No screenshot changes — nothing to commit."
+          else
+            git commit -m "chore: auto-refresh screenshots [skip ci]"
+            git push origin HEAD:main
+            echo "Screenshots updated in marketing/screenshots/6.7"
+          fi

@@ -29,3 +29,6 @@ Thumbs.db
 
 # tool scratch
 tool/_generated_manifest.json
+
+# CI-downloaded color emoji font for screenshot capture (not bundled)
+noto_emoji.ttf
