@@ -7,9 +7,16 @@ class K {
   /// 100% ad-free build (see docs/APP_STORE_REVIEW_NOTES.md).
   static const bool adsEnabled = true;
 
-  /// When true, the (future) real AdMob layer uses Google TEST ad unit ids.
-  /// Production ids are injected later via --dart-define (see ADMOB_NOTES.md).
-  static const bool useTestAds = true;
+  /// When true, use Google's TEST ad units (safe during development — never tap
+  /// real ads on your own account). Flip to false for production.
+  static const bool useTestAds = bool.fromEnvironment('USE_TEST_ADS', defaultValue: true);
+
+  // ---- AdMob (Beat Nusantara) -------------------------------------------------
+  // App ID goes into the native manifest/plist (injected by CI). Ad unit is used
+  // by GoogleMobileAdsService. NOTE: AdMob app-ids/units are per-platform — these
+  // are the IDs you provided; add separate iOS ids if your AdMob app differs.
+  static const admobAppId = 'ca-app-pub-1298950542115439~5662432931';
+  static const rewardedAdUnit = 'ca-app-pub-1298950542115439/8932764961';
 
   // Gameplay tuning ---------------------------------------------------------
   /// How long (ms) a note is visible while falling before it reaches the line.

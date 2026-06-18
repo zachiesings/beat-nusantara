@@ -12,11 +12,7 @@ dependencies:
   provider: ^6.1.2          # simple, CI-stable state management (justified: minimal surface, no codegen)
   shared_preferences: ^2.2.2 # local persistence (progress, settings, unlocks, scores)
   audioplayers: ^6.1.0       # song + SFX playback (proven on this build pipeline)
-
-  # AdMob is intentionally NOT a dependency yet — Phase 1 ships a fully working
-  # ads ABSTRACTION + stub so the build needs no platform AdMob app-id (which
-  # would crash review builds if misconfigured). See docs/ADMOB_NOTES.md for the
-  # drop-in google_mobile_ads integration (code provided, ~10 min to enable).
+  google_mobile_ads: ^5.2.0  # rewarded ads (App ID injected into native config by CI)
 
 dev_dependencies:
   flutter_test:

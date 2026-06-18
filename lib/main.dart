@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'app/app.dart';
+import 'core/constants.dart';
 import 'data/song_catalog.dart';
 import 'services/ads/ads_service.dart';
+import 'services/ads/google_mobile_ads_service.dart';
 import 'services/audio/audio_service.dart';
 import 'services/storage/storage_service.dart';
 import 'state/game_state.dart';
@@ -27,7 +29,7 @@ Future<void> main() async {
     ..musicEnabled = gameState.music
     ..sfxEnabled = gameState.sfx;
 
-  final AdsService ads = StubAdsService();
+  final AdsService ads = K.adsEnabled ? GoogleMobileAdsService() : StubAdsService();
 
   runApp(
     MultiProvider(

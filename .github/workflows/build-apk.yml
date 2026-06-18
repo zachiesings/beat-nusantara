@@ -32,6 +32,20 @@ jobs:
       - name: Generate platform folders
         run: flutter create --org com.beatnusantara --project-name beat_nusantara --platforms=android,ios .
 
+      - name: Configure AdMob (Android) — app-id meta-data, INTERNET, minSdk 23
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          # AdMob requires minSdk 23
+          sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' android/app/build.gradle.kts 2>/dev/null || true
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle 2>/dev/null || true
+          # INTERNET permission (before <application>)
+          grep -q 'android.permission.INTERNET' "$MANIFEST" || \
+            sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' "$MANIFEST"
+          # AdMob application id meta-data (inside <application>)
+          grep -q 'com.google.android.gms.ads.APPLICATION_ID' "$MANIFEST" || \
+            sed -i 's#</application>#    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-1298950542115439~5662432931"/>\n    </application>#' "$MANIFEST"
+          echo "--- manifest ---"; grep -nE "INTERNET|APPLICATION_ID" "$MANIFEST" || true
+
       - name: Get dependencies
         run: flutter pub get
 
