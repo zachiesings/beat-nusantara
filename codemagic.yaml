@@ -24,8 +24,8 @@ workflows:
       xcode: latest
       cocoapods: default
       vars:
-        # Change to match your App Store Connect app record if different.
-        BUNDLE_ID: "com.beatnusantara.beatnusantara"
+        # Must match the App Store Connect app record + registered App ID.
+        BUNDLE_ID: "id.beatnusantara.beatnusantara"
 
     scripts:
       - name: Initialize keychain
