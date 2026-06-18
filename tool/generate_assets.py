@@ -15,7 +15,7 @@ Outputs:
 No external packages required (uses `wave`, `struct`, `math`, `random`, `json`).
 Re-run anytime:  python3 tool/generate_assets.py
 """
-import json, math, os, random, struct, wave
+import json, math, os, random, struct, wave, zlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SR = 22050  # sample rate
@@ -82,6 +82,27 @@ def add_hat(buf, start_s, vol=0.12):
             continue
         env = math.exp(-i / n * 6)
         buf[idx] += vol * env * (random.random() * 2 - 1)
+
+
+def add_metallic(buf, start_s, dur_s, freq, vol, ratios, decay, shimmer=0.0):
+    """Inharmonic struck-metal tone — gamelan bonang/saron/gong flavour.
+    Partials at non-integer ratios + optional beating shimmer."""
+    i0 = int(start_s * SR)
+    n = int(dur_s * SR)
+    norm = len(ratios) * (2 if shimmer > 0 else 1)
+    for i in range(n):
+        idx = i0 + i
+        if idx < 0 or idx >= len(buf):
+            continue
+        t = i / SR
+        env = math.exp(-t * decay)
+        s = 0.0
+        for r in ratios:
+            f = freq * r
+            s += math.sin(2 * math.pi * f * t)
+            if shimmer > 0:
+                s += math.sin(2 * math.pi * f * (1 + shimmer) * t)
+        buf[idx] += vol * env * (s / norm)
 
 
 def write_wav(path, buf):
@@ -163,7 +184,7 @@ def build_song(spec):
     scale = SCALES[spec["scale"]]
     root = spec["root"]
     lanes = spec["lanes"]
-    rng = random.Random(hash(spec["id"]) & 0xffffffff)
+    rng = random.Random(zlib.crc32(spec["id"].encode()))  # stable across runs (not Python's randomized hash)
 
     # --- backing track: kick on the beat, hats on offbeats, bass on downbeats ---
     for s in range(steps):
@@ -264,6 +285,18 @@ def main():
     miss = [0.0] * int(0.16 * SR)
     add_tone(miss, 0, 0.14, 196, vol=0.5, kind="square", release=0.10)
     write_wav(os.path.join(ROOT, "assets/audio/sfx/miss.wav"), miss)
+
+    # combo milestone — bright bonang/saron "ting" (gamelan)
+    combo = [0.0] * int(0.5 * SR)
+    add_metallic(combo, 0, 0.46, 740, 0.5, [1, 2.76, 5.40, 8.9], decay=10, shimmer=0.004)
+    add_tone(combo, 0, 0.16, 1480, vol=0.22, kind="tri", release=0.1)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/combo.wav"), combo)
+
+    # fever activation — gong ageng (deep, long, shimmering) + bright accent
+    fever = [0.0] * int(1.7 * SR)
+    add_metallic(fever, 0, 1.6, 98, 0.55, [1, 2.4, 3.8, 5.9, 8.2], decay=2.2, shimmer=0.006)
+    add_metallic(fever, 0.02, 0.9, 392, 0.18, [1, 2.7, 5.1], decay=5, shimmer=0.012)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/fever.wav"), fever)
 
     manifest_fragment = []
     for spec in SONGS:

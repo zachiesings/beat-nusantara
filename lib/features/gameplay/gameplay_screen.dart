@@ -133,6 +133,7 @@ class _GameplayScreenState extends State<GameplayScreen>
       _wasFever = true;
       _showBanner('FEVER ×2!');
       _flash.forward(from: 0); // screen flash on fever
+      _audio.playSfx('fever'); // gamelan gong ageng
       Haptics.heavy();
     } else if (!_engine!.feverActive) {
       _wasFever = false;
@@ -160,6 +161,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     final combo = _engine!.board.combo;
     if (j != Judgment.miss && combo >= 25 && combo % 25 == 0) {
       _showBanner('$combo COMBO!');
+      _audio.playSfx('combo'); // gamelan bonang "ting"
     }
   }
 
