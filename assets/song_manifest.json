@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "note": "All songs, titles and artist names are FICTIONAL/original. Replace audioAssetPath + chartPaths with licensed assets later (see docs/MUSIC_LICENSING.md). Only entries with playable=true ship a real chart + audio.",
+  "categories": [
+    "Untuk Kamu",
+    "Pop Indonesia",
+    "Koplo/Dangdut",
+    "Nusantara Beats",
+    "Global Hits Inspired",
+    "EDM",
+    "Chill",
+    "Challenge"
+  ],
+  "songs": [
+    {
+      "id": "senja_jakarta",
+      "title": "Senja di Jakarta",
+      "artistDisplayName": "Lampu Kota",
+      "genre": "Lo-Fi Pasar Malam",
+      "regionTag": "Nusantara",
+      "category": "Chill",
+      "bpm": 88,
+      "durationMs": 55545,
+      "audioAssetPath": "assets/audio/songs/senja_jakarta.wav",
+      "coverAssetPath": "assets/images/cover_senja_jakarta.png",
+      "availableDifficulties": ["Easy", "Normal"],
+      "chartPaths": {
+        "Easy": "assets/charts/senja_jakarta__easy.json",
+        "Normal": "assets/charts/senja_jakarta__normal.json"
+      },
+      "unlockType": "free",
+      "unlockCost": 0,
+      "previewStartTimeMs": 8000,
+      "playable": true
+    },
+    {
+      "id": "gamelan_pulse",
+      "title": "Gamelan Pulse",
+      "artistDisplayName": "Sekar Sintetik",
+      "genre": "Gamelan Electronic",
+      "regionTag": "Jawa",
+      "category": "Nusantara Beats",
+      "bpm": 124,
+      "durationMs": 47451,
+      "audioAssetPath": "assets/audio/songs/gamelan_pulse.wav",
+      "coverAssetPath": "assets/images/cover_gamelan_pulse.png",
+      "availableDifficulties": ["Normal", "Hard"],
+      "chartPaths": {
+        "Normal": "assets/charts/gamelan_pulse__normal.json",
+        "Hard": "assets/charts/gamelan_pulse__hard.json"
+      },
+      "unlockType": "free",
+      "unlockCost": 0,
+      "previewStartTimeMs": 6000,
+      "playable": true
+    },
+    {
+      "id": "koplo_neon",
+      "title": "Koplo Neon",
+      "artistDisplayName": "DJ Senja",
+      "genre": "Dangdut / Koplo EDM",
+      "regionTag": "Nusantara",
+      "category": "Koplo/Dangdut",
+      "bpm": 140,
+      "durationMs": 42142,
+      "audioAssetPath": "assets/audio/songs/koplo_neon.wav",
+      "coverAssetPath": "assets/images/cover_koplo_neon.png",
+      "availableDifficulties": ["Normal", "Hard", "Expert"],
+      "chartPaths": {
+        "Normal": "assets/charts/koplo_neon__normal.json",
+        "Hard": "assets/charts/koplo_neon__hard.json",
+        "Expert": "assets/charts/koplo_neon__expert.json"
+      },
+      "unlockType": "free",
+      "unlockCost": 0,
+      "previewStartTimeMs": 5000,
+      "playable": true
+    },
+
+    { "id": "melati_senja", "title": "Melati Senja", "artistDisplayName": "Awan Biru", "genre": "Pop Indonesia", "regionTag": "Nusantara", "category": "Pop Indonesia", "bpm": 102, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Easy", "Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 150, "previewStartTimeMs": 0, "playable": false },
+    { "id": "hujan_neon", "title": "Hujan Neon", "artistDisplayName": "Kira Lumen", "genre": "City Pop / J-Pop Inspired", "regionTag": "Global", "category": "Pop Indonesia", "bpm": 116, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 200, "previewStartTimeMs": 0, "playable": false },
+    { "id": "sambal_bass", "title": "Sambal Bass", "artistDisplayName": "DJ Cabe", "genre": "Koplo", "regionTag": "Nusantara", "category": "Koplo/Dangdut", "bpm": 145, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 150, "previewStartTimeMs": 0, "playable": false },
+    { "id": "goyang_galaksi", "title": "Goyang Galaksi", "artistDisplayName": "Bintang Koplo", "genre": "Dangdut House", "regionTag": "Nusantara", "category": "Koplo/Dangdut", "bpm": 128, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "level", "unlockCost": 3, "previewStartTimeMs": 0, "playable": false },
+    { "id": "sasando_drift", "title": "Sasando Drift", "artistDisplayName": "Pulau Synth", "genre": "Ethnic Electronic", "regionTag": "Nusa Tenggara", "category": "Nusantara Beats", "bpm": 120, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 250, "previewStartTimeMs": 0, "playable": false },
+    { "id": "angklung_arcade", "title": "Angklung Arcade", "artistDisplayName": "Bambu Volt", "genre": "Angklung EDM", "regionTag": "Jawa Barat", "category": "Nusantara Beats", "bpm": 130, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "level", "unlockCost": 4, "previewStartTimeMs": 0, "playable": false },
+    { "id": "tokyo_kilat", "title": "Tokyo Kilat", "artistDisplayName": "Hikari Nine", "genre": "J-Pop Inspired", "regionTag": "Global", "category": "Global Hits Inspired", "bpm": 150, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard", "Expert"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 200, "previewStartTimeMs": 0, "playable": false },
+    { "id": "seoul_mirror", "title": "Seoul Mirror", "artistDisplayName": "Echo Project", "genre": "K-Pop Inspired", "regionTag": "Global", "category": "Global Hits Inspired", "bpm": 124, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 250, "previewStartTimeMs": 0, "playable": false },
+    { "id": "midnight_avenue", "title": "Midnight Avenue", "artistDisplayName": "Lina Vox", "genre": "Global Pop", "regionTag": "Global", "category": "Global Hits Inspired", "bpm": 118, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 200, "previewStartTimeMs": 0, "playable": false },
+    { "id": "concrete_flow", "title": "Concrete Flow", "artistDisplayName": "MC Senja", "genre": "Hip-Hop Inspired", "regionTag": "Global", "category": "Global Hits Inspired", "bpm": 92, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 200, "previewStartTimeMs": 0, "playable": false },
+    { "id": "voltage", "title": "Voltage", "artistDisplayName": "Pulsewave", "genre": "EDM", "regionTag": "Global", "category": "EDM", "bpm": 128, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 180, "previewStartTimeMs": 0, "playable": false },
+    { "id": "deep_jakarta", "title": "Deep Jakarta", "artistDisplayName": "Kota House", "genre": "House", "regionTag": "Nusantara", "category": "EDM", "bpm": 122, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Normal", "Hard"], "chartPaths": {}, "unlockType": "level", "unlockCost": 5, "previewStartTimeMs": 0, "playable": false },
+    { "id": "phonk_pasar", "title": "Phonk Pasar", "artistDisplayName": "Drift Malam", "genre": "Phonk", "regionTag": "Nusantara", "category": "EDM", "bpm": 138, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Hard", "Expert"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 220, "previewStartTimeMs": 0, "playable": false },
+    { "id": "hyper_melati", "title": "Hyper Melati", "artistDisplayName": "GlitchGirl", "genre": "Hyperpop", "regionTag": "Global", "category": "EDM", "bpm": 160, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Hard", "Expert"], "chartPaths": {}, "unlockType": "level", "unlockCost": 6, "previewStartTimeMs": 0, "playable": false },
+    { "id": "ombak_tenang", "title": "Ombak Tenang", "artistDisplayName": "Laut Sore", "genre": "Lo-Fi Chill", "regionTag": "Nusantara", "category": "Chill", "bpm": 80, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Easy", "Normal"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 120, "previewStartTimeMs": 0, "playable": false },
+    { "id": "kopi_pagi", "title": "Kopi Pagi", "artistDisplayName": "Pagi Pagi", "genre": "Lo-Fi", "regionTag": "Nusantara", "category": "Chill", "bpm": 84, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Easy", "Normal"], "chartPaths": {}, "unlockType": "coins", "unlockCost": 100, "previewStartTimeMs": 0, "playable": false },
+    { "id": "garuda_rising", "title": "Final: Garuda Rising", "artistDisplayName": "Garuda System", "genre": "Boss / Orchestral EDM", "regionTag": "Nusantara", "category": "Challenge", "bpm": 174, "durationMs": 0, "audioAssetPath": null, "coverAssetPath": "assets/images/cover_locked.png", "availableDifficulties": ["Expert"], "chartPaths": {}, "unlockType": "comingSoon", "unlockCost": 0, "previewStartTimeMs": 0, "playable": false }
+  ]
+}

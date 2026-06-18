@@ -1,0 +1,88 @@
+# Codemagic CI/CD — build Beat Nusantara for iOS in the cloud (no Mac needed).
+# Signing uses an App Store Connect API key passed as environment variables when
+# the build is triggered (APP_STORE_CONNECT_*), mirroring the GoNihon pipeline.
+#
+# Because the repo tracks only lib/ + assets/, this pipeline first regenerates
+# the native platform folders with `flutter create`, then forces a deterministic
+# bundle id ($BUNDLE_ID) so signing + the App Store Connect record line up.
+#
+# Required env vars / secrets (set in Codemagic UI or trigger payload):
+#   APP_STORE_CONNECT_PRIVATE_KEY     (.p8 contents)
+#   APP_STORE_CONNECT_KEY_IDENTIFIER  (key id)
+#   APP_STORE_CONNECT_ISSUER_ID       (issuer id)
+#   CERTIFICATE_PRIVATE_KEY           (signing certificate private key)
+# Do NOT commit any of these. See docs/CODEMAGIC_SETUP.md.
+
+workflows:
+  ios-appstore:
+    name: Beat Nusantara iOS — TestFlight & App Store
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        # Change to match your App Store Connect app record if different.
+        BUNDLE_ID: "com.beatnusantara.beatnusantara"
+
+    scripts:
+      - name: Initialize keychain
+        script: keychain initialize
+
+      - name: Generate platform folders
+        script: |
+          flutter create --org com.beatnusantara --project-name beat_nusantara \
+            --platforms=android,ios .
+
+      - name: Force deterministic bundle id
+        script: |
+          find ios -name project.pbxproj -exec \
+            sed -i '' "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]*;/PRODUCT_BUNDLE_IDENTIFIER = $BUNDLE_ID;/g" {} +
+
+      - name: Flutter packages
+        script: flutter pub get
+
+      - name: Generate launcher icons
+        script: dart run flutter_launcher_icons || true
+
+      - name: Fetch signing files (App Store Connect API key)
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+
+      - name: Add signing certificate to keychain
+        script: keychain add-certificates
+
+      - name: Set up provisioning profiles
+        script: xcode-project use-profiles
+
+      - name: Install CocoaPods
+        script: |
+          find . -name "Podfile" -execdir pod install \; || true
+
+      - name: Build IPA (release)
+        script: |
+          flutter build ipa --release \
+            --build-number=$BUILD_NUMBER \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - asd95179517@gmail.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        submit_to_app_store: false

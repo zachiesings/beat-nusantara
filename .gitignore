@@ -1,0 +1,31 @@
+# Flutter / Dart / Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+**/doc/api/
+app.*.symbols
+app.*.map.json
+pubspec.lock
+
+# Platform folders are GENERATED in CI via `flutter create .`
+# (kept out of the repo so we hand-author only lib/ + assets).
+/android/
+/ios/
+/linux/
+/macos/
+/windows/
+/web/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# tool scratch
+tool/_generated_manifest.json
