@@ -194,7 +194,7 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
           ),
           clipBehavior: Clip.antiAlias,
           child: SizedBox(
-            height: 168,
+            height: 182,
             child: Stack(
               children: [
                 Positioned.fill(child: HoloSheen(radius: 0, child: Image.asset(song.coverAssetPath, fit: BoxFit.cover))),

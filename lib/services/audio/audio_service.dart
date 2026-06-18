@@ -4,8 +4,12 @@ import 'package:audioplayers/audioplayers.dart';
 /// Every call is wrapped so a missing/locked asset can NEVER crash gameplay —
 /// the game runs off its own Stopwatch clock, audio is "best effort" on top.
 class AudioService {
-  final AudioPlayer _music = AudioPlayer(playerId: 'music');
-  final AudioPlayer _sfx = AudioPlayer(playerId: 'sfx');
+  // Lazily created — constructing AudioService no longer touches the audio plugin
+  // (so it's safe in tests / screenshot capture; audio only inits on first play).
+  AudioPlayer? _musicP;
+  AudioPlayer? _sfxP;
+  AudioPlayer get _music => _musicP ??= AudioPlayer(playerId: 'music');
+  AudioPlayer get _sfx => _sfxP ??= AudioPlayer(playerId: 'sfx');
 
   bool musicEnabled = true;
   bool sfxEnabled = true;
@@ -54,7 +58,7 @@ class AudioService {
   }
 
   Future<void> dispose() async {
-    await _music.dispose();
-    await _sfx.dispose();
+    await _musicP?.dispose();
+    await _sfxP?.dispose();
   }
 }
