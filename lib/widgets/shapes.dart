@@ -100,6 +100,43 @@ class _TwinklePainter extends CustomPainter {
   bool shouldRepaint(covariant _TwinklePainter old) => old.t != t;
 }
 
+/// Tumpal — the gold sawtooth triangle border from songket/tenun cloth. A small
+/// band of it along a card edge instantly reads "Nusantara textile".
+class Tumpal extends StatelessWidget {
+  final double height;
+  final Gradient gradient;
+  const Tumpal({super.key, this.height = 12, this.gradient = AppGradients.goldRush});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: height,
+        width: double.infinity,
+        child: CustomPaint(painter: _TumpalPainter(gradient)),
+      );
+}
+
+class _TumpalPainter extends CustomPainter {
+  final Gradient gradient;
+  _TumpalPainter(this.gradient);
+
+  @override
+  void paint(Canvas c, Size size) {
+    final paint = Paint()..shader = gradient.createShader(Offset.zero & size);
+    const w = 18.0;
+    final path = Path();
+    for (double x = -w; x < size.width + w; x += w) {
+      path.moveTo(x, size.height);
+      path.lineTo(x + w / 2, 0);
+      path.lineTo(x + w, size.height);
+      path.close();
+    }
+    c.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _TumpalPainter old) => false;
+}
+
 /// A soft wavy section divider — breaks up the "stacked rectangles" rhythm.
 class WavyDivider extends StatelessWidget {
   final Gradient gradient;
