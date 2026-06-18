@@ -47,9 +47,23 @@ Urutkan begini di App Store (kiri→kanan):
 - Hindari: klaim lagu populer/artis nyata, jumlah lagu berlebihan, "gratis"
   yang menyesatkan.
 
+## Timing tangkapan (penting)
+- **Home / Library / Gameplay** = state statis → aman ditangkap kapan pun.
+- **Result** = ada animasi sekali jalan: **tangkap ~0.8–1.5 dtk** setelah layar
+  muncul supaya **confetti masih turun** dan angka skor (count-up) sudah berhenti
+  di nilai final. Terlalu cepat = skor belum penuh; terlalu lambat = confetti habis
+  (tinggal buka ulang route-nya).
+- **Reward** = tile glow halus, aman kapan pun.
+
+## Data demo (sudah di-art-direct)
+Semua shot konsisten satu "cerita": pemain **Andini · Lv 7 · 2.450 koin**, lagu
+sorotan **Koplo Neon (Expert)** tampil di Gameplay (combo 188, FEVER) lalu Result
+(**SSS, Full Combo, 1.180.400**). Library penuh badge grade + favorit; Reward
+menampilkan tiga state (Dipakai / beli koin / tonton iklan). Atur di
+`lib/features/screenshot/demo_data.dart`.
+
 ## Tips kualitas
 - Status bar bersih (Simulator → Features → Toggle Appearance untuk dark; waktu
   default Apple 9:41 otomatis di Simulator screenshot bila pakai `xcrun simctl
   status_bar`).
-- Ambil dengan animasi sudah settle (mode screenshot statis → aman).
 - Jangan crop UI penting; sisakan ruang untuk headline di atas/bawah.

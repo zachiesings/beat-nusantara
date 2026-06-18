@@ -50,19 +50,24 @@ class MemoryStorageService extends StorageService {
 GameState buildDemoGameState(SongCatalog catalog) {
   final gs = GameState(MemoryStorageService());
   gs.playerName = 'Andini';
-  gs.coins = 1480;
-  gs.xp = 3260; // → Level 7
+  gs.coins = 2450; // premium-feeling balance, affordable unlocks visible
+  gs.xp = 3450; // → Level 7, 90% to next (near-full ring on Profile)
   gs.noteSpeed = 1.1;
-  gs.laneSkin = 'sunset';
-  gs.hitEffect = 'star';
-  gs.cosmetics = {'neon', 'spark', 'sunset', 'ocean', 'star', 'bloom'};
-  gs.favorites = {'senja_jakarta', 'koplo_neon', 'tokyo_kilat'};
+  gs.laneSkin = 'sunset'; // equipped → "Dipakai" state
+  gs.hitEffect = 'star'; // equipped
+  // owned vs locked is intentional: bloom (coins) + batik (ad) stay locked so the
+  // Reward shot shows all three states — equipped / buy / watch-ad.
+  gs.cosmetics = {'neon', 'spark', 'sunset', 'ocean', 'star'};
+  gs.favorites = {'senja_jakarta', 'koplo_neon', 'gamelan_pulse', 'tokyo_kilat'};
   gs.onboardingDone = true;
+  // rich, accomplished score wall → grade badges everywhere + all missions done.
+  // koplo Expert continues from the Gameplay/Result shots for a cohesive story.
   gs.bestScores = {
-    'koplo_neon__Expert': BestScore(942300, 'SSS', 98.64, true),
-    'koplo_neon__Hard': BestScore(710300, 'SS', 96.0, true),
-    'gamelan_pulse__Hard': BestScore(615400, 'S', 94.2, false),
-    'senja_jakarta__Normal': BestScore(498200, 'SS', 97.1, false),
+    'koplo_neon__Expert': BestScore(1180400, 'SSS', 98.9, true),
+    'koplo_neon__Hard': BestScore(942300, 'SS', 96.5, true),
+    'gamelan_pulse__Hard': BestScore(705300, 'S', 94.8, false),
+    'senja_jakarta__Normal': BestScore(612400, 'SS', 97.4, false),
+    'gamelan_pulse__Normal': BestScore(548900, 'S', 93.2, false),
   };
   // session trials so a couple premium tracks read as unlocked in the library
   for (final id in ['tokyo_kilat', 'hujan_neon']) {
@@ -72,18 +77,19 @@ GameState buildDemoGameState(SongCatalog catalog) {
   return gs;
 }
 
-/// A polished result summary for the result screenshot.
+/// A polished result summary for the Result screenshot — a clean Full-Combo SSS
+/// run of "Koplo Neon (Expert)", numbers consistent with a 216-note chart.
 ResultSummary demoResult() => ResultSummary(
-      score: 942300,
-      maxCombo: 410,
-      accuracy: 98.64,
+      score: 1180400,
+      maxCombo: 216,
+      accuracy: 98.90,
       grade: Grade.sss,
-      perfect: 388,
-      great: 18,
-      good: 4,
+      perfect: 196,
+      great: 17,
+      good: 3,
       miss: 0,
       fullCombo: true,
       cleared: true,
-      coins: 320,
-      xp: 540,
+      coins: 340,
+      xp: 560,
     );
