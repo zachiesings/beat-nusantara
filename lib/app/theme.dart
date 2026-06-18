@@ -48,6 +48,30 @@ class AppColors {
     end: Alignment.centerRight,
   );
 
+  /// Color mood per library category — Koplo = warm coral/gold, Gamelan = teal,
+  /// Chill = cyan/mint, Challenge = magenta-violet, etc. Gives the library genre
+  /// identity instead of a uniform palette.
+  static Color moodFor(String category) {
+    switch (category) {
+      case 'Koplo/Dangdut':
+        return coral;
+      case 'Nusantara Beats':
+        return teal;
+      case 'Chill':
+        return cyan;
+      case 'Challenge':
+        return pink;
+      case 'Pop Indonesia':
+        return pink;
+      case 'EDM':
+        return indigo;
+      case 'Global Hits Inspired':
+        return violet;
+      default:
+        return cyan;
+    }
+  }
+
   /// A cute, stable per-song accent (hash → palette) so cards get identity.
   static Color accentFor(String id) {
     const pal = [pink, cyan, gold, mint, coral, violet, teal, indigo];

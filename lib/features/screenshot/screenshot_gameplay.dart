@@ -57,6 +57,7 @@ class _ScreenshotGameplayState extends State<ScreenshotGameplay> {
                       approachMs: 2400,
                       laneCount: e.laneCount,
                       laneFlash: const {2: _frozenMs}, // glow one lane like a fresh hit
+                      laneMiss: const {},
                       reduceEffects: false,
                       highContrast: false,
                       repaint: _repaint,

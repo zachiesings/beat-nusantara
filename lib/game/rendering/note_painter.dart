@@ -12,6 +12,7 @@ class NotePainter extends CustomPainter {
   final double approachMs;
   final int laneCount;
   final Map<int, int> laneFlash; // lane -> clockMs of last hit (for glow)
+  final Map<int, int> laneMiss; // lane -> clockMs of last miss (for red flash)
   final bool reduceEffects;
   final bool highContrast;
 
@@ -20,6 +21,7 @@ class NotePainter extends CustomPainter {
     required this.approachMs,
     required this.laneCount,
     required this.laneFlash,
+    required this.laneMiss,
     required this.reduceEffects,
     required this.highContrast,
     required Listenable repaint,
@@ -30,8 +32,9 @@ class NotePainter extends CustomPainter {
     final now = engine.effectiveNow;
     final laneW = size.width / laneCount;
     final hitY = size.height * (1 - K.hitLineFromBottom);
+    final fever = engine.feverActive;
 
-    _paintLanes(canvas, size, laneW, hitY, now);
+    _paintLanes(canvas, size, laneW, hitY, now, fever);
     _paintHitLine(canvas, size, laneW, hitY, now);
 
     for (final n in engine.chart.notes) {
@@ -44,18 +47,18 @@ class NotePainter extends CustomPainter {
       final frac = 1 - delta / approachMs;
       final y = frac * hitY;
       final cx = (n.lane + 0.5) * laneW;
-      _paintNote(canvas, n, cx, y, laneW, hitY, now);
+      _paintNote(canvas, n, cx, y, laneW, hitY, now, fever);
     }
   }
 
-  void _paintLanes(Canvas c, Size size, double laneW, double hitY, int now) {
+  void _paintLanes(Canvas c, Size size, double laneW, double hitY, int now, bool fever) {
     final sep = Paint()
       ..color = highContrast ? Colors.white24 : AppColors.glassBorder
       ..strokeWidth = 1;
     for (int i = 0; i <= laneCount; i++) {
       c.drawLine(Offset(i * laneW, 0), Offset(i * laneW, size.height), sep);
     }
-    // subtle lane tint
+    // lane tint with vertical depth (stronger toward the hit line) + fever boost
     for (int i = 0; i < laneCount; i++) {
       final col = AppColors.lanes[i % AppColors.lanes.length];
       final flash = laneFlash[i];
@@ -64,6 +67,7 @@ class NotePainter extends CustomPainter {
         final age = now - flash;
         if (age >= 0 && age < 180) glow = (1 - age / 180) * 0.5;
       }
+      final feverBase = fever ? 0.12 : 0.0;
       final rect = Rect.fromLTWH(i * laneW, 0, laneW, size.height);
       c.drawRect(
         rect,
@@ -72,11 +76,30 @@ class NotePainter extends CustomPainter {
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              col.withValues(alpha: 0.10 + glow),
+              col.withValues(alpha: 0.14 + glow + feverBase),
+              col.withValues(alpha: 0.02),
               col.withValues(alpha: 0.0),
             ],
+            stops: const [0.0, 0.5, 1.0],
           ).createShader(rect),
       );
+      // miss flash — clear but soft red, never harsh
+      final miss = laneMiss[i];
+      if (miss != null) {
+        final age = now - miss;
+        if (age >= 0 && age < 260) {
+          final m = 1 - age / 260;
+          c.drawRect(
+            rect,
+            Paint()
+              ..shader = LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [AppColors.danger.withValues(alpha: 0.3 * m), AppColors.danger.withValues(alpha: 0.0)],
+              ).createShader(rect),
+          );
+        }
+      }
     }
   }
 
@@ -130,7 +153,7 @@ class NotePainter extends CustomPainter {
     }
   }
 
-  void _paintNote(Canvas c, Note n, double cx, double y, double laneW, double hitY, int now) {
+  void _paintNote(Canvas c, Note n, double cx, double y, double laneW, double hitY, int now, bool fever) {
     final w = laneW * 0.72;
     final col = _noteColor(n);
 
@@ -176,7 +199,8 @@ class NotePainter extends CustomPainter {
             Rect.fromCenter(center: Offset(cx, y), width: w * 1.18, height: h * 1.3),
             Radius.circular(w * 0.3)),
         Paint()
-          ..color = col.withValues(alpha: n.type == NoteType.fever || n.type == NoteType.golden ? 0.5 : 0.28)
+          ..color = col.withValues(
+              alpha: (n.type == NoteType.fever || n.type == NoteType.golden ? 0.5 : 0.28) + (fever ? 0.18 : 0.0))
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
       );
     }

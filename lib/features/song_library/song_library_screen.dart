@@ -5,13 +5,16 @@ import '../../data/song_catalog.dart';
 import '../../game/models/song.dart';
 import '../../state/game_state.dart';
 import '../../widgets/bouncy.dart';
+import '../../widgets/gradient_button.dart';
+import '../../widgets/holo.dart';
 import '../../widgets/neon_chip.dart';
+import '../../widgets/shapes.dart';
 import '../../widgets/song_card.dart';
 import '../song_detail/song_detail_screen.dart';
 
 class SongLibraryScreen extends StatefulWidget {
   final String? initialCategory;
-  final bool embedded; // true when shown as a shell tab (no back arrow)
+  final bool embedded;
   const SongLibraryScreen({super.key, this.initialCategory, this.embedded = false});
   @override
   State<SongLibraryScreen> createState() => _SongLibraryScreenState();
@@ -29,6 +32,9 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
     super.initState();
     _cat = widget.initialCategory ?? 'Semua';
   }
+
+  void _open(Song s) =>
+      Navigator.push(context, MaterialPageRoute(builder: (_) => SongDetailScreen(song: s)));
 
   @override
   Widget build(BuildContext context) {
@@ -57,36 +63,41 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
     if (!_showLocked) list = list.where(gs.isUnlocked).toList();
     if (_sortByBpm) list = [...list]..sort((a, b) => a.bpm.compareTo(b.bpm));
 
-    final showHits = _cat == 'Semua' && _query.isEmpty && !_favOnly;
+    final showFeatured = _cat == 'Semua' && _query.isEmpty && !_favOnly;
+    final featured = catalog.byId('koplo_neon') ?? catalog.playable.first;
 
     return Scaffold(
       body: NeonBackground(
         child: SafeArea(
+          bottom: false,
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    _topBar(context),
+                    _header(context),
                     _search(),
                     _categoryChips(cats),
                     const SizedBox(height: 12),
                     _filterRow(),
-                    if (showHits) _hits(context, catalog),
+                    if (showFeatured) _featured(featured),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 16, 16, 2),
+                      child: Row(children: [
+                        Text(showFeatured ? 'Koleksi Beat 🎵' : '$_cat 🎵',
+                            style: AppText.heading.copyWith(fontSize: 18)),
+                      ]),
+                    ),
                   ],
                 ),
               ),
               SliverPadding(
-                padding: EdgeInsets.fromLTRB(16, 10, 16, widget.embedded ? 120 : 100),
+                padding: EdgeInsets.fromLTRB(16, 8, 16, widget.embedded ? 120 : 100),
                 sliver: list.isEmpty
                     ? const SliverToBoxAdapter(child: _Empty())
                     : SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (_, i) => SongCard(
-                            song: list[i],
-                            onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (_) => SongDetailScreen(song: list[i]))),
-                          ),
+                          (_, i) => SongCard(song: list[i], onTap: () => _open(list[i])),
                           childCount: list.length,
                         ),
                       ),
@@ -98,19 +109,28 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
     );
   }
 
-  Widget _topBar(BuildContext context) => Padding(
+  Widget _header(BuildContext context) => Padding(
         padding: EdgeInsets.fromLTRB(widget.embedded ? 18 : 6, 12, 16, 0),
         child: Row(children: [
           if (!widget.embedded)
             Bouncy(
                 onTap: () => Navigator.pop(context),
                 child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.arrow_back_rounded))),
-          Text('Perpustakaan Lagu', style: AppText.title),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Perpustakaan Beat', style: AppText.title),
+                const Text('Cari beat favoritmu 🎧',
+                    style: TextStyle(color: AppColors.textLo, fontSize: 12.5)),
+              ],
+            ),
+          ),
         ]),
       );
 
   Widget _search() => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.glass,
@@ -150,59 +170,75 @@ class _SongLibraryScreenState extends State<SongLibraryScreen> {
   Widget _filterRow() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
-          NeonChip(
-              label: 'Favorit',
-              icon: Icons.favorite_rounded,
-              selected: _favOnly,
-              gradient: AppGradients.sunset,
-              onTap: () => setState(() => _favOnly = !_favOnly)),
+          NeonChip(label: 'Favoritmu', icon: Icons.favorite_rounded, selected: _favOnly, gradient: AppGradients.sunset, onTap: () => setState(() => _favOnly = !_favOnly)),
           const SizedBox(width: 8),
-          NeonChip(
-              label: 'Terkunci',
-              icon: Icons.lock_open_rounded,
-              selected: _showLocked,
-              gradient: AppGradients.aurora,
-              onTap: () => setState(() => _showLocked = !_showLocked)),
+          NeonChip(label: 'Terkunci', icon: Icons.lock_open_rounded, selected: _showLocked, gradient: AppGradients.aurora, onTap: () => setState(() => _showLocked = !_showLocked)),
           const SizedBox(width: 8),
-          NeonChip(
-              label: 'BPM',
-              icon: Icons.speed_rounded,
-              selected: _sortByBpm,
-              gradient: AppGradients.ocean,
-              onTap: () => setState(() => _sortByBpm = !_sortByBpm)),
+          NeonChip(label: 'BPM', icon: Icons.speed_rounded, selected: _sortByBpm, gradient: AppGradients.ocean, onTap: () => setState(() => _sortByBpm = !_sortByBpm)),
         ]),
       );
 
-  Widget _hits(BuildContext context, SongCatalog catalog) {
-    final hits = catalog.playable;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(18, 18, 16, 10),
-          child: Text('Lagi Hits 🔥', style: AppText.heading.copyWith(fontSize: 18)),
-        ),
-        SizedBox(
-          height: 248,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: hits.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 14),
-            itemBuilder: (_, i) => SongCard(
-              song: hits[i],
-              compact: true,
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => SongDetailScreen(song: hits[i]))),
+  // big, rich featured card — "lagi nyala"
+  Widget _featured(Song song) {
+    final accent = AppColors.moodFor(song.category);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Bouncy(
+        onTap: () => _open(song),
+        scale: 0.97,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(color: accent.withValues(alpha: 0.5)),
+            boxShadow: AppShadows.glow(accent, blur: 28, y: 12, a: 0.45),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+            height: 168,
+            child: Stack(
+              children: [
+                Positioned.fill(child: HoloSheen(radius: 0, child: Image.asset(song.coverAssetPath, fit: BoxFit.cover))),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: [AppColors.ink.withValues(alpha: 0.92), accent.withValues(alpha: 0.25)],
+                      ),
+                    ),
+                  ),
+                ),
+                const Positioned.fill(child: Twinkles(count: 8)),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Sticker(text: 'LAGI NYALA', icon: Icons.local_fire_department_rounded, gradient: AppGradients.candy, angle: -0.05),
+                      const Spacer(),
+                      Text(song.title, style: AppText.title.copyWith(fontSize: 22)),
+                      Text('${song.artistDisplayName}  •  ${song.bpm} BPM',
+                          style: const TextStyle(color: AppColors.textLo, fontSize: 12.5)),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: 150,
+                        child: GradientButton(
+                          label: 'Mainkan',
+                          icon: Icons.play_arrow_rounded,
+                          height: 42,
+                          gradient: AppGradients.from(accent),
+                          onTap: () => _open(song),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(18, 18, 16, 0),
-          child: Text('Semua Lagu', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -213,10 +249,7 @@ class _Empty extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.only(top: 40),
-      child: Center(
-        child: Text('Tidak ada lagu di sini 🎵',
-            style: TextStyle(color: AppColors.textLo)),
-      ),
+      child: Center(child: Text('Tidak ada lagu di sini 🎵', style: TextStyle(color: AppColors.textLo))),
     );
   }
 }

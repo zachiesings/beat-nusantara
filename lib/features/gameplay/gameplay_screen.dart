@@ -44,6 +44,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   final Stopwatch _sw = Stopwatch();
   final ValueNotifier<int> _frame = ValueNotifier(0);
   final Map<int, int> _laneFlash = {};
+  final Map<int, int> _laneMiss = {};
   late final Ticker _ticker;
   late final AnimationController _shake =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 320));
@@ -133,6 +134,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         Haptics.light();
       case Judgment.miss:
         _audio.playSfx('miss');
+        _laneMiss[lane] = _sw.elapsedMilliseconds;
         _shake.forward(from: 0);
         Haptics.medium();
     }
@@ -279,6 +281,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                           approachMs: _approachMs,
                           laneCount: _engine!.laneCount,
                           laneFlash: _laneFlash,
+                          laneMiss: _laneMiss,
                           reduceEffects: gs.reduceEffects,
                           highContrast: gs.highContrast,
                           repaint: _frame,

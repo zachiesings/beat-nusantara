@@ -23,7 +23,7 @@ class SongCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final gs = context.watch<GameState>();
     final unlocked = gs.isUnlocked(song);
-    final accent = AppColors.accentFor(song.id);
+    final accent = AppColors.moodFor(song.category); // genre-mood identity
     final best = song.availableDifficulties.isNotEmpty
         ? gs.best(song.id, song.availableDifficulties.first)
         : null;
