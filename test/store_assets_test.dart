@@ -36,7 +36,14 @@ Future<void> _loadFonts() async {
 
 void _silenceAudioplayers() {
   final m = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-  for (final name in const ['xyz.luan/audioplayers', 'xyz.luan/audioplayers.global']) {
+  for (final name in const [
+    'xyz.luan/audioplayers',
+    'xyz.luan/audioplayers.global',
+    'xyz.luan/audioplayers.global/events',
+    'xyz.luan/audioplayers/events/music',
+    'xyz.luan/audioplayers/events/sfx',
+    'xyz.luan/audioplayers/events/bgm',
+  ]) {
     m.setMockMethodCallHandler(MethodChannel(name), (call) async => call.method == 'create' ? 1 : null);
   }
 }
