@@ -521,9 +521,40 @@ class _GameplayScreenState extends State<GameplayScreen>
   Widget _countdownOverlay() => Container(
         color: Colors.black54,
         alignment: Alignment.center,
-        child: Text('$_countdown',
-            style: const TextStyle(
-                fontSize: 96, fontWeight: FontWeight.w800, color: AppColors.cyan)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Bersiap…',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textLo, letterSpacing: 2)),
+            const SizedBox(height: 14),
+            // glowing gold ring around the count number (gamelan "denyut")
+            Container(
+              width: 150,
+              height: 150,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [
+                  AppColors.gold.withValues(alpha: 0.18),
+                  AppColors.gold.withValues(alpha: 0.0),
+                ]),
+                border: Border.all(color: AppColors.gold.withValues(alpha: 0.7), width: 3),
+                boxShadow: AppShadows.glow(AppColors.gold, blur: 30, y: 0, a: 0.5),
+              ),
+              child: ShaderMask(
+                shaderCallback: (r) => AppGradients.goldRush.createShader(r),
+                child: Text('$_countdown',
+                    style: const TextStyle(
+                        fontSize: 96, fontWeight: FontWeight.w800, color: Colors.white)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(widget.song.title,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textHi)),
+            Text('${widget.difficulty} • ${widget.modeLabel}',
+                style: const TextStyle(fontSize: 12, color: AppColors.textLo)),
+          ],
+        ),
       );
 
   Widget _pauseOverlay() => Container(

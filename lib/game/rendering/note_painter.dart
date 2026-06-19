@@ -232,7 +232,7 @@ class NotePainter extends CustomPainter {
   }
 
   void _paintNote(Canvas c, Note n, double cx, double y, double laneW, double hitY, int now, bool fever) {
-    final w = laneW * 0.72;
+    final w = laneW * 0.78;
     final col = _noteColor(n);
 
     // hold/slide body
@@ -257,7 +257,7 @@ class NotePainter extends CustomPainter {
 
     if (n.holding) return; // head already at the line; only body remains
 
-    final h = laneW * 0.36;
+    final h = laneW * 0.40;
 
     // motion trail (a fading comet tail above the falling note)
     if (!reduceEffects) {
