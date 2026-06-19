@@ -60,14 +60,39 @@ class GameplayBackdrop extends CustomPainter {
       );
     }
 
-    // faint kawung batik dot field — warms slightly as combo grows
-    final dotP = Paint()..color = AppColors.gold.withValues(alpha: 0.035 + 0.05 * comboNorm);
-    const gap = 54.0;
-    for (double y = gap / 2; y < size.height; y += gap) {
-      for (double x = gap / 2; x < size.width; x += gap) {
-        c.drawCircle(Offset(x, y), 1.6, dotP);
+    // faint kawung batik motif field — petals + dot, fills the dark space so the
+    // playfield never reads as empty; warms slightly as combo grows
+    final petalA = 0.05 + 0.05 * comboNorm;
+    final petal = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..color = AppColors.gold.withValues(alpha: petalA);
+    final dotP = Paint()..color = AppColors.gold.withValues(alpha: petalA + 0.02);
+    const gap = 64.0, pr = gap * 0.28;
+    for (double y = gap / 2; y < size.height + gap; y += gap) {
+      for (double x = gap / 2; x < size.width + gap; x += gap) {
+        for (var k = 0; k < 4; k++) {
+          final ang = math.pi / 4 + k * math.pi / 2;
+          final oc = Offset(x + math.cos(ang) * pr, y + math.sin(ang) * pr);
+          c.save();
+          c.translate(oc.dx, oc.dy);
+          c.rotate(ang);
+          c.drawOval(Rect.fromCenter(center: Offset.zero, width: pr * 1.6, height: pr * 0.8), petal);
+          c.restore();
+        }
+        c.drawCircle(Offset(x, y), 1.4, dotP);
       }
     }
+
+    // a large, very faint GUNUNGAN silhouette up top — quietly Nusantara
+    final gx = size.width / 2, gTop = size.height * 0.06, gBot = size.height * 0.34;
+    final gw = size.width * 0.22;
+    final gun = Path()
+      ..moveTo(gx, gBot)
+      ..quadraticBezierTo(gx - gw, (gTop + gBot) / 2, gx, gTop)
+      ..quadraticBezierTo(gx + gw, (gTop + gBot) / 2, gx, gBot)
+      ..close();
+    c.drawPath(gun, Paint()..color = AppColors.gold.withValues(alpha: 0.03 + 0.03 * (fever ? 1 : 0)));
 
     // gamelan "denyut" — a ring pulsing out from the hit zone on every beat
     final pulseR = size.width * (0.30 + 0.55 * beat) * (fever ? 1.3 : 1.0);
