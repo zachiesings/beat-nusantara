@@ -76,12 +76,14 @@
    "availableDifficulties": [
     "Normal",
     "Hard",
-    "Expert"
+    "Expert",
+    "Extreme"
    ],
    "chartPaths": {
     "Normal": "assets/charts/koplo_neon__normal.json",
     "Hard": "assets/charts/koplo_neon__hard.json",
-    "Expert": "assets/charts/koplo_neon__expert.json"
+    "Expert": "assets/charts/koplo_neon__expert.json",
+    "Extreme": "assets/charts/koplo_neon__extreme.json"
    },
    "unlockType": "free",
    "unlockCost": 0,
@@ -248,12 +250,14 @@
    "availableDifficulties": [
     "Normal",
     "Hard",
-    "Expert"
+    "Expert",
+    "Extreme"
    ],
    "chartPaths": {
     "Normal": "assets/charts/tokyo_kilat__normal.json",
     "Hard": "assets/charts/tokyo_kilat__hard.json",
-    "Expert": "assets/charts/tokyo_kilat__expert.json"
+    "Expert": "assets/charts/tokyo_kilat__expert.json",
+    "Extreme": "assets/charts/tokyo_kilat__extreme.json"
    },
    "unlockType": "coins",
    "unlockCost": 200,
@@ -393,11 +397,13 @@
    "coverAssetPath": "assets/images/cover_phonk_pasar.png",
    "availableDifficulties": [
     "Hard",
-    "Expert"
+    "Expert",
+    "Extreme"
    ],
    "chartPaths": {
     "Hard": "assets/charts/phonk_pasar__hard.json",
-    "Expert": "assets/charts/phonk_pasar__expert.json"
+    "Expert": "assets/charts/phonk_pasar__expert.json",
+    "Extreme": "assets/charts/phonk_pasar__extreme.json"
    },
    "unlockType": "coins",
    "unlockCost": 220,
@@ -417,11 +423,13 @@
    "coverAssetPath": "assets/images/cover_hyper_melati.png",
    "availableDifficulties": [
     "Hard",
-    "Expert"
+    "Expert",
+    "Extreme"
    ],
    "chartPaths": {
     "Hard": "assets/charts/hyper_melati__hard.json",
-    "Expert": "assets/charts/hyper_melati__expert.json"
+    "Expert": "assets/charts/hyper_melati__expert.json",
+    "Extreme": "assets/charts/hyper_melati__extreme.json"
    },
    "unlockType": "level",
    "unlockCost": 6,
@@ -489,11 +497,13 @@
    "coverAssetPath": "assets/images/cover_garuda_rising.png",
    "availableDifficulties": [
     "Hard",
-    "Expert"
+    "Expert",
+    "Extreme"
    ],
    "chartPaths": {
     "Hard": "assets/charts/garuda_rising__hard.json",
-    "Expert": "assets/charts/garuda_rising__expert.json"
+    "Expert": "assets/charts/garuda_rising__expert.json",
+    "Extreme": "assets/charts/garuda_rising__extreme.json"
    },
    "unlockType": "level",
    "unlockCost": 8,

@@ -301,7 +301,7 @@ GROOVES = {
 }
 
 DIRS = ["left", "right", "up", "down"]
-DIFF_DENSITY = {"Easy": 0.5, "Normal": 0.72, "Hard": 0.9, "Expert": 1.0}
+DIFF_DENSITY = {"Easy": 0.5, "Normal": 0.72, "Hard": 0.9, "Expert": 1.0, "Extreme": 1.0}
 
 # section plan: (name, bars). intro/outro carry NO chart notes. Sized so songs
 # land roughly in a 52–82s window regardless of tempo (slow songs get trimmed).
@@ -323,24 +323,24 @@ def section_plan(bpm):
 SONGS = [
     {"id": "senja_jakarta",  "bpm": 90,  "root": 57, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.45, "diffs": ["Easy", "Normal"]},
     {"id": "gamelan_pulse",  "bpm": 124, "root": 60, "scale": "pelog_ish",  "prog": "edm_min", "groove": "edm",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.72, "diffs": ["Normal", "Hard"]},
-    {"id": "koplo_neon",     "bpm": 140, "root": 62, "scale": "dorian",     "prog": "koplo",   "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 0.95, "diffs": ["Normal", "Hard", "Expert"]},
+    {"id": "koplo_neon",     "bpm": 140, "root": 62, "scale": "dorian",     "prog": "koplo",   "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 0.95, "diffs": ["Normal", "Hard", "Expert", "Extreme"]},
     {"id": "melati_senja",   "bpm": 100, "root": 60, "scale": "major_pent", "prog": "pop_emo", "groove": "pop",     "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.55, "diffs": ["Easy", "Normal", "Hard"]},
     {"id": "hujan_neon",     "bpm": 116, "root": 62, "scale": "major",      "prog": "pop",     "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.62, "diffs": ["Normal", "Hard"]},
     {"id": "sambal_bass",    "bpm": 145, "root": 62, "scale": "dorian",     "prog": "koplo",   "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 0.9,  "diffs": ["Normal", "Hard"]},
     {"id": "goyang_galaksi", "bpm": 128, "root": 60, "scale": "minor",      "prog": "dangdut", "groove": "dangdut", "lead": "lead",  "flavor": "flute", "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
     {"id": "sasando_drift",  "bpm": 118, "root": 60, "scale": "pelog_ish",  "prog": "edm_maj", "groove": "citypop", "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.65, "diffs": ["Normal", "Hard"]},
     {"id": "angklung_arcade","bpm": 130, "root": 64, "scale": "major_pent", "prog": "pop",     "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
-    {"id": "tokyo_kilat",    "bpm": 150, "root": 64, "scale": "major",      "prog": "citypop", "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.9,  "diffs": ["Normal", "Hard", "Expert"]},
+    {"id": "tokyo_kilat",    "bpm": 150, "root": 64, "scale": "major",      "prog": "citypop", "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.9,  "diffs": ["Normal", "Hard", "Expert", "Extreme"]},
     {"id": "seoul_mirror",   "bpm": 124, "root": 57, "scale": "minor",      "prog": "kpop",    "groove": "kpop",    "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
     {"id": "midnight_avenue","bpm": 112, "root": 60, "scale": "major",      "prog": "citypop", "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.6,  "diffs": ["Normal", "Hard"]},
     {"id": "concrete_flow",  "bpm": 92,  "root": 55, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "pluck", "flavor": None,    "lanes": 4, "energy": 0.55, "diffs": ["Normal", "Hard"]},
     {"id": "voltage",        "bpm": 128, "root": 62, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.85, "diffs": ["Normal", "Hard"]},
     {"id": "deep_jakarta",   "bpm": 122, "root": 57, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.75, "diffs": ["Normal", "Hard"]},
-    {"id": "phonk_pasar",    "bpm": 138, "root": 55, "scale": "minor",      "prog": "phonk",   "groove": "phonk",   "lead": "lead",  "flavor": "bell",  "lanes": 5, "energy": 0.9,  "diffs": ["Hard", "Expert"]},
-    {"id": "hyper_melati",   "bpm": 160, "root": 64, "scale": "major",      "prog": "kpop",    "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.95, "diffs": ["Hard", "Expert"]},
+    {"id": "phonk_pasar",    "bpm": 138, "root": 55, "scale": "minor",      "prog": "phonk",   "groove": "phonk",   "lead": "lead",  "flavor": "bell",  "lanes": 5, "energy": 0.9,  "diffs": ["Hard", "Expert", "Extreme"]},
+    {"id": "hyper_melati",   "bpm": 160, "root": 64, "scale": "major",      "prog": "kpop",    "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.95, "diffs": ["Hard", "Expert", "Extreme"]},
     {"id": "ombak_tenang",   "bpm": 84,  "root": 57, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "energy": 0.4,  "diffs": ["Easy", "Normal"]},
     {"id": "kopi_pagi",      "bpm": 88,  "root": 60, "scale": "major_pent", "prog": "pop_emo", "groove": "lofi",    "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.42, "diffs": ["Easy", "Normal"]},
-    {"id": "garuda_rising",  "bpm": 172, "root": 62, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 1.0,  "diffs": ["Hard", "Expert"]},
+    {"id": "garuda_rising",  "bpm": 172, "root": 62, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 1.0,  "diffs": ["Hard", "Expert", "Extreme"]},
 ]
 
 # ============================================================================
@@ -700,7 +700,7 @@ def build_song(spec):
                     ntype, hold_s = _chart_type(bar, st, is_chorus, lanes, beat, k)
                     for d in spec["diffs"]:
                         dens = DIFF_DENSITY[d]
-                        if not is_chorus:
+                        if not is_chorus and d != "Extreme":
                             dens *= 0.82
                         if rng.random() > dens:
                             continue
@@ -710,9 +710,13 @@ def build_song(spec):
                         if ntype == "flick":
                             note["direction"] = DIRS[k % len(DIRS)]
                         notes_by_diff[d].append(note)
-                        if ntype == "double" and d in ("Hard", "Expert"):
+                        if ntype == "double" and d in ("Hard", "Expert", "Extreme"):
                             notes_by_diff[d].append({"type": "tap",
                                 "lane": (lane + 2) % lanes, "startTimeMs": start_ms})
+                        # EXTREME: extra companion taps → relentless top tier
+                        if d == "Extreme" and ntype not in ("double", "hold", "slide") and st % 2 == 0:
+                            notes_by_diff[d].append({"type": "tap",
+                                "lane": (lane + max(1, lanes // 2)) % lanes, "startTimeMs": start_ms})
         bar_cursor += sec_bars
 
     write_wav(os.path.join(ROOT, "assets/audio/songs", spec["id"] + ".wav"), buf)

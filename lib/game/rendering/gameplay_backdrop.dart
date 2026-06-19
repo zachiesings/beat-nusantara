@@ -175,6 +175,13 @@ class GameplayBackdrop extends CustomPainter {
       c.drawCircle(Offset(x + math.sin(t + i) * 8, y), 1.2 + (i % 3) * 0.9, ember);
     }
 
+    // STAGE FURNITURE — wayang dancers at the sides + a gamelan bonang row that
+    // glows on the beat. Faint silhouettes so the playfield stays readable.
+    final sway = math.sin(t * 2 * math.pi * (bpm / 120) / 2) * 0.05;
+    _wayang(c, size.width * 0.075, size.height * 0.80, size.height * 0.34, true, 0.08 + 0.06 * intensity, sway);
+    _wayang(c, size.width * 0.925, size.height * 0.80, size.height * 0.34, false, 0.08 + 0.06 * intensity, -sway);
+    _gamelan(c, size, beat, intensity);
+
     // edge VIGNETTE + reactive glow framing the "stage" (warms on combo/FEVER)
     c.drawRect(
       rect,
@@ -188,6 +195,78 @@ class GameplayBackdrop extends CustomPainter {
           stops: const [0.60, 1.0],
         ).createShader(rect),
     );
+  }
+
+  // a stylised wayang-kulit dancer silhouette (tall crown, profile, one arm
+  // raised in a dance pose), gently swaying. Atmospheric, low-alpha gold.
+  void _wayang(Canvas c, double bx, double baseY, double h, bool faceRight, double alpha, double sway) {
+    final dir = faceRight ? 1.0 : -1.0;
+    final fill = Paint()..color = AppColors.gold.withValues(alpha: alpha);
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..color = AppColors.gold.withValues(alpha: alpha);
+    c.save();
+    c.translate(bx, baseY);
+    c.rotate(sway * dir);
+    // tapering body
+    final body = Path()
+      ..moveTo(-h * 0.05, 0)
+      ..lineTo(-h * 0.04, -h * 0.52)
+      ..lineTo(0, -h * 0.6)
+      ..lineTo(h * 0.045, -h * 0.52)
+      ..lineTo(h * 0.06, 0)
+      ..close();
+    c.drawPath(body, fill);
+    // sash / skirt flare at the base
+    final skirt = Path()
+      ..moveTo(-h * 0.05, 0)
+      ..lineTo(-h * 0.16, h * 0.04)
+      ..lineTo(h * 0.16, h * 0.04)
+      ..lineTo(h * 0.06, 0)
+      ..close();
+    c.drawPath(skirt, Paint()..color = AppColors.gold.withValues(alpha: alpha * 0.7));
+    // head
+    c.drawCircle(Offset(dir * h * 0.02, -h * 0.66), h * 0.055, fill);
+    // sharp wayang nose
+    c.drawPath(
+        Path()
+          ..moveTo(dir * h * 0.06, -h * 0.66)
+          ..lineTo(dir * h * 0.14, -h * 0.63)
+          ..lineTo(dir * h * 0.06, -h * 0.62)
+          ..close(),
+        fill);
+    // tall pointed crown (jamang/tekes)
+    c.drawPath(
+        Path()
+          ..moveTo(dir * h * 0.02, -h * 0.71)
+          ..quadraticBezierTo(dir * h * 0.14, -h * 0.82, dir * h * 0.05, -h * 0.98)
+          ..quadraticBezierTo(dir * -h * 0.03, -h * 0.8, dir * h * 0.02, -h * 0.71)
+          ..close(),
+        fill);
+    // raised dance arm (out then up) + lower arm
+    stroke.strokeWidth = h * 0.028;
+    c.drawLine(Offset(0, -h * 0.44), Offset(dir * h * 0.24, -h * 0.52), stroke);
+    c.drawLine(Offset(dir * h * 0.24, -h * 0.52), Offset(dir * h * 0.34, -h * 0.72), stroke);
+    c.drawLine(Offset(0, -h * 0.42), Offset(dir * -h * 0.16, -h * 0.3), stroke);
+    c.drawLine(Offset(dir * -h * 0.16, -h * 0.3), Offset(dir * -h * 0.1, -h * 0.14), stroke);
+    c.restore();
+  }
+
+  // a row of gamelan bonang pots along the stage front, glowing on the beat.
+  void _gamelan(Canvas c, Size size, double beat, double intensity) {
+    final y = size.height * 0.945;
+    const n = 7;
+    final r = size.width * 0.034;
+    final glow = (0.35 + 0.5 * beat) * (0.45 + intensity);
+    for (var i = 0; i < n; i++) {
+      final x = size.width * (0.12 + 0.76 * i / (n - 1));
+      c.drawCircle(Offset(x, y), r * 1.5,
+          Paint()..color = AppColors.gold.withValues(alpha: 0.10 * glow)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7));
+      c.drawCircle(Offset(x, y), r,
+          Paint()..style = PaintingStyle.stroke..strokeWidth = 2..color = AppColors.gold.withValues(alpha: 0.22 + 0.1 * glow));
+      c.drawCircle(Offset(x, y), r * 0.32, Paint()..color = AppColors.gold.withValues(alpha: 0.28 + 0.2 * glow));
+    }
   }
 
   @override

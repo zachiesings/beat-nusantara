@@ -255,7 +255,31 @@ class NotePainter extends CustomPainter {
             ..color = col.withValues(alpha: 0.8));
     }
 
-    if (n.holding) return; // head already at the line; only body remains
+    if (n.holding) {
+      // ENERGY while a hold is kept down — a pulsing glow + sparks streaming up
+      // the lane at the hit line, so a long note feels alive (not a dead "flop").
+      final pulse = 0.5 + 0.5 * math.sin(now / 60.0);
+      c.drawCircle(
+          Offset(cx, hitY),
+          laneW * (0.34 + 0.10 * pulse),
+          Paint()
+            ..color = col.withValues(alpha: 0.30 + 0.30 * pulse)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
+      c.drawCircle(Offset(cx, hitY), laneW * 0.30,
+          Paint()..style = PaintingStyle.stroke..strokeWidth = 3 + 2 * pulse..color = AppColors.goldLt.withValues(alpha: 0.6 + 0.4 * pulse));
+      c.drawCircle(Offset(cx, hitY), laneW * (0.12 + 0.04 * pulse), Paint()..color = Colors.white.withValues(alpha: 0.85));
+      if (!reduceEffects) {
+        for (int k = 0; k < 6; k++) {
+          final sp = ((now / 5.0 + k * 45) % 130) / 130.0;
+          final sy = hitY - sp * laneW * 1.9;
+          c.drawCircle(
+              Offset(cx + math.sin(now / 90.0 + k * 1.3) * laneW * 0.22, sy),
+              (1 - sp) * 3.2 + 0.8,
+              Paint()..color = (k.isEven ? col : AppColors.goldLt).withValues(alpha: 0.85 * (1 - sp)));
+        }
+      }
+      return; // head already at the line; only body + this effect remain
+    }
 
     final h = laneW * 0.40;
 
