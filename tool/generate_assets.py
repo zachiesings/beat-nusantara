@@ -362,7 +362,7 @@ def _na(lines):
     for ln in lines:
         toks = ln.split()
         for i, tok in enumerate(toks):
-            beats = 1.0 if i == len(toks) - 1 else 0.5
+            beats = 1.5 if i == len(toks) - 1 else 0.5
             if tok == "0":
                 out.append((0, beats)); continue
             deg = int(tok[0]); oc = tok.count("'") - tok.count(",")
@@ -401,16 +401,16 @@ MELODIES = {k: _na(v) for k, v in NOTANGKA.items()}
 # in modern grooves. Become real catalog entries (category "Lagu Daerah"/"Lagu Anak").
 _LD = "Lagu Daerah"; _LA = "Lagu Anak"
 FOLK = [
-    {"id": "apuse",          "melody": "apuse",          "title": "Apuse",               "region": "Papua",              "category": _LD, "bpm": 104, "root": 60, "groove": "citypop", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "ampar_pisang",   "melody": "ampar_pisang",   "title": "Ampar-Ampar Pisang",  "region": "Kalimantan Selatan", "category": _LD, "bpm": 108, "root": 60, "groove": "koplo",   "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "soleram",        "melody": "soleram",        "title": "Soleram",             "region": "Riau",               "category": _LD, "bpm": 92,  "root": 60, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "rasa_sayange",   "melody": "rasa_sayange",   "title": "Rasa Sayange",        "region": "Maluku",             "category": _LD, "bpm": 100, "root": 60, "groove": "citypop", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "yamko",          "melody": "yamko",          "title": "Yamko Rambe Yamko",   "region": "Papua",              "category": _LD, "bpm": 128, "root": 60, "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
-    {"id": "bungong_jeumpa", "melody": "bungong_jeumpa", "title": "Bungong Jeumpa",      "region": "Aceh",               "category": _LD, "bpm": 96,  "root": 57, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "sajojo",         "melody": "sajojo",         "title": "Sajojo",              "region": "Papua",              "category": _LD, "bpm": 124, "root": 60, "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
-    {"id": "cublak_suweng",  "melody": "cublak_suweng",  "title": "Cublak-Cublak Suweng","region": "Jawa Tengah",        "category": _LA, "bpm": 116, "root": 60, "groove": "edm",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Normal", "Hard"]},
-    {"id": "gundul_pacul",   "melody": "gundul_pacul",   "title": "Gundul-Gundul Pacul", "region": "Jawa Tengah",        "category": _LA, "bpm": 120, "root": 60, "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
-    {"id": "anak_kambing",   "melody": "anak_kambing",   "title": "Anak Kambing Saya",   "region": "Nusa Tenggara Timur","category": _LA, "bpm": 112, "root": 62, "groove": "pop",     "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "apuse",          "melody": "apuse",          "title": "Apuse",               "region": "Papua",              "category": _LD, "bpm": 88,  "root": 60, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "ampar_pisang",   "melody": "ampar_pisang",   "title": "Ampar-Ampar Pisang",  "region": "Kalimantan Selatan", "category": _LD, "bpm": 100, "root": 60, "groove": "pop",  "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "soleram",        "melody": "soleram",        "title": "Soleram",             "region": "Riau",               "category": _LD, "bpm": 78,  "root": 60, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "rasa_sayange",   "melody": "rasa_sayange",   "title": "Rasa Sayange",        "region": "Maluku",             "category": _LD, "bpm": 92,  "root": 60, "groove": "pop",  "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "yamko",          "melody": "yamko",          "title": "Yamko Rambe Yamko",   "region": "Papua",              "category": _LD, "bpm": 112, "root": 60, "groove": "pop",  "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "bungong_jeumpa", "melody": "bungong_jeumpa", "title": "Bungong Jeumpa",      "region": "Aceh",               "category": _LD, "bpm": 86,  "root": 57, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "sajojo",         "melody": "sajojo",         "title": "Sajojo",              "region": "Papua",              "category": _LD, "bpm": 116, "root": 60, "groove": "koplo","lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "cublak_suweng",  "melody": "cublak_suweng",  "title": "Cublak-Cublak Suweng","region": "Jawa Tengah",        "category": _LA, "bpm": 100, "root": 60, "groove": "pop",  "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "gundul_pacul",   "melody": "gundul_pacul",   "title": "Gundul-Gundul Pacul", "region": "Jawa Tengah",        "category": _LA, "bpm": 100, "root": 60, "groove": "pop",  "lead": "pluck", "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "anak_kambing",   "melody": "anak_kambing",   "title": "Anak Kambing Saya",   "region": "Nusa Tenggara Timur","category": _LA, "bpm": 96,  "root": 62, "groove": "pop",  "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal"]},
 ]
 
 # chords that could harmonise a melody, scored by how many melody notes they contain
@@ -474,12 +474,12 @@ def build_song_melody(spec, write=False):
         if sec != "outro":
             for st in range(spb):
                 t = t_bar + st * step
-                if st in groove.get("kick", []): mix(buf, render_drum("kick"), t, 0.78)
-                if st in groove.get("snare", []) and not light: mix(buf, render_drum("snare"), t, 0.6)
-                if st in groove.get("clap", []) and full: mix(buf, render_drum("clap"), t, 0.5)
+                if st in groove.get("kick", []): mix(buf, render_drum("kick"), t, 0.55)
+                if st in groove.get("snare", []) and not light: mix(buf, render_drum("snare"), t, 0.42)
+                if st in groove.get("clap", []) and full: mix(buf, render_drum("clap"), t, 0.4)
                 if st in groove.get("rim", []) and not light: mix(buf, render_drum("rim"), t, 0.34)
                 if st in groove.get("hatC", []) and (full or light or st % 4 == 0):
-                    mix(buf, render_drum("hatC"), t, 0.30 if not light else 0.20)
+                    mix(buf, render_drum("hatC"), t, 0.20 if not light else 0.14)
                 if st in groove.get("hatO", []) and full: mix(buf, render_drum("hatO"), t, 0.34)
         # chord + bass (only where we have a chord = note-bearing bars)
         ch = chord_of.get(gbar)
@@ -504,7 +504,7 @@ def build_song_melody(spec, write=False):
                 t = t_bar + offset * beat
                 pitch = midi + (12 if full else 0)
                 dur = beat * beats * 0.95
-                mix(buf, render_voice(spec["lead"], midi_to_hz(pitch), dur), t, 0.6 if full else 0.42)
+                mix(buf, render_voice(spec["lead"], midi_to_hz(pitch), dur), t, 0.72 if full else 0.55)  # melody-forward
                 if spec.get("flavor") and full and beats >= 1.0:
                     mix(buf, render_voice(spec["flavor"], midi_to_hz(pitch + 12), beat * beats * 0.8), t, 0.13)
                 # chart note
