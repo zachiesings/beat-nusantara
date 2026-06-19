@@ -8,6 +8,7 @@ import '../../state/game_state.dart';
 import '../../widgets/bouncy.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/holo.dart';
+import '../../widgets/mascot.dart';
 import '../../widgets/pulse.dart';
 import '../../widgets/shapes.dart';
 import '../../widgets/soft_card.dart';
@@ -42,6 +43,8 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
+                    _greeting(gs),
+                    const SizedBox(height: 14),
                     _hero(context, featured),
                     const SizedBox(height: 14),
                     _continueCard(context, gs, continueSong),
@@ -162,6 +165,46 @@ class HomeScreen extends StatelessWidget {
           Text('$coins', style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.gold)),
         ]),
       );
+
+  // -------- Melodi greeting: the animated mascot welcomes the player --------
+  Widget _greeting(GameState gs) {
+    // a friendly, rotating coach line from Melodi (varies with the day & coins)
+    const tips = [
+      'Yuk, panaskan jarimu — satu lagu dulu! 🔥',
+      'Ketuk pas di garis biar dapat PERFECT ✨',
+      'Kejar combo panjang buat masuk FEVER! ⚡',
+      'Selesaikan misi harian, kumpulin koin 🪙',
+    ];
+    final tip = tips[(gs.level + gs.coins) % tips.length];
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 6, 14, 6),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.gold.withValues(alpha: 0.16), AppColors.surface.withValues(alpha: 0.45)],
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        children: [
+          const Mascot(size: 76, mood: Mood.cheer, color: AppColors.gold),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Melodi',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.gold)),
+                const SizedBox(height: 2),
+                Text(tip,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textHi, height: 1.25)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // -------- hero: the event-feeling featured card --------
   Widget _hero(BuildContext context, Song featured) {

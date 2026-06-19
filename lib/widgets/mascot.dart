@@ -2,9 +2,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../app/theme.dart';
 
-/// "Melodi" — the Beat Nusantara rhythm spirit. An original, minimal, glowing
-/// beat-creature (no copyrighted characters). Gentle bob; a few expressions for
-/// onboarding, empty states, missions and rewards. Painted, so it's tiny & sharp.
+/// "Melodi" — the Beat Nusantara rhythm spirit. An original, glowing beat-creature
+/// (no copyrighted characters), now a *lively* character: gentle breathing bob,
+/// a soft body sway, little waving arms, periodic eye-blinks, a wayang-style
+/// shadow for depth, and a few mood expressions. All painted, so it stays tiny,
+/// sharp and free of image assets.
 enum Mood { happy, cheer, wink, sleepy }
 
 class Mascot extends StatefulWidget {
@@ -12,12 +14,17 @@ class Mascot extends StatefulWidget {
   final Mood mood;
   final Color color;
   final bool animate;
+
+  /// Little waving arms + wayang shadow. On by default; turn off for a flatter
+  /// emblem (e.g. very small inline uses).
+  final bool arms;
   const Mascot({
     super.key,
     this.size = 96,
     this.mood = Mood.happy,
     this.color = AppColors.cyan,
     this.animate = true,
+    this.arms = true,
   });
 
   @override
@@ -25,9 +32,11 @@ class Mascot extends StatefulWidget {
 }
 
 class _MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
+  // One looping clock (non-reversing) so we can derive several independent
+  // motions (bob / sway / blink / arm-wave) at different frequencies.
   late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))
-        ..repeat(reverse: true);
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 3600))
+        ..repeat();
 
   @override
   void dispose() {
@@ -41,13 +50,21 @@ class _MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
       width: widget.size,
       height: widget.size,
       child: AnimatedBuilder(
-        animation: widget.animate ? _c : const AlwaysStoppedAnimation(0.5),
+        animation: widget.animate ? _c : const AlwaysStoppedAnimation(0.0),
         builder: (_, __) {
-          final v = widget.animate ? _c.value : 0.5;
-          final bob = math.sin(v * math.pi) * widget.size * 0.04;
+          final t = widget.animate ? _c.value : 0.0;
+          final s = widget.size;
+          // breathing bob + tiny sway
+          final bob = math.sin(t * 2 * math.pi) * s * 0.035;
+          final sway = math.sin(t * 2 * math.pi * 0.5) * 0.05; // radians
           return Transform.translate(
             offset: Offset(0, bob),
-            child: CustomPaint(painter: _MascotPainter(widget.mood, widget.color, v)),
+            child: Transform.rotate(
+              angle: widget.mood == Mood.sleepy ? sway * 0.4 : sway,
+              child: CustomPaint(
+                painter: _MascotPainter(widget.mood, widget.color, t, widget.arms),
+              ),
+            ),
           );
         },
       ),
@@ -58,13 +75,32 @@ class _MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
 class _MascotPainter extends CustomPainter {
   final Mood mood;
   final Color color;
-  final double t;
-  _MascotPainter(this.mood, this.color, this.t);
+  final double t; // 0..1 loop
+  final bool arms;
+  _MascotPainter(this.mood, this.color, this.t, this.arms);
 
   @override
   void paint(Canvas canvas, Size size) {
     final s = size.width;
     final cx = s / 2;
+
+    // blink: eyes shut briefly ~twice per loop (skip when sleepy = already shut)
+    final blinkPhase = (t * 2.0) % 1.0;
+    final blinking = mood != Mood.sleepy && blinkPhase < 0.06;
+    // arm wave swing
+    final swing = math.sin(t * 2 * math.pi * 1.0);
+
+    // ---- wayang-style shadow (offset silhouette, painted first) ----
+    if (arms) {
+      final shadowRect = Rect.fromCenter(
+          center: Offset(cx + s * 0.05, s * 0.62), width: s * 0.74, height: s * 0.7);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(shadowRect, Radius.circular(s * 0.32)),
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.18)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      );
+    }
 
     // glow halo
     canvas.drawCircle(
@@ -88,6 +124,26 @@ class _MascotPainter extends CustomPainter {
         Paint()..color = bulbColor.withValues(alpha: 0.9)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
     canvas.drawCircle(bulb, s * 0.045, Paint()..color = bulbColor);
 
+    // ---- arms (drawn behind body so shoulders tuck in) ----
+    if (arms) {
+      final armPaint = Paint()
+        ..color = Color.lerp(color, AppColors.violet, 0.25)!
+        ..strokeWidth = s * 0.066
+        ..strokeCap = StrokeCap.round;
+      // cheer = both arms up; otherwise gentle alternating wave
+      final upL = mood == Mood.cheer ? -1.0 : swing;
+      final upR = mood == Mood.cheer ? -1.0 : -swing;
+      final shoulderY = s * 0.56;
+      canvas.drawLine(Offset(cx - s * 0.32, shoulderY),
+          Offset(cx - s * 0.40, shoulderY + upL * s * 0.14 - s * 0.02), armPaint);
+      canvas.drawLine(Offset(cx + s * 0.32, shoulderY),
+          Offset(cx + s * 0.40, shoulderY + upR * s * 0.14 - s * 0.02), armPaint);
+      // little hand dots
+      final hand = Paint()..color = Color.lerp(color, Colors.white, 0.3)!;
+      canvas.drawCircle(Offset(cx - s * 0.40, shoulderY + upL * s * 0.14 - s * 0.02), s * 0.05, hand);
+      canvas.drawCircle(Offset(cx + s * 0.40, shoulderY + upR * s * 0.14 - s * 0.02), s * 0.05, hand);
+    }
+
     // body — rounded blob with gradient
     final bodyRect = Rect.fromCenter(center: Offset(cx, s * 0.58), width: s * 0.74, height: s * 0.7);
     final body = RRect.fromRectAndRadius(bodyRect, Radius.circular(s * 0.32));
@@ -110,6 +166,12 @@ class _MascotPainter extends CustomPainter {
           ..strokeWidth = s * 0.05
           ..strokeCap = StrokeCap.round);
 
+    // a small batik "kawung" dot motif on the belly → traditional touch
+    final motif = Paint()..color = Colors.white.withValues(alpha: 0.14);
+    for (final d in const [Offset(0, 0.0), Offset(-0.12, 0.06), Offset(0.12, 0.06), Offset(0, 0.13)]) {
+      canvas.drawCircle(Offset(cx + d.dx * s, s * 0.72 + d.dy * s), s * 0.012, motif);
+    }
+
     // cheeks
     final blush = Paint()..color = AppColors.pink.withValues(alpha: 0.5);
     canvas.drawCircle(Offset(cx - s * 0.22, s * 0.64), s * 0.05, blush);
@@ -126,7 +188,15 @@ class _MascotPainter extends CustomPainter {
       ..strokeWidth = s * 0.03
       ..strokeCap = StrokeCap.round;
 
+    void blinkLine(double ex) {
+      canvas.drawLine(Offset(ex - s * 0.06, eyeY), Offset(ex + s * 0.06, eyeY), line);
+    }
+
     void roundEye(double ex) {
+      if (blinking) {
+        blinkLine(ex);
+        return;
+      }
       canvas.drawCircle(Offset(ex, eyeY), s * 0.075, white);
       canvas.drawCircle(Offset(ex, eyeY), s * 0.042, dark);
       canvas.drawCircle(Offset(ex - s * 0.014, eyeY - s * 0.016), s * 0.016, white);
@@ -168,15 +238,30 @@ class _MascotPainter extends CustomPainter {
         sleepyEye(lx);
         sleepyEye(rx);
         canvas.drawCircle(Offset(cx, s * 0.66), s * 0.02, dark);
+        // floating "z" to read as sleepy
+        final zP = Paint()
+          ..color = AppColors.textLo.withValues(alpha: 0.7)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = s * 0.018;
+        final zx = cx + s * 0.34, zy = s * 0.2 - math.sin(t * 2 * math.pi) * s * 0.03;
+        canvas.drawPath(
+          Path()
+            ..moveTo(zx, zy)
+            ..lineTo(zx + s * 0.06, zy)
+            ..lineTo(zx, zy + s * 0.06)
+            ..lineTo(zx + s * 0.06, zy + s * 0.06),
+          zP,
+        );
     }
   }
 
   @override
-  bool shouldRepaint(covariant _MascotPainter old) => old.mood != mood || old.t != t || old.color != color;
+  bool shouldRepaint(covariant _MascotPainter old) =>
+      old.mood != mood || old.t != t || old.color != color || old.arms != arms;
 }
 
 /// Mascot + a charming speech bubble. Great for onboarding / empty states /
-/// missions: "Yuk main lagi!", "Ayo kejar Full Combo!".
+/// missions / the home greeting: "Yuk main lagi!", "Ayo kejar Full Combo!".
 class MascotBubble extends StatelessWidget {
   final String text;
   final Mood mood;
