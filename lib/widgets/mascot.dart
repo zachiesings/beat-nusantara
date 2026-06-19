@@ -111,18 +111,42 @@ class _MascotPainter extends CustomPainter {
             .createShader(Rect.fromCircle(center: Offset(cx, s * 0.55), radius: s * 0.5)),
     );
 
-    // antenna with glowing note bulb
-    final bulb = Offset(cx, s * 0.10);
+    // antenna topped with a GUNUNGAN (wayang kayon) crown — Nusantara identity
+    final crownColor = mood == Mood.sleepy ? AppColors.textLo : AppColors.gold;
     canvas.drawLine(
-        Offset(cx, s * 0.28),
-        bulb,
+        Offset(cx, s * 0.30),
+        Offset(cx, s * 0.23),
         Paint()
-          ..color = Colors.white.withValues(alpha: 0.8)
+          ..color = Colors.white.withValues(alpha: 0.7)
           ..strokeWidth = s * 0.02);
-    final bulbColor = mood == Mood.sleepy ? AppColors.textLo : AppColors.gold;
-    canvas.drawCircle(bulb, s * 0.06,
-        Paint()..color = bulbColor.withValues(alpha: 0.9)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
-    canvas.drawCircle(bulb, s * 0.045, Paint()..color = bulbColor);
+    final crownC = Offset(cx, s * 0.12);
+    final cw = s * 0.12, ch = s * 0.14;
+    final crown = Path()
+      ..moveTo(crownC.dx, crownC.dy + ch)
+      ..quadraticBezierTo(crownC.dx - cw * 1.25, crownC.dy, crownC.dx, crownC.dy - ch)
+      ..quadraticBezierTo(crownC.dx + cw * 1.25, crownC.dy, crownC.dx, crownC.dy + ch)
+      ..close();
+    canvas.drawPath(
+        crown,
+        Paint()
+          ..color = crownColor.withValues(alpha: 0.55)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+    canvas.drawPath(
+        crown,
+        Paint()
+          ..shader = const LinearGradient(
+            colors: [AppColors.goldLt, AppColors.gold, AppColors.coral],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ).createShader(Rect.fromCenter(center: crownC, width: cw * 2.5, height: ch * 2)));
+    canvas.drawPath(
+        crown,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = s * 0.012
+          ..color = AppColors.goldLt);
+    // little maroon "isen" jewel inside the gunungan
+    canvas.drawCircle(crownC, s * 0.022, Paint()..color = AppColors.maroon.withValues(alpha: 0.85));
 
     // ---- arms (drawn behind body so shoulders tuck in) ----
     if (arms) {
@@ -170,6 +194,24 @@ class _MascotPainter extends CustomPainter {
     final motif = Paint()..color = Colors.white.withValues(alpha: 0.14);
     for (final d in const [Offset(0, 0.0), Offset(-0.12, 0.06), Offset(0.12, 0.06), Offset(0, 0.13)]) {
       canvas.drawCircle(Offset(cx + d.dx * s, s * 0.72 + d.dy * s), s * 0.012, motif);
+    }
+
+    // songket gold band + tumpal teeth across the waist (only when big enough)
+    if (s > 70) {
+      final bandY = s * 0.84;
+      canvas.drawLine(Offset(cx - s * 0.28, bandY), Offset(cx + s * 0.28, bandY),
+          Paint()..color = AppColors.goldLt.withValues(alpha: 0.5)..strokeWidth = s * 0.018);
+      for (double dx = -0.22; dx <= 0.221; dx += 0.073) {
+        final tx = cx + dx * s;
+        canvas.drawPath(
+          Path()
+            ..moveTo(tx - s * 0.022, bandY - s * 0.006)
+            ..lineTo(tx, bandY - s * 0.04)
+            ..lineTo(tx + s * 0.022, bandY - s * 0.006)
+            ..close(),
+          Paint()..color = AppColors.gold.withValues(alpha: 0.6),
+        );
+      }
     }
 
     // cheeks

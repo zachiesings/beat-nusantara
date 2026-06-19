@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../app/theme.dart';
+import '../../widgets/mascot.dart';
 
 /// The in-game HUD, extracted as a pure widget so BOTH the live gameplay screen
 /// and the deterministic screenshot route render the *same* component. Takes
@@ -67,6 +68,14 @@ class GameHud extends StatelessWidget {
                   Text('${accuracy.toStringAsFixed(1)}%',
                       style: const TextStyle(color: AppColors.textLo, fontSize: 11)),
                 ],
+              ),
+              const SizedBox(width: 6),
+              // Melodi cheers you on — lights up (cheer) during FEVER
+              Mascot(
+                size: 44,
+                mood: feverActive ? Mood.cheer : Mood.happy,
+                color: feverActive ? AppColors.gold : AppColors.cyan,
+                arms: false,
               ),
             ],
           ),
