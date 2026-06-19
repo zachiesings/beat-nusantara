@@ -1,365 +1,650 @@
 #!/usr/bin/env python3
 """
-Beat Nusantara — procedural asset generator.
+Beat Nusantara — procedural MUSIC + chart generator (v2, "real-song" engine).
 
-Generates 100% ORIGINAL, license-safe audio (pure-stdlib synthesis) together with
-the gameplay chart that is *beat-aligned to that exact audio*. One source of truth:
-the same beat grid that places audible lead "plucks" also emits the tap/hold/flick
-notes — so when the player taps on the note, it lands on the music.
+100% ORIGINAL, license-safe audio synthesised from pure stdlib. Unlike v1 (which
+just walked a pentatonic scale over a kick), v2 composes actual *songs*:
 
-Outputs:
+  • chord progressions (pop / dangdut-koplo / EDM / city-pop / phonk / lo-fi)
+  • song structure  intro → verse → chorus → bridge → chorus → outro
+  • a repeating melodic HOOK (motif) in the chorus so it's catchy
+  • layered arrangement: sub-bass, bassline, chord stabs/pads, supersaw lead,
+    plus a full drum kit (kick / snare / clap / closed+open hi-hat)
+  • per-genre grooves, Indonesian-dominant (koplo, gamelan, angklung, suling
+    timbres) with worldwide flavours (EDM, K/J-pop, phonk) mixed in.
+
+The gameplay chart is generated FROM the lead hook, so tapping a note lands on
+the melody. A 2-bar INTRO (no notes) gives every chart a proper lead-in, so the
+first note can never reach the hit-line before the player can react.
+
+Outputs (committed to the repo):
   assets/audio/songs/<id>.wav      (mono 22050 Hz 16-bit)
-  assets/audio/sfx/*.wav           (hit / perfect / miss feedback)
-  assets/charts/<id>__<diff>.json  (chart/beatmap consumed by chart_loader.dart)
+  assets/audio/sfx/*.wav , bgm/menu_loop.wav
+  assets/charts/<id>__<diff>.json
+  tool/_generated_manifest.json    (durations + note counts; fed into manifest)
 
-No external packages required (uses `wave`, `struct`, `math`, `random`, `json`).
-Re-run anytime:  python3 tool/generate_assets.py
+Pure stdlib (wave/struct/math/random/zlib). Slow path is mitigated by a
+one-shot voice RENDER CACHE — repeated notes are synthesised once and blitted.
+
+Usage:
+  python3 tool/generate_assets.py                 # everything
+  python3 tool/generate_assets.py senja_jakarta   # one song (for iteration)
+  python3 tool/generate_assets.py --songs-only    # skip sfx/menu
 """
-import json, math, os, random, struct, wave, zlib
+import json, math, os, random, struct, sys, wave, zlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SR = 22050  # sample rate
+SR = 22050
 
-# ----------------------------------------------------------------------------
-# Low-level synthesis (pure python, additive + simple envelopes)
-# ----------------------------------------------------------------------------
+# ============================================================================
+# Low-level synthesis
+# ============================================================================
 
-def _osc(t, freq, kind):
-    p = 2 * math.pi * freq * t
-    if kind == "sine":
-        return math.sin(p)
-    if kind == "tri":
-        return (2 / math.pi) * math.asin(math.sin(p))
-    if kind == "square":
-        return 1.0 if math.sin(p) >= 0 else -1.0
-    if kind == "saw":
-        x = (freq * t) % 1.0
-        return 2 * x - 1
-    return math.sin(p)
+def _saw(ph):   return 2.0 * (ph - math.floor(ph + 0.5))
+def _square(ph):return 1.0 if (ph % 1.0) < 0.5 else -1.0
+def _tri(ph):   return 2.0 * abs(_saw(ph)) - 1.0
+def _sine(ph):  return math.sin(2 * math.pi * ph)
 
+def midi_to_hz(m): return 440.0 * (2 ** ((m - 69) / 12.0))
 
-def add_tone(buf, start_s, dur_s, freq, vol=0.3, kind="tri", attack=0.005, release=0.08):
-    """Mix a single enveloped tone into the float buffer in-place."""
-    i0 = int(start_s * SR)
-    n = int(dur_s * SR)
-    a = max(1, int(attack * SR))
-    r = max(1, int(release * SR))
+def _adsr(n, a, d, s, r):
+    """Per-sample ADSR envelope of length n (samples)."""
+    a = max(1, int(a * SR)); d = max(1, int(d * SR)); r = max(1, int(r * SR))
+    env = [0.0] * n
     for i in range(n):
-        idx = i0 + i
-        if idx < 0 or idx >= len(buf):
-            continue
-        t = i / SR
         if i < a:
-            env = i / a
-        elif i > n - r:
-            env = max(0.0, (n - i) / r)
+            env[i] = i / a
+        elif i < a + d:
+            env[i] = 1.0 - (1.0 - s) * (i - a) / d
+        elif i < n - r:
+            env[i] = s
         else:
-            env = 1.0
-        buf[idx] += vol * env * _osc(t, freq, kind)
+            env[i] = s * max(0.0, (n - i) / r)
+    return env
 
+def _lowpass(buf, alpha):
+    """Cheap one-pole low-pass in place (alpha 0..1, lower = darker)."""
+    y = 0.0
+    for i in range(len(buf)):
+        y += alpha * (buf[i] - y)
+        buf[i] = y
+    return buf
 
-def add_kick(buf, start_s, vol=0.55):
-    """Punchy sine kick with pitch drop."""
-    i0 = int(start_s * SR)
-    n = int(0.16 * SR)
+# ---- voice render cache: synth each unique (instrument,freq,dur) once --------
+_VOICE_CACHE = {}
+
+def render_voice(inst, freq, dur):
+    key = (inst, round(freq, 1), round(dur, 3))
+    cached = _VOICE_CACHE.get(key)
+    if cached is not None:
+        return cached
+    out = _render_voice(inst, freq, dur)
+    _VOICE_CACHE[key] = out
+    return out
+
+def _render_voice(inst, freq, dur):
+    n = max(1, int(dur * SR))
+    buf = [0.0] * n
+    sp = freq / SR  # phase increment per sample
+
+    if inst == "sub":  # deep sine sub-bass
+        env = _adsr(n, 0.006, 0.05, 0.85, 0.08)
+        ph = 0.0
+        for i in range(n):
+            buf[i] = 0.9 * env[i] * _sine(ph); ph += sp
+        return buf
+
+    if inst == "bass":  # round saw bass, low-passed
+        env = _adsr(n, 0.005, 0.06, 0.7, 0.07)
+        ph = 0.0
+        for i in range(n):
+            buf[i] = env[i] * (0.7 * _saw(ph) + 0.5 * _sine(ph)); ph += sp
+        _lowpass(buf, 0.18)
+        return buf
+
+    if inst == "pluck":  # short decaying tri/saw — koplo/pop lead body
+        env = _adsr(n, 0.004, 0.10, 0.0, 0.06)
+        ph = 0.0
+        for i in range(n):
+            buf[i] = env[i] * (0.6 * _tri(ph) + 0.25 * _saw(ph * 2)); ph += sp
+        return buf
+
+    if inst == "lead":  # bright supersaw (detuned) lead for choruses
+        env = _adsr(n, 0.006, 0.08, 0.75, 0.09)
+        dets = (0.994, 1.0, 1.006)
+        ph = [0.0, 0.0, 0.0]
+        for i in range(n):
+            s = 0.0
+            for k, dt in enumerate(dets):
+                s += _saw(ph[k]); ph[k] += sp * dt
+            buf[i] = env[i] * 0.34 * s
+        _lowpass(buf, 0.5)
+        return buf
+
+    if inst == "stab":  # plucky chord-stab voice (one note of a chord)
+        env = _adsr(n, 0.004, 0.12, 0.35, 0.10)
+        ph = 0.0
+        for i in range(n):
+            buf[i] = env[i] * (0.5 * _saw(ph) + 0.3 * _square(ph)); ph += sp
+        _lowpass(buf, 0.4)
+        return buf
+
+    if inst == "pad":  # soft sustained pad (one note of a chord)
+        env = _adsr(n, 0.18, 0.2, 0.8, 0.4)
+        ph = 0.0; ph2 = 0.0
+        for i in range(n):
+            buf[i] = env[i] * 0.4 * (_sine(ph) + 0.5 * _sine(ph2)); ph += sp; ph2 += sp * 2
+        return buf
+
+    if inst == "bell":  # gamelan/angklung struck-metal — inharmonic partials
+        ratios = (1.0, 2.76, 5.40, 8.93)
+        env = [math.exp(-i / SR * 7.0) for i in range(n)]
+        for i in range(n):
+            t = i / SR; s = 0.0
+            for r in ratios:
+                s += math.sin(2 * math.pi * freq * r * t)
+            buf[i] = env[i] * 0.22 * s / len(ratios)
+        return buf
+
+    if inst == "flute":  # suling-ish breathy sine lead
+        env = _adsr(n, 0.04, 0.05, 0.8, 0.12)
+        ph = 0.0
+        for i in range(n):
+            vib = 1.0 + 0.006 * math.sin(2 * math.pi * 5.0 * i / SR)
+            buf[i] = env[i] * 0.5 * (_sine(ph) + 0.12 * _sine(ph * 2)); ph += sp * vib
+        return buf
+
+    # default fallback
+    env = _adsr(n, 0.01, 0.1, 0.4, 0.1); ph = 0.0
     for i in range(n):
-        idx = i0 + i
-        if idx < 0 or idx >= len(buf):
-            continue
-        t = i / SR
-        f = 120 * math.exp(-t * 22) + 45
-        env = math.exp(-t * 16)
-        buf[idx] += vol * env * math.sin(2 * math.pi * f * t)
+        buf[i] = env[i] * 0.4 * _tri(ph); ph += sp
+    return buf
 
+# ---- drums (rendered once, cached) -----------------------------------------
+_DRUM_CACHE = {}
 
-def add_hat(buf, start_s, vol=0.12):
-    """Short noise burst hi-hat."""
-    i0 = int(start_s * SR)
-    n = int(0.04 * SR)
-    for i in range(n):
-        idx = i0 + i
-        if idx < 0 or idx >= len(buf):
-            continue
-        env = math.exp(-i / n * 6)
-        buf[idx] += vol * env * (random.random() * 2 - 1)
+def render_drum(kind):
+    d = _DRUM_CACHE.get(kind)
+    if d is not None:
+        return d
+    d = _render_drum(kind)
+    _DRUM_CACHE[kind] = d
+    return d
 
+def _render_drum(kind):
+    if kind == "kick":
+        n = int(0.18 * SR); buf = [0.0] * n
+        for i in range(n):
+            t = i / SR
+            f = 115 * math.exp(-t * 26) + 48
+            buf[i] = math.exp(-t * 14) * math.sin(2 * math.pi * f * t)
+        return buf
+    if kind == "snare":
+        n = int(0.16 * SR); buf = [0.0] * n
+        for i in range(n):
+            t = i / SR
+            tone = 0.5 * math.sin(2 * math.pi * 190 * t) * math.exp(-t * 26)
+            noise = (random.random() * 2 - 1) * math.exp(-t * 22)
+            buf[i] = 0.7 * (tone + noise)
+        _lowpass(buf, 0.7)
+        return buf
+    if kind == "clap":
+        n = int(0.16 * SR); buf = [0.0] * n
+        bursts = (0.0, 0.012, 0.024)
+        for i in range(n):
+            t = i / SR; s = 0.0
+            for b in bursts:
+                if t >= b:
+                    s += (random.random() * 2 - 1) * math.exp(-(t - b) * 40)
+            buf[i] = 0.5 * s
+        _lowpass(buf, 0.8)
+        return buf
+    if kind == "hatC":
+        n = int(0.035 * SR); buf = [0.0] * n
+        for i in range(n):
+            buf[i] = 0.4 * (random.random() * 2 - 1) * math.exp(-i / n * 5)
+        return buf
+    if kind == "hatO":
+        n = int(0.13 * SR); buf = [0.0] * n
+        for i in range(n):
+            buf[i] = 0.32 * (random.random() * 2 - 1) * math.exp(-i / n * 2.2)
+        return buf
+    if kind == "rim":
+        n = int(0.05 * SR); buf = [0.0] * n
+        for i in range(n):
+            t = i / SR
+            buf[i] = 0.4 * math.sin(2 * math.pi * 420 * t) * math.exp(-t * 60)
+        return buf
+    return [0.0]
 
-def add_metallic(buf, start_s, dur_s, freq, vol, ratios, decay, shimmer=0.0):
-    """Inharmonic struck-metal tone — gamelan bonang/saron/gong flavour.
-    Partials at non-integer ratios + optional beating shimmer."""
-    i0 = int(start_s * SR)
-    n = int(dur_s * SR)
-    norm = len(ratios) * (2 if shimmer > 0 else 1)
-    for i in range(n):
-        idx = i0 + i
-        if idx < 0 or idx >= len(buf):
-            continue
-        t = i / SR
-        env = math.exp(-t * decay)
-        s = 0.0
-        for r in ratios:
-            f = freq * r
-            s += math.sin(2 * math.pi * f * t)
-            if shimmer > 0:
-                s += math.sin(2 * math.pi * f * (1 + shimmer) * t)
-        buf[idx] += vol * env * (s / norm)
+# ---- mixing -----------------------------------------------------------------
 
+def mix(buf, voice, start_s, gain):
+    o = int(start_s * SR)
+    if o < 0:
+        voice = voice[-o:]; o = 0
+    L = len(voice)
+    end = o + L
+    if end > len(buf):
+        L = len(buf) - o; end = len(buf)
+        if L <= 0:
+            return
+        voice = voice[:L]
+    seg = buf[o:end]
+    buf[o:end] = [seg[i] + voice[i] * gain for i in range(L)]
 
 def write_wav(path, buf):
-    # soft-clip + normalize
     peak = max(1e-6, max(abs(x) for x in buf))
-    norm = 0.92 / peak if peak > 0.92 else 1.0
+    norm = 0.95 / peak if peak > 0.95 else 1.0
     frames = bytearray()
     for x in buf:
-        v = x * norm
-        v = math.tanh(v)  # gentle saturation
-        s = int(max(-1.0, min(1.0, v)) * 32767)
-        frames += struct.pack("<h", s)
+        v = math.tanh(x * norm * 1.05)
+        frames += struct.pack("<h", int(max(-1.0, min(1.0, v)) * 32767))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with wave.open(path, "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(SR)
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes(bytes(frames))
 
+# ============================================================================
+# Music theory
+# ============================================================================
 
-# ----------------------------------------------------------------------------
-# Musical helpers
-# ----------------------------------------------------------------------------
-
-def midi_to_hz(m):
-    return 440.0 * (2 ** ((m - 69) / 12))
-
-# scale degree sets (semitone offsets from root)
 SCALES = {
-    "minor_pent": [0, 3, 5, 7, 10],
-    "major_pent": [0, 2, 4, 7, 9],
-    "pelog_ish":  [0, 1, 3, 7, 8],     # gamelan-evoking (original, not a real tuning)
+    "major":      [0, 2, 4, 5, 7, 9, 11],
+    "minor":      [0, 2, 3, 5, 7, 8, 10],
     "dorian":     [0, 2, 3, 5, 7, 9, 10],
+    "major_pent": [0, 2, 4, 7, 9],
+    "minor_pent": [0, 3, 5, 7, 10],
+    "pelog_ish":  [0, 1, 3, 7, 8],   # gamelan-evoking (original, not a real tuning)
+}
+
+CHORD_Q = {
+    "maj":  [0, 4, 7], "min":  [0, 3, 7],
+    "maj7": [0, 4, 7, 11], "min7": [0, 3, 7, 10], "dom7": [0, 4, 7, 10],
+    "sus4": [0, 5, 7],
+}
+
+# progressions as (root-offset-from-tonic, quality), 1 chord per bar (looped)
+PROGRESSIONS = {
+    "pop":     [(0, "maj"), (7, "maj"), (9, "min"), (5, "maj")],          # I–V–vi–IV
+    "pop_emo": [(9, "min"), (5, "maj"), (0, "maj"), (7, "maj")],          # vi–IV–I–V
+    "citypop": [(0, "maj7"), (9, "min7"), (5, "maj7"), (7, "dom7")],
+    "kpop":    [(0, "maj"), (4, "min"), (5, "maj"), (7, "maj")],          # I–iii–IV–V
+    "dangdut": [(0, "min"), (10, "maj"), (8, "maj"), (7, "dom7")],        # Andalusian i–VII–VI–V
+    "koplo":   [(0, "min"), (5, "min"), (10, "maj"), (7, "dom7")],
+    "edm_min": [(0, "min"), (8, "maj"), (3, "maj"), (10, "maj")],         # i–VI–III–VII
+    "edm_maj": [(9, "min"), (5, "maj"), (0, "maj"), (7, "maj")],
+    "phonk":   [(0, "min"), (0, "min"), (8, "maj"), (10, "maj")],
+    "lofi":    [(0, "min7"), (5, "min7"), (10, "maj7"), (3, "maj7")],
+}
+
+# melodic hook templates. rhythm = sixteenth-step onsets in a 2-bar (32-step)
+# phrase; contour = relative scale-step movement applied across those onsets.
+HOOKS = [
+    {"rhythm": [0, 4, 8, 12, 16, 20, 24, 28],            "contour": [0, 2, 1, 3, 2, 4, 3, 1]},
+    {"rhythm": [0, 6, 8, 14, 16, 22, 24, 30],            "contour": [0, 1, 2, 1, 3, 2, 1, 0]},
+    {"rhythm": [0, 2, 4, 8, 12, 16, 20, 24, 28],         "contour": [4, 3, 2, 0, 1, 4, 3, 2, 0]},
+    {"rhythm": [0, 4, 6, 8, 12, 16, 18, 20, 24, 28, 30], "contour": [0, 1, 2, 3, 2, 0, 1, 2, 3, 4, 2]},
+    {"rhythm": [0, 3, 6, 8, 11, 16, 19, 22, 24, 27],     "contour": [0, 2, 4, 3, 1, 0, 2, 4, 3, 1]},  # syncopated
+]
+
+# drum grooves over one bar = 16 sixteenth steps. beats land on 0,4,8,12.
+GROOVES = {
+    "pop":     {"kick": [0, 8, 10], "snare": [4, 12], "hatC": [0,2,4,6,8,10,12,14], "hatO": [], "clap": []},
+    "edm":     {"kick": [0, 4, 8, 12], "snare": [], "hatC": [2,6,10,14], "hatO": [2,6,10,14], "clap": [4,12]},
+    "koplo":   {"kick": [0, 3, 6, 8, 11, 14], "snare": [4, 12], "hatC": [0,2,4,6,8,10,12,14], "hatO": [], "rim": [2,6,10,14]},
+    "dangdut": {"kick": [0, 6, 8, 11], "snare": [4, 12], "hatC": [0,2,4,6,8,10,12,14], "hatO": [], "rim": [3,7,10,14]},
+    "phonk":   {"kick": [0, 7], "snare": [8], "hatC": [0,2,4,6,8,10,12,14], "hatO": [], "clap": []},
+    "lofi":    {"kick": [0, 8, 10], "snare": [4, 12], "hatC": [0,3,4,7,8,11,12,15], "hatO": [], "clap": []},
+    "citypop": {"kick": [0, 8, 11], "snare": [4, 12], "hatC": [0,2,4,6,8,10,12,14], "hatO": [6,14], "clap": []},
+    "kpop":    {"kick": [0, 6, 8, 12], "snare": [], "hatC": [0,2,4,6,8,10,12,14], "hatO": [], "clap": [4,12]},
 }
 
 DIRS = ["left", "right", "up", "down"]
-
-
-# ----------------------------------------------------------------------------
-# Song definitions  (all fictional / original — no real songs or artists)
-# ----------------------------------------------------------------------------
-
-SONGS = [
-    # the 3 original demos (kept)
-    {"id": "senja_jakarta", "bpm": 88, "bars": 20, "root": 57, "scale": "minor_pent", "kind": "tri", "lanes": 4, "energy": 0.45, "diffs": ["Easy", "Normal"]},
-    {"id": "gamelan_pulse", "bpm": 124, "bars": 24, "root": 60, "scale": "pelog_ish", "kind": "square", "lanes": 4, "energy": 0.7, "diffs": ["Normal", "Hard"]},
-    {"id": "koplo_neon", "bpm": 140, "bars": 24, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 0.95, "diffs": ["Normal", "Hard", "Expert"]},
-    # 17 more (all original, license-safe) — ids match assets/song_manifest.json
-    {"id": "melati_senja", "bpm": 102, "bars": 16, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.55, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "hujan_neon", "bpm": 116, "bars": 16, "root": 62, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.6, "diffs": ["Normal", "Hard"]},
-    {"id": "sambal_bass", "bpm": 145, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 0.9, "diffs": ["Normal", "Hard"]},
-    {"id": "goyang_galaksi", "bpm": 128, "bars": 16, "root": 60, "scale": "dorian", "kind": "saw", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
-    {"id": "sasando_drift", "bpm": 120, "bars": 16, "root": 60, "scale": "pelog_ish", "kind": "tri", "lanes": 4, "energy": 0.65, "diffs": ["Normal", "Hard"]},
-    {"id": "angklung_arcade", "bpm": 130, "bars": 16, "root": 64, "scale": "major_pent", "kind": "square", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
-    {"id": "tokyo_kilat", "bpm": 150, "bars": 16, "root": 64, "scale": "major_pent", "kind": "saw", "lanes": 5, "energy": 0.9, "diffs": ["Normal", "Hard", "Expert"]},
-    {"id": "seoul_mirror", "bpm": 124, "bars": 16, "root": 57, "scale": "minor_pent", "kind": "square", "lanes": 4, "energy": 0.8, "diffs": ["Normal", "Hard"]},
-    {"id": "midnight_avenue", "bpm": 118, "bars": 16, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.6, "diffs": ["Normal", "Hard"]},
-    {"id": "concrete_flow", "bpm": 92, "bars": 16, "root": 55, "scale": "minor_pent", "kind": "square", "lanes": 4, "energy": 0.55, "diffs": ["Normal", "Hard"]},
-    {"id": "voltage", "bpm": 128, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 4, "energy": 0.85, "diffs": ["Normal", "Hard"]},
-    {"id": "deep_jakarta", "bpm": 122, "bars": 16, "root": 57, "scale": "minor_pent", "kind": "saw", "lanes": 4, "energy": 0.75, "diffs": ["Normal", "Hard"]},
-    {"id": "phonk_pasar", "bpm": 138, "bars": 16, "root": 55, "scale": "minor_pent", "kind": "square", "lanes": 5, "energy": 0.9, "diffs": ["Hard", "Expert"]},
-    {"id": "hyper_melati", "bpm": 160, "bars": 16, "root": 64, "scale": "major_pent", "kind": "saw", "lanes": 5, "energy": 0.95, "diffs": ["Hard", "Expert"]},
-    {"id": "ombak_tenang", "bpm": 80, "bars": 14, "root": 57, "scale": "minor_pent", "kind": "tri", "lanes": 4, "energy": 0.4, "diffs": ["Easy", "Normal"]},
-    {"id": "kopi_pagi", "bpm": 84, "bars": 14, "root": 60, "scale": "major_pent", "kind": "tri", "lanes": 4, "energy": 0.42, "diffs": ["Easy", "Normal"]},
-    {"id": "garuda_rising", "bpm": 174, "bars": 16, "root": 62, "scale": "dorian", "kind": "saw", "lanes": 5, "energy": 1.0, "diffs": ["Hard", "Expert"]},
-]
-
 DIFF_DENSITY = {"Easy": 0.5, "Normal": 0.72, "Hard": 0.9, "Expert": 1.0}
 
+# section plan: (name, bars). intro/outro carry NO chart notes. Sized so songs
+# land roughly in a 52–82s window regardless of tempo (slow songs get trimmed).
+def section_plan(bpm):
+    bar_s = 4 * 60.0 / bpm
+    full = [("intro", 2), ("verse", 8), ("chorus", 8), ("bridge", 4), ("verse", 4), ("chorus", 8), ("outro", 2)]
+    mid  = [("intro", 2), ("verse", 8), ("chorus", 8), ("verse", 4), ("chorus", 6), ("outro", 2)]
+    short = [("intro", 2), ("verse", 6), ("chorus", 8), ("chorus", 6), ("outro", 2)]
+    for plan in (full, mid, short):
+        if sum(b for _, b in plan) * bar_s <= 82:
+            return plan
+    return short
+
+# ============================================================================
+# Song specs — 20 originals. groove/progression chosen per vibe.
+# Indonesian-dominant (koplo/dangdut/gamelan/angklung) + worldwide (EDM/pop/phonk)
+# ============================================================================
+
+SONGS = [
+    {"id": "senja_jakarta",  "bpm": 90,  "root": 57, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.45, "diffs": ["Easy", "Normal"]},
+    {"id": "gamelan_pulse",  "bpm": 124, "root": 60, "scale": "pelog_ish",  "prog": "edm_min", "groove": "edm",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.72, "diffs": ["Normal", "Hard"]},
+    {"id": "koplo_neon",     "bpm": 140, "root": 62, "scale": "dorian",     "prog": "koplo",   "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 0.95, "diffs": ["Normal", "Hard", "Expert"]},
+    {"id": "melati_senja",   "bpm": 100, "root": 60, "scale": "major_pent", "prog": "pop_emo", "groove": "pop",     "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.55, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "hujan_neon",     "bpm": 116, "root": 62, "scale": "major",      "prog": "pop",     "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.62, "diffs": ["Normal", "Hard"]},
+    {"id": "sambal_bass",    "bpm": 145, "root": 62, "scale": "dorian",     "prog": "koplo",   "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 0.9,  "diffs": ["Normal", "Hard"]},
+    {"id": "goyang_galaksi", "bpm": 128, "root": 60, "scale": "minor",      "prog": "dangdut", "groove": "dangdut", "lead": "lead",  "flavor": "flute", "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
+    {"id": "sasando_drift",  "bpm": 118, "root": 60, "scale": "pelog_ish",  "prog": "edm_maj", "groove": "citypop", "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.65, "diffs": ["Normal", "Hard"]},
+    {"id": "angklung_arcade","bpm": 130, "root": 64, "scale": "major_pent", "prog": "pop",     "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
+    {"id": "tokyo_kilat",    "bpm": 150, "root": 64, "scale": "major",      "prog": "citypop", "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.9,  "diffs": ["Normal", "Hard", "Expert"]},
+    {"id": "seoul_mirror",   "bpm": 124, "root": 57, "scale": "minor",      "prog": "kpop",    "groove": "kpop",    "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.8,  "diffs": ["Normal", "Hard"]},
+    {"id": "midnight_avenue","bpm": 112, "root": 60, "scale": "major",      "prog": "citypop", "groove": "citypop", "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.6,  "diffs": ["Normal", "Hard"]},
+    {"id": "concrete_flow",  "bpm": 92,  "root": 55, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "pluck", "flavor": None,    "lanes": 4, "energy": 0.55, "diffs": ["Normal", "Hard"]},
+    {"id": "voltage",        "bpm": 128, "root": 62, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.85, "diffs": ["Normal", "Hard"]},
+    {"id": "deep_jakarta",   "bpm": 122, "root": 57, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 4, "energy": 0.75, "diffs": ["Normal", "Hard"]},
+    {"id": "phonk_pasar",    "bpm": 138, "root": 55, "scale": "minor",      "prog": "phonk",   "groove": "phonk",   "lead": "lead",  "flavor": "bell",  "lanes": 5, "energy": 0.9,  "diffs": ["Hard", "Expert"]},
+    {"id": "hyper_melati",   "bpm": 160, "root": 64, "scale": "major",      "prog": "kpop",    "groove": "edm",     "lead": "lead",  "flavor": None,    "lanes": 5, "energy": 0.95, "diffs": ["Hard", "Expert"]},
+    {"id": "ombak_tenang",   "bpm": 84,  "root": 57, "scale": "minor_pent", "prog": "lofi",    "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "energy": 0.4,  "diffs": ["Easy", "Normal"]},
+    {"id": "kopi_pagi",      "bpm": 88,  "root": 60, "scale": "major_pent", "prog": "pop_emo", "groove": "lofi",    "lead": "pluck", "flavor": "bell",  "lanes": 4, "energy": 0.42, "diffs": ["Easy", "Normal"]},
+    {"id": "garuda_rising",  "bpm": 172, "root": 62, "scale": "minor",      "prog": "edm_min", "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 5, "energy": 1.0,  "diffs": ["Hard", "Expert"]},
+]
+
+# ============================================================================
+# Song builder
+# ============================================================================
+
+def scale_pitch_ladder(root, scale, lo_oct, hi_oct):
+    out = []
+    for o in range(lo_oct, hi_oct + 1):
+        for s in scale:
+            out.append(root + 12 * o + s)
+    return sorted(set(out))
+
+def nearest_chord_tone(pitch, chord_pcs):
+    """Snap a midi pitch to the nearest pitch whose pitch-class is in the chord."""
+    best = pitch; bestd = 99
+    for dp in range(-4, 5):
+        if (pitch + dp) % 12 in chord_pcs:
+            if abs(dp) < bestd:
+                bestd = abs(dp); best = pitch + dp
+    return best
 
 def build_song(spec):
     bpm = spec["bpm"]
     beat = 60.0 / bpm
-    step = beat / 2.0           # eighth-note grid
-    bars = spec["bars"]
-    steps = bars * 8            # 8 eighths per 4/4 bar
-    total_s = steps * step + 1.0
+    step = beat / 4.0                 # sixteenth-note grid
+    spb = 16                          # steps per bar
+    sections = section_plan(bpm)
+    total_bars = sum(b for _, b in sections)
+    total_steps = total_bars * spb
+    total_s = total_steps * step + 1.2
     buf = [0.0] * int(total_s * SR)
+
     scale = SCALES[spec["scale"]]
     root = spec["root"]
     lanes = spec["lanes"]
-    rng = random.Random(zlib.crc32(spec["id"].encode()))  # stable across runs (not Python's randomized hash)
+    prog = PROGRESSIONS[spec["prog"]]
+    groove = GROOVES[spec["groove"]]
+    energy = spec["energy"]
+    rng = random.Random(zlib.crc32(spec["id"].encode()))
+    hook = HOOKS[zlib.crc32(spec["id"].encode()) % len(HOOKS)]
+    ladder = scale_pitch_ladder(root, scale, 1, 3)   # melody range
+    base_idx = len(ladder) // 2
 
-    # --- backing track: kick on the beat, hats on offbeats, bass on downbeats ---
-    for s in range(steps):
-        t = s * step
-        if s % 2 == 0:
-            add_kick(buf, t, vol=0.5 + 0.1 * spec["energy"])
-        else:
-            add_hat(buf, t, vol=0.10)
-        if s % 8 == 0:  # bar downbeat bass
-            bass_f = midi_to_hz(root - 12 + scale[(s // 8) % len(scale)])
-            add_tone(buf, t, beat * 1.5, bass_f, vol=0.34, kind="sine", release=0.25)
-
-    # --- lead melody + the chart notes share the SAME placement loop ---
     notes_by_diff = {d: [] for d in spec["diffs"]}
     prev_lane = 0
-    for s in range(steps):
-        t = s * step
-        # melodic pluck on most onsets (every step in busy songs, every other in chill)
-        place_lead = (s % 1 == 0) if spec["energy"] > 0.6 else (s % 2 == 0 or rng.random() < 0.35)
-        if not place_lead:
-            continue
-        deg = scale[(s * 2 + (s // 8)) % len(scale)]
-        octave = 12 * (1 + (1 if (s % 8) in (4, 6) else 0))
-        freq = midi_to_hz(root + octave + deg)
-        add_tone(buf, t, step * 0.9, freq, vol=0.26, kind=spec["kind"], release=0.10)
+    first_note_step = None
 
-        # lane chosen to flow (avoid big jumps), deterministic per step
-        lane = (prev_lane + 1 + (s % (lanes - 1))) % lanes
-        prev_lane = lane
-        start_ms = int(t * 1000)
+    bar_cursor = 0
+    for sec_name, sec_bars in sections:
+        for b in range(sec_bars):
+            bar = bar_cursor + b
+            chord_root_off, qual = prog[bar % len(prog)]
+            chord_root = root + chord_root_off
+            chord_ints = CHORD_Q[qual]
+            chord_pcs = set((chord_root + iv) % 12 for iv in chord_ints)
+            t_bar = bar * spb * step
 
-        # decide a base note type for this onset (shared design), then each
-        # difficulty subsamples by density so all charts stay musically aligned.
-        onset_type, extra = _pick_type(s, steps, rng, lanes, beat)
+            # ---------- drums (verse lighter than chorus for contrast) ----------
+            play_drums = sec_name not in ("outro",)
+            light = sec_name in ("intro", "bridge")
+            full = sec_name == "chorus"
+            for st in range(spb):
+                t = t_bar + st * step
+                if not play_drums:
+                    continue
+                if st in groove.get("kick", []):
+                    mix(buf, render_drum("kick"), t, 0.78)
+                if st in groove.get("snare", []) and not light:
+                    mix(buf, render_drum("snare"), t, 0.6)
+                if st in groove.get("clap", []) and full:
+                    mix(buf, render_drum("clap"), t, 0.5)
+                if st in groove.get("rim", []) and not light:
+                    mix(buf, render_drum("rim"), t, 0.34)
+                if st in groove.get("hatC", []):
+                    # verses use only the on-beat hats → less busy than chorus
+                    if full or light or st % 4 == 0:
+                        mix(buf, render_drum("hatC"), t, 0.30 if not light else 0.20)
+                if st in groove.get("hatO", []) and full:
+                    mix(buf, render_drum("hatO"), t, 0.34)
+            # one-bar fill/riser into every chorus (snare roll) for a "drop" feel
+            if sec_name == "chorus" and b == 0:
+                for j in range(8):
+                    tt = t_bar - (8 - j) * (step * 0.5)
+                    mix(buf, render_drum("snare"), tt, 0.18 + 0.05 * j)
 
-        for d in spec["diffs"]:
-            if rng.random() > DIFF_DENSITY[d]:
-                continue
-            note = {"type": onset_type, "lane": lane, "startTimeMs": start_ms}
-            if onset_type in ("hold", "slide"):
-                note["endTimeMs"] = start_ms + int(extra * 1000)
-            if onset_type == "flick":
-                note["direction"] = DIRS[s % len(DIRS)]
-            notes_by_diff[d].append(note)
-            # doubles only on higher difficulties
-            if onset_type == "double" and d in ("Hard", "Expert"):
-                notes_by_diff[d].append({
-                    "type": "tap", "lane": (lane + 2) % lanes, "startTimeMs": start_ms})
+            # ---------- bass ----------
+            bass_oct = -2
+            if sec_name != "outro":
+                if spec["groove"] in ("koplo", "dangdut"):
+                    # walking dangdut bass: root–fifth–octave–seventh on 8ths
+                    walk = [0, 7, 12, 10, 0, 7, 5, 7]
+                    for k in range(8):
+                        t = t_bar + k * (step * 2)
+                        bf = midi_to_hz(chord_root + 12 * bass_oct + walk[k % len(walk)])
+                        mix(buf, render_voice("bass", bf, beat * 0.5), t, 0.5)
+                elif spec["groove"] in ("edm", "phonk"):
+                    for st in groove.get("kick", []):
+                        t = t_bar + st * step
+                        bf = midi_to_hz(chord_root + 12 * bass_oct)
+                        dur = beat * (1.6 if spec["groove"] == "phonk" else 0.45)
+                        mix(buf, render_voice("sub", bf, dur), t, 0.6)
+                else:
+                    for k in (0, 4, 8, 12, 14):
+                        t = t_bar + k * step
+                        bf = midi_to_hz(chord_root + 12 * bass_oct)
+                        mix(buf, render_voice("bass", bf, beat * 0.5), t, 0.5)
+
+            # ---------- chords (stabs in chorus, pads elsewhere) ----------
+            if sec_name in ("verse", "chorus", "bridge"):
+                use_pad = sec_name != "chorus"
+                stab_steps = [0, 4, 8, 12] if sec_name == "chorus" else [0, 8]
+                for st in stab_steps:
+                    t = t_bar + st * step
+                    for iv in chord_ints:
+                        cf = midi_to_hz(chord_root + iv)
+                        if use_pad:
+                            mix(buf, render_voice("pad", cf, beat * 2.0), t, 0.16)
+                        else:
+                            mix(buf, render_voice("stab", cf, beat * 0.9), t, 0.2)
+
+            # ---------- lead hook + CHART (verse/chorus only) ----------
+            if sec_name in ("verse", "chorus"):
+                is_chorus = sec_name == "chorus"
+                phrase_pos = (bar % 2) * spb     # 2-bar hook phrase
+                for k, rstep in enumerate(hook["rhythm"]):
+                    if rstep < phrase_pos or rstep >= phrase_pos + spb:
+                        continue
+                    st = rstep - phrase_pos
+                    # verses thin the hook out for contrast
+                    if not is_chorus and (k % 2 == 1):
+                        continue
+                    t = t_bar + st * step
+                    strong = st % 4 == 0
+                    idx = base_idx + hook["contour"][k % len(hook["contour"])]
+                    idx = max(0, min(len(ladder) - 1, idx))
+                    pitch = ladder[idx] + (12 if is_chorus else 0)
+                    if strong:
+                        pitch = nearest_chord_tone(pitch, chord_pcs)
+                    pitch = min(pitch, root + 26)   # ceiling: keep lead from getting shrill
+                    lf = midi_to_hz(pitch)
+                    lead_inst = spec["lead"]
+                    note_dur = step * (3.0 if (strong and is_chorus) else 1.7)
+                    mix(buf, render_voice(lead_inst, lf, note_dur),
+                        t, 0.62 if is_chorus else 0.42)
+                    # optional regional flavor doubling (gamelan bell / suling)
+                    if spec["flavor"] and is_chorus and strong:
+                        mix(buf, render_voice(spec["flavor"], midi_to_hz(pitch + 12), step * 2),
+                            t, 0.14)
+
+                    # ----- chart note (drives gameplay = play the melody) -----
+                    global_step = bar * spb + st
+                    if first_note_step is None:
+                        first_note_step = global_step
+                    lane = (prev_lane + 1 + (k % (lanes - 1))) % lanes
+                    prev_lane = lane
+                    start_ms = int(t * 1000)
+                    ntype, hold_s = _chart_type(bar, st, is_chorus, lanes, beat, k)
+                    for d in spec["diffs"]:
+                        dens = DIFF_DENSITY[d]
+                        if not is_chorus:
+                            dens *= 0.82
+                        if rng.random() > dens:
+                            continue
+                        note = {"type": ntype, "lane": lane, "startTimeMs": start_ms}
+                        if ntype in ("hold", "slide"):
+                            note["endTimeMs"] = start_ms + int(hold_s * 1000)
+                        if ntype == "flick":
+                            note["direction"] = DIRS[k % len(DIRS)]
+                        notes_by_diff[d].append(note)
+                        if ntype == "double" and d in ("Hard", "Expert"):
+                            notes_by_diff[d].append({"type": "tap",
+                                "lane": (lane + 2) % lanes, "startTimeMs": start_ms})
+        bar_cursor += sec_bars
 
     write_wav(os.path.join(ROOT, "assets/audio/songs", spec["id"] + ".wav"), buf)
 
     charts = {}
     for d in spec["diffs"]:
         ns = sorted(notes_by_diff[d], key=lambda n: (n["startTimeMs"], n["lane"]))
-        chart = {
-            "songId": spec["id"],
-            "difficulty": d,
-            "bpm": bpm,
-            "offsetMs": 0,
-            "notes": ns,
-        }
+        chart = {"songId": spec["id"], "difficulty": d, "bpm": bpm, "offsetMs": 0, "notes": ns}
         fn = "%s__%s.json" % (spec["id"], d.lower())
         with open(os.path.join(ROOT, "assets/charts", fn), "w") as f:
             json.dump(chart, f, indent=1)
         charts[d] = "assets/charts/" + fn
-    return total_s, charts, {d: len(notes_by_diff[d]) for d in spec["diffs"]}
 
+    first_ms = int((first_note_step or 0) * step * 1000)
+    # chorus #1 start ms for song-preview
+    intro_verse_bars = 2 + 8
+    preview_ms = int(intro_verse_bars * spb * step * 1000)
+    return total_s, charts, {d: len(notes_by_diff[d]) for d in spec["diffs"]}, first_ms, preview_ms
 
-def _pick_type(s, steps, rng, lanes, beat):
-    """Deterministic-ish note type for variety. Returns (type, holdLenSeconds)."""
-    pos = s % 16
-    if pos == 0:
+def _chart_type(bar, st, is_chorus, lanes, beat, k):
+    if st == 0 and bar % 8 == 0:
         return "fever", 0
-    if pos in (7, 15):
+    if is_chorus and st == 0 and bar % 4 == 2:
         return "golden", 0
-    if pos in (4, 12):
-        return "hold", beat * 1.5
-    if pos in (10,):
+    if st == 8 and is_chorus:
+        return "hold", beat * 1.0
+    if st == 12 and k % 3 == 0:
         return "flick", 0
-    if pos in (2, 6) and lanes >= 5:
+    if is_chorus and lanes >= 5 and st in (4,) and bar % 2 == 1:
         return "double", 0
-    if pos in (8,):
-        return "slide", beat
     return "tap", 0
 
+# ============================================================================
+# SFX + menu (kept compact; gamelan-flavoured feedback)
+# ============================================================================
+
+def _bell_sfx(buf, t0, freq, vol, decay):
+    n = len(buf)
+    for i in range(int(t0 * SR), min(n, int(t0 * SR) + int(0.6 * SR))):
+        t = (i - t0 * SR) / SR
+        env = math.exp(-t * decay)
+        s = 0.0
+        for r in (1, 2.76, 5.40, 8.9):
+            s += math.sin(2 * math.pi * freq * r * t)
+        buf[i] += vol * env * s / 4
+
+def build_sfx():
+    def tone(buf, t0, dur, f, vol, kind):
+        v = render_voice({"tri": "pluck", "sine": "sub"}.get(kind, "pluck"), f, dur)
+        mix(buf, v, t0, vol)
+
+    hit = [0.0] * int(0.12 * SR); _bell_sfx(hit, 0, 880, 0.4, 24)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/hit.wav"), hit)
+
+    perfect = [0.0] * int(0.22 * SR)
+    _bell_sfx(perfect, 0.0, 1175, 0.4, 18); _bell_sfx(perfect, 0.05, 1568, 0.4, 18)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/perfect.wav"), perfect)
+
+    miss = [0.0] * int(0.16 * SR)
+    mix(miss, render_voice("bass", 150, 0.14), 0, 0.6)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/miss.wav"), miss)
+
+    combo = [0.0] * int(0.5 * SR); _bell_sfx(combo, 0, 740, 0.5, 11)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/combo.wav"), combo)
+
+    fever = [0.0] * int(1.7 * SR); _bell_sfx(fever, 0, 196, 0.5, 3.0); _bell_sfx(fever, 0.02, 392, 0.3, 5)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/fever.wav"), fever)
+
+    unlock = [0.0] * int(0.75 * SR)
+    for t0, f in [(0.0, 587), (0.09, 740), (0.19, 988)]:
+        _bell_sfx(unlock, t0, f, 0.4, 11)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/unlock.wav"), unlock)
+
+    win = [0.0] * int(2.0 * SR); _bell_sfx(win, 0, 220, 0.45, 2.2)
+    for t0, f in [(0.0, 494), (0.12, 659), (0.24, 784), (0.36, 988), (0.5, 1175)]:
+        _bell_sfx(win, t0, f, 0.3, 8)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/win.wav"), win)
+
+    lose = [0.0] * int(1.5 * SR); _bell_sfx(lose, 0, 174, 0.4, 2.6)
+    for t0, f in [(0.0, 494), (0.17, 415), (0.34, 349)]:
+        _bell_sfx(lose, t0, f, 0.26, 9)
+    write_wav(os.path.join(ROOT, "assets/audio/sfx/lose.wav"), lose)
+    print("✔ sfx (8)")
 
 def build_menu():
-    """Soft, loopable menu ambience — gentle pentatonic pads + sparse gamelan
-    plinks. Calm, premium, Nusantara. ~32s loop."""
     dur = 32.0
     buf = [0.0] * int(dur * SR)
     rng = random.Random(777)
-    root = 57  # A3
-    scale = SCALES["minor_pent"]
-    chords = [[0, 2, 4], [4, 1, 3], [0, 2, 3], [2, 4, 0]]
+    root = 57; scale = SCALES["minor_pent"]
+    prog = [(0, "min"), (8, "maj"), (5, "min"), (7, "maj")]
+    beat = 60.0 / 76
     for bar in range(int(dur / 4)):
         t0 = bar * 4.0
-        for deg in chords[bar % len(chords)]:
-            f = midi_to_hz(root + scale[deg % len(scale)])
-            add_tone(buf, t0, 4.3, f, vol=0.13, kind="sine", attack=0.7, release=1.4)
-            add_tone(buf, t0, 4.3, f * 2, vol=0.05, kind="sine", attack=0.9, release=1.4)
+        croot_off, q = prog[bar % len(prog)]
+        for iv in CHORD_Q[q]:
+            f = midi_to_hz(root + croot_off + iv)
+            mix(buf, render_voice("pad", f, 4.2), t0, 0.22)
     steps = int(dur / 2.0)
     for i in range(steps):
         if rng.random() < 0.5:
             t0 = i * 2.0 + rng.uniform(0.0, 0.25)
             deg = rng.randrange(len(scale))
-            f = midi_to_hz(root + 12 + scale[deg])
-            add_metallic(buf, t0, 1.6, f, 0.10, [1, 2.76, 5.40], decay=4, shimmer=0.003)
+            _bell_sfx(buf, t0, midi_to_hz(root + 12 + scale[deg]), 0.10, 4)
     write_wav(os.path.join(ROOT, "assets/audio/bgm/menu_loop.wav"), buf)
-    print("✔ menu_loop  %5.1fs (soft ambient loop)" % dur)
+    print("✔ menu_loop 32s")
 
+# ============================================================================
 
 def main():
-    # --- SFX (short, original) ---
-    hit = [0.0] * int(0.10 * SR)
-    add_tone(hit, 0, 0.09, 880, vol=0.5, kind="tri", release=0.05)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/hit.wav"), hit)
+    args = sys.argv[1:]
+    songs_only = "--songs-only" in args
+    ids = [a for a in args if not a.startswith("--")]
+    todo = [s for s in SONGS if not ids or s["id"] in ids]
 
-    perfect = [0.0] * int(0.18 * SR)
-    add_tone(perfect, 0, 0.08, 1175, vol=0.45, kind="tri", release=0.05)
-    add_tone(perfect, 0.05, 0.10, 1568, vol=0.45, kind="tri", release=0.06)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/perfect.wav"), perfect)
+    if not songs_only and not ids:
+        build_sfx(); build_menu()
 
-    miss = [0.0] * int(0.16 * SR)
-    add_tone(miss, 0, 0.14, 196, vol=0.5, kind="square", release=0.10)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/miss.wav"), miss)
+    frag = []
+    for spec in todo:
+        _VOICE_CACHE.clear()  # per-song cache (pitches differ) to bound memory
+        dur_s, charts, counts, first_ms, preview_ms = build_song(spec)
+        frag.append({"id": spec["id"], "durationMs": int(dur_s * 1000),
+                     "charts": charts, "noteCounts": counts,
+                     "firstNoteMs": first_ms, "previewStartTimeMs": preview_ms})
+        print("✔ %-16s %4dbpm %5.1fs first=%4dms notes=%s" % (
+            spec["id"], spec["bpm"], dur_s, first_ms, counts))
 
-    # combo milestone — bright bonang/saron "ting" (gamelan)
-    combo = [0.0] * int(0.5 * SR)
-    add_metallic(combo, 0, 0.46, 740, 0.5, [1, 2.76, 5.40, 8.9], decay=10, shimmer=0.004)
-    add_tone(combo, 0, 0.16, 1480, vol=0.22, kind="tri", release=0.1)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/combo.wav"), combo)
-
-    # fever activation — gong ageng (deep, long, shimmering) + bright accent
-    fever = [0.0] * int(1.7 * SR)
-    add_metallic(fever, 0, 1.6, 98, 0.55, [1, 2.4, 3.8, 5.9, 8.2], decay=2.2, shimmer=0.006)
-    add_metallic(fever, 0.02, 0.9, 392, 0.18, [1, 2.7, 5.1], decay=5, shimmer=0.012)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/fever.wav"), fever)
-
-    # unlock — bright ascending bonang flourish ("kebuka!")
-    unlock = [0.0] * int(0.75 * SR)
-    for t0, f in [(0.0, 587), (0.09, 740), (0.19, 988)]:
-        add_metallic(unlock, t0, 0.45, f, 0.42, [1, 2.76, 5.40], decay=10, shimmer=0.004)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/unlock.wav"), unlock)
-
-    # win — triumphant gong + ascending arpeggio cadence
-    win = [0.0] * int(2.0 * SR)
-    add_metallic(win, 0, 1.85, 110, 0.5, [1, 2.4, 3.8, 5.9], decay=2.0, shimmer=0.006)
-    for t0, f in [(0.0, 494), (0.12, 659), (0.24, 784), (0.36, 988), (0.5, 1175)]:
-        add_metallic(win, t0, 0.6, f, 0.30, [1, 2.76, 5.40, 8.9], decay=7, shimmer=0.004)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/win.wav"), win)
-
-    # lose — low gong + gentle descending phrase (soft, never harsh)
-    lose = [0.0] * int(1.5 * SR)
-    add_metallic(lose, 0, 1.35, 87, 0.45, [1, 2.4, 3.8], decay=2.6, shimmer=0.006)
-    for t0, f in [(0.0, 494), (0.17, 415), (0.34, 349)]:
-        add_metallic(lose, t0, 0.55, f, 0.26, [1, 2.7, 5.1], decay=8, shimmer=0.004)
-    write_wav(os.path.join(ROOT, "assets/audio/sfx/lose.wav"), lose)
-
-    build_menu()  # soft menu background loop
-
-    manifest_fragment = []
-    for spec in SONGS:
-        dur_s, charts, counts = build_song(spec)
-        manifest_fragment.append({
-            "id": spec["id"], "durationMs": int(dur_s * 1000),
-            "charts": charts, "noteCounts": counts,
-        })
-        print("✔ %-16s %4d bpm  %5.1fs  notes=%s" % (
-            spec["id"], spec["bpm"], dur_s, counts))
-
-    with open(os.path.join(ROOT, "tool", "_generated_manifest.json"), "w") as f:
-        json.dump(manifest_fragment, f, indent=2)
-    print("\nWrote 3 songs + 7 charts + 3 sfx. Manifest fragment -> tool/_generated_manifest.json")
-
+    if not ids:
+        with open(os.path.join(ROOT, "tool", "_generated_manifest.json"), "w") as f:
+            json.dump(frag, f, indent=2)
+        print("\nWrote manifest fragment -> tool/_generated_manifest.json")
 
 if __name__ == "__main__":
     main()
