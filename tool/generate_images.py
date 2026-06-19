@@ -131,10 +131,15 @@ PALETTES = {
 
 
 def main():
-    make_icon(os.path.join(ROOT, "assets/icon/app_icon.png"))
+    # NOTE: the real app icon is the premium gold GUNUNGAN rendered by
+    # lib/features/screenshot/store_assets.dart (store-assets CI) — do NOT
+    # regenerate it here (make_icon is the old generic placeholder). Covers only.
+    import sys
+    if "--icon" in sys.argv:
+        make_icon(os.path.join(ROOT, "assets/icon/app_icon.png"))
     for name, (b, a) in PALETTES.items():
         make_cover(os.path.join(ROOT, "assets/images", "cover_%s.png" % name), 600, b, a)
-    print("Wrote app_icon.png + %d covers" % len(PALETTES))
+    print("Wrote %d covers (icon left untouched; pass --icon to regenerate placeholder)" % len(PALETTES))
 
 
 if __name__ == "__main__":

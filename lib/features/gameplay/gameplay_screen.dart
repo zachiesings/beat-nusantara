@@ -8,6 +8,7 @@ import '../../core/haptics.dart';
 import '../../game/chart_loader/chart_loader.dart';
 import '../../game/engine/game_engine.dart';
 import '../../game/models/song.dart';
+import '../../game/rendering/gameplay_backdrop.dart';
 import '../../game/rendering/note_painter.dart';
 import '../../game/scoring/judgment.dart';
 import '../../services/ads/ads_service.dart';
@@ -297,15 +298,12 @@ class _GameplayScreenState extends State<GameplayScreen>
             ? const Center(child: CircularProgressIndicator(color: AppColors.cyan))
             : Stack(
                 children: [
-                  // warm batik-night backdrop (no longer flat black)
-                  const Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [AppColors.ink2, AppColors.navy],
-                        ),
+                  // LIVING batik-night backdrop — pulses on the beat, grows
+                  // warmer/brighter with combo & FEVER (reacts to your play)
+                  Positioned.fill(
+                    child: RepaintBoundary(
+                      child: CustomPaint(
+                        painter: GameplayBackdrop(engine: _engine!, repaint: _frame),
                       ),
                     ),
                   ),

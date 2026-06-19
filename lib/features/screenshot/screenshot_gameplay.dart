@@ -3,6 +3,7 @@ import '../../app/theme.dart';
 import '../../core/constants.dart';
 import '../../game/chart_loader/chart_loader.dart';
 import '../../game/engine/game_engine.dart';
+import '../../game/rendering/gameplay_backdrop.dart';
 import '../../game/rendering/note_painter.dart';
 import '../gameplay/game_hud.dart';
 
@@ -30,7 +31,9 @@ class _ScreenshotGameplayState extends State<ScreenshotGameplay> {
   Future<void> _load() async {
     final chart = await ChartLoader.load('assets/charts/koplo_neon__expert.json');
     if (chart == null || !mounted) return;
-    final e = GameEngine(chart)..songTimeMs = _frozenMs;
+    final e = GameEngine(chart)
+      ..songTimeMs = _frozenMs
+      ..feverActive = true; // show the backdrop at FEVER intensity (matches HUD)
     // stage a mid-dissolve on lane 1 for the still frame
     for (final n in chart.notes) {
       if (n.lane == 1) {
@@ -57,6 +60,11 @@ class _ScreenshotGameplayState extends State<ScreenshotGameplay> {
           ? const Center(child: CircularProgressIndicator(color: AppColors.cyan))
           : Stack(
               children: [
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: GameplayBackdrop(engine: e, repaint: _repaint),
+                  ),
+                ),
                 Positioned.fill(
                   child: CustomPaint(
                     painter: NotePainter(
