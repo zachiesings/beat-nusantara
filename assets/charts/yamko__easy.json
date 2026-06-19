@@ -1,0 +1,115 @@
+{
+ "songId": "yamko",
+ "difficulty": "Easy",
+ "bpm": 120,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 5000
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 6500
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 7500
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 14000
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 14500
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 15000
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 16000
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 21500
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 29500
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 30500,
+   "endTimeMs": 31500
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 32000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 32500
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 33500
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 34500
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 35000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 46500
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 51500
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 57000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 65000
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 66000,
+   "endTimeMs": 67000
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 67000
+  }
+ ]
+}

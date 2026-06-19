@@ -1,0 +1,196 @@
+{
+ "songId": "manuk_dadali",
+ "difficulty": "Easy",
+ "bpm": 100,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 6000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 7199
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 8399
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 9600,
+   "endTimeMs": 10800
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 11399
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 13200
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 15599,
+   "endTimeMs": 16799
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 18000
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 18600
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 20400
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 23400
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 24600
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 25800
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 26400
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 27000
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 27599,
+   "endTimeMs": 28799
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 30599
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 31800
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 33000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 35400
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 36600
+  },
+  {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 38400
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 42000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 42599
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 44400
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 44999
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 49200
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 50400
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 51000
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 53400
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 54599
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 55199
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 55800
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 58800
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 59399
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 61800
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 65399
+  }
+ ]
+}

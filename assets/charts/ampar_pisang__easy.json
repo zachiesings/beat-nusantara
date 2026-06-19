@@ -1,183 +1,198 @@
 {
  "songId": "ampar_pisang",
  "difficulty": "Easy",
- "bpm": 100,
+ "bpm": 104,
  "offsetMs": 0,
  "notes": [
   {
    "type": "tap",
    "lane": 1,
-   "startTimeMs": 4800
+   "startTimeMs": 4615
   },
   {
    "type": "tap",
    "lane": 2,
-   "startTimeMs": 5399
+   "startTimeMs": 5769
   },
   {
    "type": "tap",
-   "lane": 1,
-   "startTimeMs": 6000
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 10799
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 11399
+   "lane": 3,
+   "startTimeMs": 6346
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 12000
+   "startTimeMs": 6923
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 9230
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 10384,
+   "endTimeMs": 11537
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 14999
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 16200
+   "startTimeMs": 12115
   },
   {
    "type": "tap",
    "lane": 2,
-   "startTimeMs": 16800
+   "startTimeMs": 12692
   },
   {
    "type": "tap",
    "lane": 3,
-   "startTimeMs": 17400
+   "startTimeMs": 14423
   },
   {
    "type": "tap",
    "lane": 3,
-   "startTimeMs": 19200
+   "startTimeMs": 20192
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 21346
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 24230
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 25384
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 19800
+   "startTimeMs": 25961
   },
   {
-   "type": "tap",
+   "type": "hold",
    "lane": 2,
-   "startTimeMs": 25200
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 28200
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 32400
-  },
-  {
-   "type": "tap",
-   "lane": 3,
-   "startTimeMs": 34200
-  },
-  {
-   "type": "tap",
-   "lane": 2,
-   "startTimeMs": 34800
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 36600
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 39600
+   "startTimeMs": 26538,
+   "endTimeMs": 27691
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 40800
+   "startTimeMs": 28846
   },
   {
    "type": "tap",
    "lane": 1,
-   "startTimeMs": 43199
-  },
-  {
-   "type": "tap",
-   "lane": 2,
-   "startTimeMs": 43800
+   "startTimeMs": 30576
   },
   {
    "type": "tap",
    "lane": 1,
-   "startTimeMs": 44400
-  },
-  {
-   "type": "tap",
-   "lane": 2,
-   "startTimeMs": 46800
-  },
-  {
-   "type": "tap",
-   "lane": 2,
-   "startTimeMs": 47400
-  },
-  {
-   "type": "tap",
-   "lane": 2,
-   "startTimeMs": 48600
+   "startTimeMs": 32307
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 52199
+   "startTimeMs": 32884
   },
   {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 54000
-  },
-  {
-   "type": "tap",
-   "lane": 1,
-   "startTimeMs": 54599
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 33461,
+   "endTimeMs": 34614
   },
   {
    "type": "tap",
    "lane": 0,
-   "startTimeMs": 55199
+   "startTimeMs": 35769
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 38076,
+   "endTimeMs": 39229
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 42692
   },
   {
    "type": "tap",
    "lane": 2,
-   "startTimeMs": 56999
+   "startTimeMs": 43846
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 44423
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 47307
   },
   {
    "type": "tap",
    "lane": 2,
-   "startTimeMs": 60000
+   "startTimeMs": 47884
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 49038
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 49615,
+   "endTimeMs": 50768
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 53076
   },
   {
    "type": "tap",
    "lane": 3,
-   "startTimeMs": 60600
+   "startTimeMs": 53653
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 55384
   },
   {
    "type": "tap",
    "lane": 1,
-   "startTimeMs": 63600
+   "startTimeMs": 57692
   },
   {
    "type": "tap",
-   "lane": 2,
-   "startTimeMs": 66600
+   "lane": 0,
+   "startTimeMs": 58269
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 59999
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 60576
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 64038
   }
  ]
 }

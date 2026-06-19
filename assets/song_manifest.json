@@ -517,8 +517,8 @@
    "genre": "Lagu Daerah",
    "regionTag": "Papua",
    "category": "Lagu Daerah",
-   "bpm": 88,
-   "durationMs": 83018,
+   "bpm": 90,
+   "durationMs": 81200,
    "audioAssetPath": "assets/audio/songs/apuse.wav",
    "coverAssetPath": "assets/images/cover_apuse.png",
    "availableDifficulties": [
@@ -533,7 +533,33 @@
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 27272,
+   "previewStartTimeMs": 26666,
+   "playable": true
+  },
+  {
+   "id": "yamko",
+   "title": "Yamko Rambe Yamko",
+   "artistDisplayName": "Papua",
+   "genre": "Lagu Daerah",
+   "regionTag": "Papua",
+   "category": "Lagu Daerah",
+   "bpm": 120,
+   "durationMs": 73200,
+   "audioAssetPath": "assets/audio/songs/yamko.wav",
+   "coverAssetPath": "assets/images/cover_yamko.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/yamko__easy.json",
+    "Normal": "assets/charts/yamko__normal.json",
+    "Hard": "assets/charts/yamko__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 20000,
    "playable": true
   },
   {
@@ -543,8 +569,8 @@
    "genre": "Lagu Daerah",
    "regionTag": "Kalimantan Selatan",
    "category": "Lagu Daerah",
-   "bpm": 100,
-   "durationMs": 73200,
+   "bpm": 104,
+   "durationMs": 70430,
    "audioAssetPath": "assets/audio/songs/ampar_pisang.wav",
    "coverAssetPath": "assets/images/cover_ampar_pisang.png",
    "availableDifficulties": [
@@ -559,7 +585,33 @@
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 24000,
+   "previewStartTimeMs": 23076,
+   "playable": true
+  },
+  {
+   "id": "bungong_jeumpa",
+   "title": "Bungong Jeumpa",
+   "artistDisplayName": "Aceh",
+   "genre": "Lagu Daerah",
+   "regionTag": "Aceh",
+   "category": "Lagu Daerah",
+   "bpm": 96,
+   "durationMs": 76200,
+   "audioAssetPath": "assets/audio/songs/bungong_jeumpa.wav",
+   "coverAssetPath": "assets/images/cover_bungong_jeumpa.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/bungong_jeumpa__easy.json",
+    "Normal": "assets/charts/bungong_jeumpa__normal.json",
+    "Hard": "assets/charts/bungong_jeumpa__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 25000,
    "playable": true
   },
   {
@@ -569,8 +621,8 @@
    "genre": "Lagu Daerah",
    "regionTag": "Riau",
    "category": "Lagu Daerah",
-   "bpm": 78,
-   "durationMs": 75046,
+   "bpm": 80,
+   "durationMs": 73200,
    "audioAssetPath": "assets/audio/songs/soleram.wav",
    "coverAssetPath": "assets/images/cover_soleram.png",
    "availableDifficulties": [
@@ -583,7 +635,59 @@
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 24615,
+   "previewStartTimeMs": 24000,
+   "playable": true
+  },
+  {
+   "id": "manuk_dadali",
+   "title": "Manuk Dadali",
+   "artistDisplayName": "Jawa Barat",
+   "genre": "Lagu Daerah",
+   "regionTag": "Jawa Barat",
+   "category": "Lagu Daerah",
+   "bpm": 100,
+   "durationMs": 73200,
+   "audioAssetPath": "assets/audio/songs/manuk_dadali.wav",
+   "coverAssetPath": "assets/images/cover_manuk_dadali.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/manuk_dadali__easy.json",
+    "Normal": "assets/charts/manuk_dadali__normal.json",
+    "Hard": "assets/charts/manuk_dadali__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 24000,
+   "playable": true
+  },
+  {
+   "id": "kicir_kicir",
+   "title": "Kicir-Kicir",
+   "artistDisplayName": "DKI Jakarta",
+   "genre": "Lagu Daerah",
+   "regionTag": "DKI Jakarta",
+   "category": "Lagu Daerah",
+   "bpm": 108,
+   "durationMs": 81200,
+   "audioAssetPath": "assets/audio/songs/kicir_kicir.wav",
+   "coverAssetPath": "assets/images/cover_kicir_kicir.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/kicir_kicir__easy.json",
+    "Normal": "assets/charts/kicir_kicir__normal.json",
+    "Hard": "assets/charts/kicir_kicir__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 22222,
    "playable": true
   },
   {
@@ -593,71 +697,21 @@
    "genre": "Lagu Daerah",
    "regionTag": "Maluku",
    "category": "Lagu Daerah",
-   "bpm": 92,
-   "durationMs": 79460,
+   "bpm": 96,
+   "durationMs": 76200,
    "audioAssetPath": "assets/audio/songs/rasa_sayange.wav",
    "coverAssetPath": "assets/images/cover_rasa_sayange.png",
-   "availableDifficulties": [
-    "Easy",
-    "Normal",
-    "Hard"
-   ],
-   "chartPaths": {
-    "Easy": "assets/charts/rasa_sayange__easy.json",
-    "Normal": "assets/charts/rasa_sayange__normal.json",
-    "Hard": "assets/charts/rasa_sayange__hard.json"
-   },
-   "unlockType": "free",
-   "unlockCost": 0,
-   "previewStartTimeMs": 26086,
-   "playable": true
-  },
-  {
-   "id": "yamko",
-   "title": "Yamko Rambe Yamko",
-   "artistDisplayName": "Papua",
-   "genre": "Lagu Daerah",
-   "regionTag": "Papua",
-   "category": "Lagu Daerah",
-   "bpm": 112,
-   "durationMs": 78342,
-   "audioAssetPath": "assets/audio/songs/yamko.wav",
-   "coverAssetPath": "assets/images/cover_yamko.png",
-   "availableDifficulties": [
-    "Normal",
-    "Hard"
-   ],
-   "chartPaths": {
-    "Normal": "assets/charts/yamko__normal.json",
-    "Hard": "assets/charts/yamko__hard.json"
-   },
-   "unlockType": "free",
-   "unlockCost": 0,
-   "previewStartTimeMs": 21428,
-   "playable": true
-  },
-  {
-   "id": "bungong_jeumpa",
-   "title": "Bungong Jeumpa",
-   "artistDisplayName": "Aceh",
-   "genre": "Lagu Daerah",
-   "regionTag": "Aceh",
-   "category": "Lagu Daerah",
-   "bpm": 86,
-   "durationMs": 68176,
-   "audioAssetPath": "assets/audio/songs/bungong_jeumpa.wav",
-   "coverAssetPath": "assets/images/cover_bungong_jeumpa.png",
    "availableDifficulties": [
     "Easy",
     "Normal"
    ],
    "chartPaths": {
-    "Easy": "assets/charts/bungong_jeumpa__easy.json",
-    "Normal": "assets/charts/bungong_jeumpa__normal.json"
+    "Easy": "assets/charts/rasa_sayange__easy.json",
+    "Normal": "assets/charts/rasa_sayange__normal.json"
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 22325,
+   "previewStartTimeMs": 25000,
    "playable": true
   },
   {
@@ -672,10 +726,12 @@
    "audioAssetPath": "assets/audio/songs/sajojo.wav",
    "coverAssetPath": "assets/images/cover_sajojo.png",
    "availableDifficulties": [
+    "Easy",
     "Normal",
     "Hard"
    ],
    "chartPaths": {
+    "Easy": "assets/charts/sajojo__easy.json",
     "Normal": "assets/charts/sajojo__normal.json",
     "Hard": "assets/charts/sajojo__hard.json"
    },
@@ -685,27 +741,127 @@
    "playable": true
   },
   {
+   "id": "sipatokaan",
+   "title": "Sipatokaan",
+   "artistDisplayName": "Sulawesi Utara",
+   "genre": "Lagu Daerah",
+   "regionTag": "Sulawesi Utara",
+   "category": "Lagu Daerah",
+   "bpm": 100,
+   "durationMs": 73200,
+   "audioAssetPath": "assets/audio/songs/sipatokaan.wav",
+   "coverAssetPath": "assets/images/cover_sipatokaan.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/sipatokaan__easy.json",
+    "Normal": "assets/charts/sipatokaan__normal.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 24000,
+   "playable": true
+  },
+  {
+   "id": "o_ina_ni_keke",
+   "title": "O Ina Ni Keke",
+   "artistDisplayName": "Sulawesi Utara",
+   "genre": "Lagu Daerah",
+   "regionTag": "Sulawesi Utara",
+   "category": "Lagu Daerah",
+   "bpm": 84,
+   "durationMs": 69771,
+   "audioAssetPath": "assets/audio/songs/o_ina_ni_keke.wav",
+   "coverAssetPath": "assets/images/cover_o_ina_ni_keke.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/o_ina_ni_keke__easy.json",
+    "Normal": "assets/charts/o_ina_ni_keke__normal.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 22857,
+   "playable": true
+  },
+  {
+   "id": "jali_jali",
+   "title": "Jali-Jali",
+   "artistDisplayName": "DKI Jakarta",
+   "genre": "Lagu Daerah",
+   "regionTag": "DKI Jakarta",
+   "category": "Lagu Daerah",
+   "bpm": 104,
+   "durationMs": 70430,
+   "audioAssetPath": "assets/audio/songs/jali_jali.wav",
+   "coverAssetPath": "assets/images/cover_jali_jali.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/jali_jali__easy.json",
+    "Normal": "assets/charts/jali_jali__normal.json",
+    "Hard": "assets/charts/jali_jali__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 23076,
+   "playable": true
+  },
+  {
+   "id": "cik_cik_periuk",
+   "title": "Cik Cik Periuk",
+   "artistDisplayName": "Kalimantan Barat",
+   "genre": "Lagu Daerah",
+   "regionTag": "Kalimantan Barat",
+   "category": "Lagu Daerah",
+   "bpm": 110,
+   "durationMs": 79745,
+   "audioAssetPath": "assets/audio/songs/cik_cik_periuk.wav",
+   "coverAssetPath": "assets/images/cover_cik_cik_periuk.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/cik_cik_periuk__easy.json",
+    "Normal": "assets/charts/cik_cik_periuk__normal.json",
+    "Hard": "assets/charts/cik_cik_periuk__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 21818,
+   "playable": true
+  },
+  {
    "id": "cublak_suweng",
    "title": "Cublak-Cublak Suweng",
    "artistDisplayName": "Jawa Tengah",
    "genre": "Lagu Anak",
    "regionTag": "Jawa Tengah",
    "category": "Lagu Anak",
-   "bpm": 100,
-   "durationMs": 73200,
+   "bpm": 108,
+   "durationMs": 81200,
    "audioAssetPath": "assets/audio/songs/cublak_suweng.wav",
    "coverAssetPath": "assets/images/cover_cublak_suweng.png",
    "availableDifficulties": [
-    "Normal",
-    "Hard"
+    "Easy",
+    "Normal"
    ],
    "chartPaths": {
-    "Normal": "assets/charts/cublak_suweng__normal.json",
-    "Hard": "assets/charts/cublak_suweng__hard.json"
+    "Easy": "assets/charts/cublak_suweng__easy.json",
+    "Normal": "assets/charts/cublak_suweng__normal.json"
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 24000,
+   "previewStartTimeMs": 22222,
    "playable": true
   },
   {
@@ -715,21 +871,21 @@
    "genre": "Lagu Anak",
    "regionTag": "Jawa Tengah",
    "category": "Lagu Anak",
-   "bpm": 100,
-   "durationMs": 73200,
+   "bpm": 106,
+   "durationMs": 82709,
    "audioAssetPath": "assets/audio/songs/gundul_pacul.wav",
    "coverAssetPath": "assets/images/cover_gundul_pacul.png",
    "availableDifficulties": [
-    "Normal",
-    "Hard"
+    "Easy",
+    "Normal"
    ],
    "chartPaths": {
-    "Normal": "assets/charts/gundul_pacul__normal.json",
-    "Hard": "assets/charts/gundul_pacul__hard.json"
+    "Easy": "assets/charts/gundul_pacul__easy.json",
+    "Normal": "assets/charts/gundul_pacul__normal.json"
    },
    "unlockType": "free",
    "unlockCost": 0,
-   "previewStartTimeMs": 24000,
+   "previewStartTimeMs": 22641,
    "playable": true
   },
   {
@@ -739,21 +895,123 @@
    "genre": "Lagu Anak",
    "regionTag": "Nusa Tenggara Timur",
    "category": "Lagu Anak",
-   "bpm": 96,
-   "durationMs": 76200,
+   "bpm": 100,
+   "durationMs": 73200,
    "audioAssetPath": "assets/audio/songs/anak_kambing.wav",
    "coverAssetPath": "assets/images/cover_anak_kambing.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/anak_kambing__easy.json",
+    "Normal": "assets/charts/anak_kambing__normal.json",
+    "Hard": "assets/charts/anak_kambing__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 24000,
+   "playable": true
+  },
+  {
+   "id": "tokecang",
+   "title": "Tokecang",
+   "artistDisplayName": "Jawa Barat",
+   "genre": "Lagu Anak",
+   "regionTag": "Jawa Barat",
+   "category": "Lagu Anak",
+   "bpm": 120,
+   "durationMs": 73200,
+   "audioAssetPath": "assets/audio/songs/tokecang.wav",
+   "coverAssetPath": "assets/images/cover_tokecang.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/tokecang__easy.json",
+    "Normal": "assets/charts/tokecang__normal.json",
+    "Hard": "assets/charts/tokecang__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 20000,
+   "playable": true
+  },
+  {
+   "id": "injit_semut",
+   "title": "Injit-Injit Semut",
+   "artistDisplayName": "Jambi",
+   "genre": "Lagu Anak",
+   "regionTag": "Jambi",
+   "category": "Lagu Anak",
+   "bpm": 112,
+   "durationMs": 78342,
+   "audioAssetPath": "assets/audio/songs/injit_semut.wav",
+   "coverAssetPath": "assets/images/cover_injit_semut.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal",
+    "Hard"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/injit_semut__easy.json",
+    "Normal": "assets/charts/injit_semut__normal.json",
+    "Hard": "assets/charts/injit_semut__hard.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 21428,
+   "playable": true
+  },
+  {
+   "id": "suwe_ora_jamu",
+   "title": "Suwe Ora Jamu",
+   "artistDisplayName": "Yogyakarta",
+   "genre": "Lagu Anak",
+   "regionTag": "Yogyakarta",
+   "category": "Lagu Anak",
+   "bpm": 96,
+   "durationMs": 76200,
+   "audioAssetPath": "assets/audio/songs/suwe_ora_jamu.wav",
+   "coverAssetPath": "assets/images/cover_suwe_ora_jamu.png",
    "availableDifficulties": [
     "Easy",
     "Normal"
    ],
    "chartPaths": {
-    "Easy": "assets/charts/anak_kambing__easy.json",
-    "Normal": "assets/charts/anak_kambing__normal.json"
+    "Easy": "assets/charts/suwe_ora_jamu__easy.json",
+    "Normal": "assets/charts/suwe_ora_jamu__normal.json"
    },
    "unlockType": "free",
    "unlockCost": 0,
    "previewStartTimeMs": 25000,
+   "playable": true
+  },
+  {
+   "id": "lir_ilir",
+   "title": "Lir-Ilir",
+   "artistDisplayName": "Jawa Tengah",
+   "genre": "Lagu Anak",
+   "regionTag": "Jawa Tengah",
+   "category": "Lagu Anak",
+   "bpm": 82,
+   "durationMs": 71443,
+   "audioAssetPath": "assets/audio/songs/lir_ilir.wav",
+   "coverAssetPath": "assets/images/cover_lir_ilir.png",
+   "availableDifficulties": [
+    "Easy",
+    "Normal"
+   ],
+   "chartPaths": {
+    "Easy": "assets/charts/lir_ilir__easy.json",
+    "Normal": "assets/charts/lir_ilir__normal.json"
+   },
+   "unlockType": "free",
+   "unlockCost": 0,
+   "previewStartTimeMs": 23414,
    "playable": true
   }
  ]

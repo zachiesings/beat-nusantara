@@ -1,0 +1,236 @@
+{
+ "songId": "cublak_suweng",
+ "difficulty": "Easy",
+ "bpm": 108,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 4444
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 5000
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 7777,
+   "endTimeMs": 8888
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 9444
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 10555
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 13333
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 13888
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 15000
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 15555
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 17777
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 20000
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 21111,
+   "endTimeMs": 22222
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 22222
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 23333
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 24444
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 25000
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 25555,
+   "endTimeMs": 26666
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 27777
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 28333
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 28888
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 31666
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 32222
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 33333
+  },
+  {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 35555
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 36111
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 51111
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 53333
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 55000
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 55555
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 56666,
+   "endTimeMs": 57777
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 58333
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 58888
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 59444
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 60000
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 61111,
+   "endTimeMs": 62222
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 64444
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 65555,
+   "endTimeMs": 66666
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 68333
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 68888
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 69444
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 70000,
+   "endTimeMs": 71111
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 72222
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 72777
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 74444,
+   "endTimeMs": 75555
+  }
+ ]
+}

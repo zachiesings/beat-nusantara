@@ -1,0 +1,236 @@
+{
+ "songId": "gundul_pacul",
+ "difficulty": "Easy",
+ "bpm": 106,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 5094
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 5660
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 9622
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 11886
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 13018
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 14716,
+   "endTimeMs": 15848
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 15849
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 16415
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 16981
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 19245
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 20377
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 20943
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 21509
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 24339
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 25471,
+   "endTimeMs": 26603
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 26603
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 27735
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 29433,
+   "endTimeMs": 30565
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 32264
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 32830,
+   "endTimeMs": 33962
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 33962
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 37924
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 38490
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 39622
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 50377
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 54339
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 56603,
+   "endTimeMs": 57735
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 58867
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 59433
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 60000
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 61698
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 63396
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 63962,
+   "endTimeMs": 65094
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 65660
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 66792
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 67358
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 67924,
+   "endTimeMs": 69056
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 69056
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 70188
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 71320,
+   "endTimeMs": 72452
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 72452
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 73584
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 74716
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 76415
+  }
+ ]
+}

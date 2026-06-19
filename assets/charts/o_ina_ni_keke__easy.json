@@ -1,0 +1,208 @@
+{
+ "songId": "o_ina_ni_keke",
+ "difficulty": "Easy",
+ "bpm": 84,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 5714
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 6428
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 7142
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 7857
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 8571,
+   "endTimeMs": 9999
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 10714
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 16428
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 17142
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 21428
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 22142
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 24285,
+   "endTimeMs": 25713
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 26428
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 27142
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 27857
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 30714
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 31428
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 32142
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 32857
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 33571
+  },
+  {
+   "type": "golden",
+   "lane": 0,
+   "startTimeMs": 34285
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 39285
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 40000,
+   "endTimeMs": 41428
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 41428
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 42142
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 42857
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 43571
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 45714
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 46428
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 47142
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 50000
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 51428,
+   "endTimeMs": 52856
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 52857
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 53571
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 54285
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 55000
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 55714,
+   "endTimeMs": 57142
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 57142
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 58571
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 61428
+  }
+ ]
+}
