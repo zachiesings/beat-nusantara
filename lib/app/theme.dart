@@ -57,6 +57,10 @@ class AppColors {
     switch (category) {
       case 'Koplo/Dangdut':
         return coral;
+      case 'Lagu Daerah':
+        return gold;
+      case 'Lagu Anak':
+        return mint;
       case 'Nusantara Beats':
         return gold;
       case 'Chill':
@@ -116,6 +120,10 @@ class AppGradients {
     switch (c) {
       case 'Untuk Kamu':
         return aurora;
+      case 'Lagu Daerah':
+        return sunset;
+      case 'Lagu Anak':
+        return candy;
       case 'Pop Indonesia':
         return candy;
       case 'Koplo/Dangdut':

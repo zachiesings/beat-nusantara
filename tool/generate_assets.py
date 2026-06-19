@@ -344,6 +344,240 @@ SONGS = [
 ]
 
 # ============================================================================
+# FOLK MELODY ENGINE — real public-domain Indonesian lagu daerah / lagu rakyat.
+# Melodies encoded as (midi, beats) in a C reference (60=C4), 0=rest. These are
+# BEST-EFFORT reconstructions from memory of traditional, anonymous, public-
+# domain tunes — NOT commercial copyrighted songs. Verify by ear & correct the
+# note arrays as needed; the rhythm engine plays whatever notes are here.
+# ============================================================================
+
+MELODIES = {
+    # Ampar-Ampar Pisang (Kalimantan Selatan) — bouncy, bright
+    "ampar_pisang": [
+        (67,0.5),(67,0.5),(69,0.5),(67,0.5),(64,0.5),(64,0.5),(62,1.0),
+        (62,0.5),(62,0.5),(64,0.5),(62,0.5),(60,0.5),(62,0.5),(64,1.0),
+        (67,0.5),(67,0.5),(69,0.5),(67,0.5),(64,0.5),(64,0.5),(62,1.0),
+        (62,0.5),(64,0.5),(62,0.5),(60,0.5),(60,2.0),
+    ],
+    # Burung Kakatua (Maluku, trad) — descending, waltzy
+    "burung_kakaktua": [
+        (72,0.5),(72,0.5),(71,0.5),(69,0.5),(67,1.5),
+        (69,0.5),(69,0.5),(67,0.5),(65,0.5),(64,1.5),
+        (72,0.5),(72,0.5),(71,0.5),(69,0.5),(67,1.5),
+        (69,0.5),(67,0.5),(65,0.5),(64,0.5),(60,1.5),
+    ],
+    # Soleram (Riau) — gentle, swaying
+    "soleram": [
+        (64,1.0),(62,0.5),(60,0.5),(62,1.0),(64,1.0),
+        (67,1.0),(69,0.5),(67,0.5),(64,2.0),
+        (69,1.0),(67,0.5),(64,0.5),(67,1.0),(64,1.0),
+        (62,1.0),(60,0.5),(62,0.5),(60,2.0),
+    ],
+    # Anak Kambing Saya (NTT)
+    "anak_kambing": [
+        (60,0.5),(64,0.5),(67,0.5),(67,0.5),(67,1.0),(69,0.5),(67,0.5),
+        (64,0.5),(64,0.5),(64,1.5),(0,0.5),
+        (62,0.5),(65,0.5),(69,0.5),(69,0.5),(69,1.0),(71,0.5),(69,0.5),
+        (67,0.5),(67,0.5),(67,1.5),(0,0.5),
+    ],
+    # Cublak-Cublak Suweng (Jawa Tengah)
+    "cublak_suweng": [
+        (67,0.5),(69,0.5),(72,0.5),(72,0.5),(69,0.5),(72,0.5),(74,1.0),
+        (72,0.5),(69,0.5),(67,0.5),(64,0.5),(67,1.5),(0,0.5),
+        (67,0.5),(69,0.5),(72,0.5),(72,0.5),(69,0.5),(72,0.5),(74,1.0),
+        (72,0.5),(69,0.5),(67,0.5),(69,0.5),(67,2.0),
+    ],
+    # Gundul-Gundul Pacul (Jawa Tengah)
+    "gundul_pacul": [
+        (67,0.5),(67,0.5),(64,0.5),(67,0.5),(69,0.5),(67,0.5),(64,1.0),
+        (64,0.5),(64,0.5),(62,0.5),(64,0.5),(60,2.0),
+        (67,0.5),(67,0.5),(64,0.5),(67,0.5),(69,0.5),(67,0.5),(64,1.0),
+        (64,0.5),(62,0.5),(64,0.5),(62,0.5),(60,2.0),
+    ],
+    # Apuse (Papua)
+    "apuse": [
+        (64,0.5),(67,0.5),(67,1.0),(67,0.5),(69,0.5),(67,0.5),(64,0.5),(62,1.0),
+        (60,0.5),(62,0.5),(64,1.0),(62,2.0),
+        (64,0.5),(67,0.5),(67,1.0),(69,0.5),(67,0.5),(64,0.5),(62,0.5),(60,1.0),
+        (62,0.5),(64,0.5),(62,0.5),(60,0.5),(60,2.0),
+    ],
+    # Potong Bebek Angsa (trad children's; melody public domain)
+    "potong_bebek": [
+        (67,0.5),(65,0.5),(64,0.5),(65,0.5),(67,0.5),(67,0.5),(67,1.0),
+        (65,0.5),(65,0.5),(65,1.0),(67,0.5),(69,0.5),(69,1.0),
+        (67,0.5),(65,0.5),(64,0.5),(65,0.5),(67,0.5),(67,0.5),(67,0.5),(67,0.5),
+        (65,0.5),(65,0.5),(67,0.5),(65,0.5),(64,2.0),
+    ],
+    # Rasa Sayange (Maluku) — lilting, iconic
+    "rasa_sayange": [
+        (67,0.5),(69,0.5),(67,0.5),(64,1.0),(0,0.5),
+        (67,0.5),(69,0.5),(67,0.5),(64,0.5),(62,0.5),(64,1.0),
+        (72,1.0),(71,0.5),(69,0.5),(67,0.5),(69,0.5),(67,1.0),
+        (67,0.5),(69,0.5),(67,0.5),(64,0.5),(62,0.5),(64,1.5),
+    ],
+    # Yamko Rambe Yamko (Papua) — upbeat, energetic
+    "yamko": [
+        (72,0.5),(72,0.5),(69,0.5),(72,0.5),(74,0.5),(72,0.5),(69,1.0),
+        (67,0.5),(69,0.5),(72,0.5),(69,0.5),(67,0.5),(64,0.5),(67,1.0),
+        (72,0.5),(72,0.5),(69,0.5),(72,0.5),(74,0.5),(72,0.5),(69,1.0),
+        (67,0.5),(69,0.5),(67,0.5),(64,0.5),(67,2.0),
+    ],
+    # Cik Cik Periuk (Kalimantan Barat)
+    "cik_cik_periuk": [
+        (67,0.5),(67,0.5),(69,0.5),(67,0.5),(64,1.0),(0,0.5),
+        (64,0.5),(64,0.5),(62,0.5),(64,0.5),(60,1.5),
+        (67,0.5),(67,0.5),(69,0.5),(67,0.5),(64,1.0),(0,0.5),
+        (64,0.5),(62,0.5),(64,0.5),(62,0.5),(60,1.5),
+    ],
+}
+
+# folk songs — real public-domain Indonesian lagu daerah / lagu rakyat, arranged
+# in modern grooves. Become real catalog entries (category "Lagu Daerah"/"Lagu Anak").
+_LD = "Lagu Daerah"; _LA = "Lagu Anak"
+FOLK = [
+    {"id": "ampar_pisang",    "melody": "ampar_pisang",    "title": "Ampar-Ampar Pisang", "region": "Kalimantan Selatan", "category": _LD, "bpm": 108, "root": 60, "groove": "koplo",   "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "burung_kakaktua", "melody": "burung_kakaktua", "title": "Burung Kakatua",     "region": "Maluku",             "category": _LA, "bpm": 100, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "soleram",         "melody": "soleram",         "title": "Soleram",            "region": "Riau",               "category": _LD, "bpm": 92,  "root": 57, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "anak_kambing",    "melody": "anak_kambing",    "title": "Anak Kambing Saya",  "region": "Nusa Tenggara Timur","category": _LD, "bpm": 116, "root": 62, "groove": "pop",     "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "cublak_suweng",   "melody": "cublak_suweng",   "title": "Cublak-Cublak Suweng","region": "Jawa Tengah",       "category": _LA, "bpm": 120, "root": 60, "groove": "edm",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "gundul_pacul",    "melody": "gundul_pacul",    "title": "Gundul-Gundul Pacul","region": "Jawa Tengah",        "category": _LD, "bpm": 128, "root": 60, "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "apuse",           "melody": "apuse",           "title": "Apuse",              "region": "Papua",              "category": _LD, "bpm": 104, "root": 60, "groove": "citypop", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "potong_bebek",    "melody": "potong_bebek",    "title": "Potong Bebek Angsa", "region": "Lagu Anak",          "category": _LA, "bpm": 124, "root": 60, "groove": "pop",     "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "rasa_sayange",    "melody": "rasa_sayange",    "title": "Rasa Sayange",       "region": "Maluku",             "category": _LD, "bpm": 104, "root": 60, "groove": "citypop", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "yamko",           "melody": "yamko",           "title": "Yamko Rambe Yamko",  "region": "Papua",              "category": _LD, "bpm": 132, "root": 62, "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "cik_cik_periuk",  "melody": "cik_cik_periuk",  "title": "Cik Cik Periuk",     "region": "Kalimantan Barat",   "category": _LD, "bpm": 118, "root": 60, "groove": "koplo",   "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Normal", "Hard"]},
+]
+
+# chords that could harmonise a melody, scored by how many melody notes they contain
+_CHORD_CANDIDATES = [(0, "maj"), (5, "maj"), (7, "maj"), (9, "min"), (2, "min"), (4, "min")]
+
+def derive_chord(key_root, melody_pcs):
+    best = (0, "maj"); bestscore = -1
+    for off, q in _CHORD_CANDIDATES:
+        pcs = set((key_root + off + iv) % 12 for iv in CHORD_Q[q])
+        score = sum(1 for pc in melody_pcs if pc in pcs)
+        if score > bestscore:
+            bestscore = score; best = (off, q)
+    return best
+
+def build_song_melody(spec, write=False):
+    """Render a folk song whose LEAD is a real public-domain melody; chords are
+    auto-derived to fit, drums/bass from the groove. Returns the audio buffer +
+    (total_s, charts, counts, first_ms, preview_ms)."""
+    bpm = spec["bpm"]; beat = 60.0 / bpm; step = beat / 4.0; spb = 16
+    sections = section_plan(bpm)
+    total_bars = sum(b for _, b in sections)
+    total_s = total_bars * spb * step + 1.2
+    buf = [0.0] * int(total_s * SR)
+    root = spec["root"]; key_pc = root % 12
+    groove = GROOVES[spec["groove"]]
+    lanes = spec.get("lanes", 4)
+    rng = random.Random(zlib.crc32(spec["melody"].encode()))
+    transpose = root - 60
+    mel = [(m + transpose if m > 0 else 0, b) for (m, b) in MELODIES[spec["melody"]]]
+
+    # bar layout
+    bars = []  # (global_bar_index, section_name, t_bar)
+    gi = 0
+    for sec_name, sec_bars in sections:
+        for _ in range(sec_bars):
+            bars.append((gi, sec_name, gi * spb * step)); gi += 1
+    note_bars = [b for b in bars if b[1] in ("verse", "chorus")]
+
+    # lay melody across note-bearing bars (looping)
+    per_bar = {b[0]: [] for b in bars}
+    gb = 0.0; ei = 0; guard = 0
+    while int(gb // 4) < len(note_bars) and guard < 100000:
+        midi, beats = mel[ei % len(mel)]
+        bar_i = int(gb // 4); offset = gb - bar_i * 4
+        per_bar[note_bars[bar_i][0]].append((offset, midi, beats))
+        gb += beats; ei += 1; guard += 1
+
+    # derive a chord per note-bearing bar
+    chord_of = {}
+    for (gbar, sec, t_bar) in note_bars:
+        pcs = [n[1] % 12 for n in per_bar[gbar] if n[1] > 0]
+        chord_of[gbar] = derive_chord(key_pc, pcs)
+
+    diffs = spec.get("diffs", ["Easy", "Normal", "Hard"])
+    notes_by_diff = {d: [] for d in diffs}
+    prev_lane = 0; first_ms = None
+
+    for (gbar, sec, t_bar) in bars:
+        full = sec == "chorus"; light = sec in ("intro", "bridge")
+        # drums
+        if sec != "outro":
+            for st in range(spb):
+                t = t_bar + st * step
+                if st in groove.get("kick", []): mix(buf, render_drum("kick"), t, 0.78)
+                if st in groove.get("snare", []) and not light: mix(buf, render_drum("snare"), t, 0.6)
+                if st in groove.get("clap", []) and full: mix(buf, render_drum("clap"), t, 0.5)
+                if st in groove.get("rim", []) and not light: mix(buf, render_drum("rim"), t, 0.34)
+                if st in groove.get("hatC", []) and (full or light or st % 4 == 0):
+                    mix(buf, render_drum("hatC"), t, 0.30 if not light else 0.20)
+                if st in groove.get("hatO", []) and full: mix(buf, render_drum("hatO"), t, 0.34)
+        # chord + bass (only where we have a chord = note-bearing bars)
+        ch = chord_of.get(gbar)
+        if ch and sec != "outro":
+            croot = root + ch[0]; ints = CHORD_Q[ch[1]]
+            for k in (0, 4, 8, 12):
+                t = t_bar + k * step
+                mix(buf, render_voice("bass", midi_to_hz(croot - 24), beat * 0.5), t, 0.5)
+            stab_steps = [0, 4, 8, 12] if full else [0, 8]
+            for st in stab_steps:
+                t = t_bar + st * step
+                for iv in ints:
+                    if full:
+                        mix(buf, render_voice("stab", midi_to_hz(croot + iv), beat * 0.9), t, 0.18)
+                    else:
+                        mix(buf, render_voice("pad", midi_to_hz(croot + iv), beat * 2.0), t, 0.14)
+        # lead melody (the real tune) + chart
+        if sec in ("verse", "chorus"):
+            for (offset, midi, beats) in per_bar[gbar]:
+                if midi <= 0:
+                    continue
+                t = t_bar + offset * beat
+                pitch = midi + (12 if full else 0)
+                dur = beat * beats * 0.95
+                mix(buf, render_voice(spec["lead"], midi_to_hz(pitch), dur), t, 0.6 if full else 0.42)
+                if spec.get("flavor") and full and beats >= 1.0:
+                    mix(buf, render_voice(spec["flavor"], midi_to_hz(pitch + 12), beat * beats * 0.8), t, 0.13)
+                # chart note
+                start_ms = int(t * 1000)
+                if first_ms is None: first_ms = start_ms
+                lane = (prev_lane + 1 + (int(offset * 2) % max(1, lanes - 1))) % lanes
+                prev_lane = lane
+                ntype = "hold" if beats >= 1.5 else ("golden" if (offset == 0 and gbar % 4 == 0 and full) else "tap")
+                for d in diffs:
+                    dens = DIFF_DENSITY[d] * (1.0 if full else 0.85)
+                    # Easy keeps only the strong (on-beat) notes
+                    if d == "Easy" and (offset % 1.0) > 0.01:
+                        continue
+                    if rng.random() > dens:
+                        continue
+                    note = {"type": ntype, "lane": lane, "startTimeMs": start_ms}
+                    if ntype == "hold":
+                        note["endTimeMs"] = start_ms + int(beats * beat * 1000)
+                    notes_by_diff[d].append(note)
+
+    charts = {}
+    if write:
+        sid = spec["id"]
+        write_wav(os.path.join(ROOT, "assets/audio/songs", sid + ".wav"), buf)
+        for d in diffs:
+            ns = sorted(notes_by_diff[d], key=lambda n: (n["startTimeMs"], n["lane"]))
+            chart = {"songId": sid, "difficulty": d, "bpm": bpm, "offsetMs": 0, "notes": ns}
+            fn = "%s__%s.json" % (sid, d.lower())
+            with open(os.path.join(ROOT, "assets/charts", fn), "w") as f:
+                json.dump(chart, f, indent=1)
+            charts[d] = "assets/charts/" + fn
+
+    intro_verse_bars = sections[0][1] + sections[1][1]
+    preview_ms = int(intro_verse_bars * spb * step * 1000)
+    counts = {d: len(notes_by_diff[d]) for d in diffs}
+    return buf, total_s, charts, counts, (first_ms or 0), preview_ms
+
+# ============================================================================
 # Song builder
 # ============================================================================
 
@@ -622,8 +856,36 @@ def build_menu():
 
 # ============================================================================
 
+def build_folk_sampler():
+    """Render the FOLK songs and stitch a ~clear chorus sampler to docs/ for the
+    user to verify melody recognition. Does NOT touch assets/ or the manifest."""
+    import struct as _st
+    SRr = SR; out = []; gap = [0] * int(0.4 * SRr)
+    order = []
+    for spec in FOLK:
+        _VOICE_CACHE.clear()
+        spec = dict(spec); spec["id"] = spec["melody"]; spec["lanes"] = 4
+        buf, total_s, _c, _n, first_ms, preview_ms = build_song_melody(spec, write=False)
+        start = int(preview_ms / 1000 * SRr)
+        seg = [int(max(-32767, min(32767, v * 30000))) for v in buf[start:start + int(13 * SRr)]]
+        f = int(0.05 * SRr)
+        for i in range(min(f, len(seg))): seg[i] = int(seg[i] * i / f)
+        for i in range(min(f, len(seg))): seg[-1 - i] = int(seg[-1 - i] * i / f)
+        out += seg + gap
+        order.append(spec["title"])
+        print("✔ %-22s %s (%dbpm)" % (spec["title"], spec["region"], spec["bpm"]))
+    path = os.path.join(ROOT, "docs", "Beat-Nusantara-FOLK-SAMPLER.wav")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with wave.open(path, "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(SRr)
+        w.writeframes(_st.pack("<%dh" % len(out), *out))
+    print("\nFOLK sampler %.1fs -> docs/Beat-Nusantara-FOLK-SAMPLER.wav\norder: %s" % (
+        len(out) / SRr, " / ".join(order)))
+
 def main():
     args = sys.argv[1:]
+    if "--folk" in args:
+        build_folk_sampler(); return
     songs_only = "--songs-only" in args
     ids = [a for a in args if not a.startswith("--")]
     todo = [s for s in SONGS if not ids or s["id"] in ids]
@@ -640,6 +902,18 @@ def main():
                      "firstNoteMs": first_ms, "previewStartTimeMs": preview_ms})
         print("✔ %-16s %4dbpm %5.1fs first=%4dms notes=%s" % (
             spec["id"], spec["bpm"], dur_s, first_ms, counts))
+
+    # folk lagu-daerah songs (real public-domain melodies) — full catalog entries
+    if not ids:
+        for spec in FOLK:
+            _VOICE_CACHE.clear()
+            buf, dur_s, charts, counts, first_ms, preview_ms = build_song_melody(spec, write=True)
+            frag.append({"id": spec["id"], "durationMs": int(dur_s * 1000), "charts": charts,
+                         "noteCounts": counts, "firstNoteMs": first_ms, "previewStartTimeMs": preview_ms,
+                         "folk": True, "title": spec["title"], "region": spec["region"],
+                         "category": spec["category"], "bpm": spec["bpm"], "diffs": spec["diffs"]})
+            print("✔ %-16s %4dbpm %5.1fs FOLK[%s] notes=%s" % (
+                spec["id"], spec["bpm"], dur_s, spec["title"], counts))
 
     if not ids:
         with open(os.path.join(ROOT, "tool", "_generated_manifest.json"), "w") as f:

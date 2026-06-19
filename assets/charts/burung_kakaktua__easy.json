@@ -1,0 +1,190 @@
+{
+ "songId": "burung_kakaktua",
+ "difficulty": "Easy",
+ "bpm": 100,
+ "offsetMs": 0,
+ "notes": [
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 6000,
+   "endTimeMs": 6899
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 7199
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 9600
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 13200
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 13800
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 14399,
+   "endTimeMs": 15298
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 15599
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 18000
+  },
+  {
+   "type": "hold",
+   "lane": 0,
+   "startTimeMs": 18600,
+   "endTimeMs": 19499
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 19800
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 24000
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 25800
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 27000,
+   "endTimeMs": 27899
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 28200
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 28799
+  },
+  {
+   "type": "tap",
+   "lane": 1,
+   "startTimeMs": 30599
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 32400
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 34200
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 34800
+  },
+  {
+   "type": "hold",
+   "lane": 3,
+   "startTimeMs": 35400,
+   "endTimeMs": 36299
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 36600
+  },
+  {
+   "type": "golden",
+   "lane": 3,
+   "startTimeMs": 38400
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 39000
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 40800
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 41400
+  },
+  {
+   "type": "hold",
+   "lane": 1,
+   "startTimeMs": 43800,
+   "endTimeMs": 44699
+  },
+  {
+   "type": "tap",
+   "lane": 0,
+   "startTimeMs": 45600
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 49200
+  },
+  {
+   "type": "hold",
+   "lane": 2,
+   "startTimeMs": 52199,
+   "endTimeMs": 53098
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 54000
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 55199
+  },
+  {
+   "type": "golden",
+   "lane": 1,
+   "startTimeMs": 57599
+  },
+  {
+   "type": "tap",
+   "lane": 2,
+   "startTimeMs": 58199
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 62400
+  },
+  {
+   "type": "tap",
+   "lane": 3,
+   "startTimeMs": 64200
+  }
+ ]
+}
