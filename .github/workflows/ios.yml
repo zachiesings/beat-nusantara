@@ -4,8 +4,8 @@ name: iOS TestFlight
 # App Store Connect / TestFlight — using the App Store Connect API key stored in
 # repo secrets. No Codemagic / no Mac needed. Mirrors codemagic.yaml via the same
 # `codemagic-cli-tools` (app-store-connect / keychain / xcode-project).
-# build trigger: 2026-06-19b — fix duplicate CFBundleVersion (build# now epoch,
-# always-unique) so the new build (music v2 + Melodi + feel polish) actually uploads
+# build trigger: 2026-06-19c — build 8: traditional Melodi (gunungan crown +
+# songket) + Melodi cheering in the gameplay HUD (build# stays epoch = unique)
 on:
   workflow_dispatch:
   push:
