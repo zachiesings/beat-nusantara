@@ -60,6 +60,64 @@ class GameplayBackdrop extends CustomPainter {
       );
     }
 
+    // stage SPOTLIGHTS — two soft cones sweeping from the top (concert feel)
+    for (var s = 0; s < 2; s++) {
+      final sx = size.width * (0.3 + 0.4 * s) + math.sin(t * 0.6 + s * 2) * size.width * 0.12;
+      final cone = Path()
+        ..moveTo(sx, -10)
+        ..lineTo(sx - size.width * 0.20, size.height * 0.72)
+        ..lineTo(sx + size.width * 0.20, size.height * 0.72)
+        ..close();
+      c.drawPath(
+        cone,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              (s == 0 ? AppColors.gold : AppColors.pink).withValues(alpha: 0.05 + 0.06 * intensity),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromLTWH(sx - size.width * 0.2, 0, size.width * 0.4, size.height * 0.72)),
+      );
+    }
+
+    // per-lane light BEAMS rising from the hit zone (pulse on the beat)
+    final lanes = engine.laneCount;
+    final lw = size.width / lanes;
+    for (var i = 0; i < lanes; i++) {
+      final col = AppColors.lanes[i % AppColors.lanes.length];
+      final lr = Rect.fromLTWH(i * lw, size.height * 0.20, lw, size.height * 0.62);
+      c.drawRect(
+        lr,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              col.withValues(alpha: (0.06 + 0.08 * intensity) * (0.6 + 0.4 * beat)),
+              col.withValues(alpha: 0.0),
+            ],
+          ).createShader(lr),
+      );
+    }
+
+    // lit STAGE FLOOR — a glowing band along the hit line
+    final floorRect = Rect.fromLTWH(0, size.height * 0.82 - 42, size.width, 84);
+    c.drawRect(
+      floorRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.gold.withValues(alpha: 0.0),
+            AppColors.gold.withValues(alpha: (0.10 + 0.12 * intensity) * (0.7 + 0.3 * beat)),
+            AppColors.gold.withValues(alpha: 0.0),
+          ],
+        ).createShader(floorRect),
+    );
+
     // faint kawung batik motif field — petals + dot, fills the dark space so the
     // playfield never reads as empty; warms slightly as combo grows
     final petalA = 0.05 + 0.05 * comboNorm;
@@ -103,6 +161,32 @@ class GameplayBackdrop extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
         ..color = AppColors.gold.withValues(alpha: 0.10 * beat * (0.5 + intensity)),
+    );
+
+    // rising EMBERS — warm gold sparks drifting up (gamelan dust)
+    final ember = Paint();
+    for (var i = 0; i < 22; i++) {
+      final seed = i * 0.131;
+      final x = ((seed * 7.3) % 1.0) * size.width;
+      final prog = (t * (0.06 + seed * 0.08) + seed) % 1.0;
+      final y = size.height * (1.02 - prog);
+      final a = math.sin(prog * math.pi) * (0.22 + 0.30 * intensity);
+      ember.color = (i.isEven ? AppColors.gold : AppColors.goldLt).withValues(alpha: a);
+      c.drawCircle(Offset(x + math.sin(t + i) * 8, y), 1.2 + (i % 3) * 0.9, ember);
+    }
+
+    // edge VIGNETTE + reactive glow framing the "stage" (warms on combo/FEVER)
+    c.drawRect(
+      rect,
+      Paint()
+        ..shader = RadialGradient(
+          radius: 1.1,
+          colors: [
+            Colors.transparent,
+            (fever ? AppColors.gold : AppColors.maroon).withValues(alpha: 0.10 + 0.22 * intensity),
+          ],
+          stops: const [0.60, 1.0],
+        ).createShader(rect),
     );
   }
 
