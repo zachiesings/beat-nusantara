@@ -4,8 +4,8 @@ name: iOS TestFlight
 # App Store Connect / TestFlight — using the App Store Connect API key stored in
 # repo secrets. No Codemagic / no Mac needed. Mirrors codemagic.yaml via the same
 # `codemagic-cli-tools` (app-store-connect / keychain / xcode-project).
-# build trigger: 2026-06-19f — build 11: real folk melodies from notasi angka (10
-# verified lagu daerah) + richer in-game background (build# stays epoch = unique)
+# build trigger: 2026-06-19g — build 12: richer in-game stage visuals (spotlights,
+# lane beams, stage floor, embers, vignette) + gentler folk arrangements
 on:
   workflow_dispatch:
   push:
