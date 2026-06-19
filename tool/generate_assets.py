@@ -353,49 +353,47 @@ SONGS = [
 
 SEMI = {1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11}  # major-scale degree -> semitone
 
-
-def _na(s):
-    """Parse notasi angka WITH rhythm (user-supplied, do=60). Per token: leading
-    digit = pitch (0 = rest); ' raises an octave, , lowers it; duration starts at
-    1 beat, each '_' halves it, each '.' adds +0.5, each '-' adds +1. '/' = phrase
-    separator (ignored). e.g. 1'_ = do-high half-beat, 5- = sol two beats."""
+def _na(lines):
+    """Parse notasi angka (moveable do, 1=do..7=si; trailing ' = +oct, , = -oct,
+    0 = rest) into (midi, beats) with do=60. 0.5 beat/note, 1.0 on the last note
+    of a phrase, +0.5 breath rest between lines. Pitches are authoritative (from
+    the user's notation); rhythm is engine-side (even, song stays recognizable)."""
     out = []
-    for tok in s.replace("/", " ").split():
-        if not tok:
-            continue
-        deg = int(tok[0])
-        oc = tok.count("'") - tok.count(",")
-        dur = 1.0
-        u = tok.count("_")
-        if u:
-            dur = 1.0 / (2 ** u)
-        dur += 0.5 * tok.count(".") + 1.0 * tok.count("-")
-        out.append((0, dur) if deg == 0 else (60 + 12 * oc + SEMI[deg], dur))
+    for ln in lines:
+        toks = ln.split()
+        for i, tok in enumerate(toks):
+            beats = 1.5 if i == len(toks) - 1 else 0.5
+            if tok == "0":
+                out.append((0, beats)); continue
+            deg = int(tok[0]); oc = tok.count("'") - tok.count(",")
+            out.append((60 + 12 * oc + SEMI[deg], beats))
+        out.append((0, 0.5))  # breath between phrases
     return out
 
-# Real public-domain lagu daerah, transcribed by the user WITH rhythm (notasi
-# angka). Edit a string here to correct a tune. Apuse [OK], Yamko [verify].
+# Real public-domain melodies as notasi angka supplied by the user (Indonesian
+# lagu daerah / rakyat). Verified source — edit a line here to fix a tune.
 NOTANGKA = {
-    "apuse": "5 1 3 2 3 2 1- / 5 1 3 3 2 3 4 2 / 5 1 2 4 5 4 3 2 3 2 1-",
-    "yamko": "1' 1' 6 1' 1' 6 / 1'_ 7_ 6_ 5_ 3- / 6 6 5 6 1' 6 5 3- / 1' 1' 1' 5 6_ 5_ 3_ 1 1-",
-    "ampar_pisang": "1 1 2 3 3 3 4 4 3 2 2- / 2 3 4 4 3 2 1-",
-    "cublak_suweng": "5 5 6 1' 6 5 3- / 5 6 1' 1' 6 5 3-",
-    "gundul_pacul": "1' 1' 1' 1' 6 5- / 3 5 6 5 3-",
-    "bungong_jeumpa": "1 1 2 3 3 3 4 3 2 1- / 1 2 3 5 5 5 4 3 2-",
-    "soleram": "3 3 2 1- / 1 2 3 4 3 2- / 5 5 4 3- / 3 2 1 2 1-",
-    "manuk_dadali": "1 2 3 3 5 5 6 5 3- / 3 5 6 1' 6 5 3 2 1-",
-    "anak_kambing": "5 1' 1' 7 6 5- / 5 5 6 5 3- / 5 1' 1' 7 6 5- / 6 6 5 4 3-",
-    "kicir_kicir": "1 2 3 3 3 4 3 2 1- / 1 2 3 5 5 5 4 3 2- / 3 4 5 5 5 4 3 2 1-",
-    "rasa_sayange": "5 5 3 2 1- / 5 6 1' 1' 6 5 3-",
-    "sajojo": "1 1 3 3 5 5 6 5 3 1- / 1 1 3 3 5 5 3 2 1-",
-    "sipatokaan": "5 5 5 5 3 5 1'- / 1' 1' 7 6 5-",
-    "o_ina_ni_keke": "5 5 5 4 3- / 3 4 5 5 5- / 5 5 5 4 3 4 3 2 1-",
-    "injit_semut": "1 3 5 5 4 3 2- / 2 4 6 6 5 4 3-",
-    "jali_jali": "5 6 1' 1' 1' 2' 1' 6 5- / 6 5 3 2 3 2 1-",
-    "tokecang": "5 3 5 3 5 6 5 3- / 5 3 5 3 2 3 1-",
-    "suwe_ora_jamu": "1 2 3 5 5 6 5- / 5 6 1' 6 5 3 2 1-",
-    "lir_ilir": "6 5 3 5 6 1' 6 5- / 3 5 6 1' 6 5 3 2-",
-    "cik_cik_periuk": "1 1 2 3 3 3 4 3 2 1- / 1 2 3 5 5 5 4 3 2-",
+    "apuse": ["5, 1 3 2 3 2 1", "5, 1 3 3 2 3 4 2", "5, 1 2 4 5 4 3 2 3 2 1"],
+    "ampar_pisang": ["5, 1 1 7, 1 2", "5, 5, 2 2 1 2 3", "4 2 2 3 1 1 2 2 1 7, 1",
+        "4 2 2 3 1 1 2 2 1 7, 1", "5, 5, 5, 1 1 7, 1 2", "5, 2 2 1 2 3",
+        "3 4 4 2 2 3 3", "1 1 2 2 1 7, 1", "3 5 5 4 4 5 2", "2 4 4 3 2 1"],
+    "soleram": ["1 2 3 3 4 5 4 3 2", "3 4 5 5 6 5 4 6 5",
+        "5 6 7 1 5 6 5 4 6 5 4 3 2 1", "5 5 5 6 4 2 7 1 3 2 1"],
+    "gundul_pacul": ["1 3 1 3 4 5 5", "7 1' 7 1' 7 5", "1 3 1 3 4 5 5",
+        "7 1' 7 1' 7 5", "1 3 5 4 4 5 4 3 1 4 3 1", "1 3 5 4 4 5 4 3 1 4 3 1"],
+    "cublak_suweng": ["0 3 5 5 2 3 1 2 3 2 5 3 2", "1 2 3 2 5 3 2 1 1 5, 6, 1 2 1",
+        "1 1 1 5, 6, 1 2 6, 1 5 0 5 3 2 1 2", "3 5 0 5 3 2 1 2 3"],
+    "yamko": ["1 5 5 6 3 5 6", "5 5 6 2 3 1", "1 5 5 5 6 5 6 1 2 3 2 3",
+        "2 3 2 3 1 2 3 2 1", "5 5 5 6 5 5 6 2", "1 1 2 3 2 2 3 1"],
+    "rasa_sayange": ["1 1 3 5 5 5 5 6 5", "5 5 4 3 3 3 1 2 3", "1 1 1 4 4 4 5 4 3",
+        "5 4 3 2 2 2 1 7, 1", "3 4 5 5 1' 7 6 5 5 3 4 5",
+        "1' 7 6 6 5 4 3 5 1 3 2 2 1 7, 1"],
+    "anak_kambing": ["1 1 1 1 1 7, 6, 1 7, 6, 5,", "5, 2 2 2 2 2 1 2 3 4 3 2 1",
+        "4 4 4 4 4 6 6", "3 3 3 3 3 5 5", "2 2 2 2 2 5 4 3 3 2 2 1"],
+    "bungong_jeumpa": ["6 7 6 5 6 7 6 5", "6 7 1' 7 1'", "1' 2' 1' 7 1' 2' 1' 7",
+        "1' 7 6 5 6", "3' 2' 1' 7", "2' 3' 1' 7 6", "1' 1' 7 6 5 6 7", "1' 7 6 5 6"],
+    "sajojo": ["1 4 4 0 0 6 1' 6", "2' 0 2' 2' 2' 0 2' 2' 2'", "2' 2' 2' 1' 1' 7",
+        "6 0 5 0 5 5 5 6 0 4 4"],
 }
 MELODIES = {k: _na(v) for k, v in NOTANGKA.items()}
 
@@ -403,26 +401,16 @@ MELODIES = {k: _na(v) for k, v in NOTANGKA.items()}
 # in modern grooves. Become real catalog entries (category "Lagu Daerah"/"Lagu Anak").
 _LD = "Lagu Daerah"; _LA = "Lagu Anak"
 FOLK = [
-    {"id": "apuse",          "melody": "apuse",          "title": "Apuse",                "region": "Papua",              "category": _LD, "bpm": 90,  "root": 60, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "yamko",          "melody": "yamko",          "title": "Yamko Rambe Yamko",    "region": "Papua",              "category": _LD, "bpm": 120, "root": 60, "groove": "edm",     "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "ampar_pisang",   "melody": "ampar_pisang",   "title": "Ampar-Ampar Pisang",   "region": "Kalimantan Selatan", "category": _LD, "bpm": 104, "root": 60, "groove": "pop",     "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "bungong_jeumpa", "melody": "bungong_jeumpa", "title": "Bungong Jeumpa",       "region": "Aceh",               "category": _LD, "bpm": 96,  "root": 60, "groove": "pop",     "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "soleram",        "melody": "soleram",        "title": "Soleram",              "region": "Riau",               "category": _LD, "bpm": 80,  "root": 60, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "manuk_dadali",   "melody": "manuk_dadali",   "title": "Manuk Dadali",         "region": "Jawa Barat",         "category": _LD, "bpm": 100, "root": 60, "groove": "pop",     "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "kicir_kicir",    "melody": "kicir_kicir",    "title": "Kicir-Kicir",          "region": "DKI Jakarta",        "category": _LD, "bpm": 108, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "rasa_sayange",   "melody": "rasa_sayange",   "title": "Rasa Sayange",         "region": "Maluku",             "category": _LD, "bpm": 96,  "root": 60, "groove": "citypop", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "sajojo",         "melody": "sajojo",         "title": "Sajojo",               "region": "Papua",              "category": _LD, "bpm": 116, "root": 60, "groove": "koplo",   "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "sipatokaan",     "melody": "sipatokaan",     "title": "Sipatokaan",           "region": "Sulawesi Utara",     "category": _LD, "bpm": 100, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "o_ina_ni_keke",  "melody": "o_ina_ni_keke",  "title": "O Ina Ni Keke",        "region": "Sulawesi Utara",     "category": _LD, "bpm": 84,  "root": 60, "groove": "lofi",    "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "jali_jali",      "melody": "jali_jali",      "title": "Jali-Jali",            "region": "DKI Jakarta",        "category": _LD, "bpm": 104, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "cik_cik_periuk", "melody": "cik_cik_periuk", "title": "Cik Cik Periuk",       "region": "Kalimantan Barat",   "category": _LD, "bpm": 110, "root": 60, "groove": "koplo",   "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "cublak_suweng",  "melody": "cublak_suweng",  "title": "Cublak-Cublak Suweng", "region": "Jawa Tengah",        "category": _LA, "bpm": 108, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "gundul_pacul",   "melody": "gundul_pacul",   "title": "Gundul-Gundul Pacul",  "region": "Jawa Tengah",        "category": _LA, "bpm": 106, "root": 60, "groove": "pop",     "lead": "pluck", "flavor": "flute", "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "anak_kambing",   "melody": "anak_kambing",   "title": "Anak Kambing Saya",    "region": "Nusa Tenggara Timur","category": _LA, "bpm": 100, "root": 60, "groove": "pop",     "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "tokecang",       "melody": "tokecang",       "title": "Tokecang",             "region": "Jawa Barat",         "category": _LA, "bpm": 120, "root": 60, "groove": "pop",     "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "injit_semut",    "melody": "injit_semut",    "title": "Injit-Injit Semut",    "region": "Jambi",              "category": _LA, "bpm": 112, "root": 60, "groove": "pop",     "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
-    {"id": "suwe_ora_jamu",  "melody": "suwe_ora_jamu",  "title": "Suwe Ora Jamu",        "region": "Yogyakarta",         "category": _LA, "bpm": 96,  "root": 60, "groove": "lofi",    "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
-    {"id": "lir_ilir",       "melody": "lir_ilir",       "title": "Lir-Ilir",             "region": "Jawa Tengah",        "category": _LA, "bpm": 82,  "root": 60, "groove": "lofi",    "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "apuse",          "melody": "apuse",          "title": "Apuse",               "region": "Papua",              "category": _LD, "bpm": 88,  "root": 60, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "ampar_pisang",   "melody": "ampar_pisang",   "title": "Ampar-Ampar Pisang",  "region": "Kalimantan Selatan", "category": _LD, "bpm": 100, "root": 60, "groove": "pop",  "lead": "pluck", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "soleram",        "melody": "soleram",        "title": "Soleram",             "region": "Riau",               "category": _LD, "bpm": 78,  "root": 60, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "rasa_sayange",   "melody": "rasa_sayange",   "title": "Rasa Sayange",        "region": "Maluku",             "category": _LD, "bpm": 92,  "root": 60, "groove": "pop",  "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal", "Hard"]},
+    {"id": "yamko",          "melody": "yamko",          "title": "Yamko Rambe Yamko",   "region": "Papua",              "category": _LD, "bpm": 112, "root": 60, "groove": "pop",  "lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "bungong_jeumpa", "melody": "bungong_jeumpa", "title": "Bungong Jeumpa",      "region": "Aceh",               "category": _LD, "bpm": 86,  "root": 57, "groove": "lofi", "lead": "flute", "flavor": "bell",  "lanes": 4, "diffs": ["Easy", "Normal"]},
+    {"id": "sajojo",         "melody": "sajojo",         "title": "Sajojo",              "region": "Papua",              "category": _LD, "bpm": 116, "root": 60, "groove": "koplo","lead": "lead",  "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "cublak_suweng",  "melody": "cublak_suweng",  "title": "Cublak-Cublak Suweng","region": "Jawa Tengah",        "category": _LA, "bpm": 100, "root": 60, "groove": "pop",  "lead": "bell",  "flavor": "bell",  "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "gundul_pacul",   "melody": "gundul_pacul",   "title": "Gundul-Gundul Pacul", "region": "Jawa Tengah",        "category": _LA, "bpm": 100, "root": 60, "groove": "pop",  "lead": "pluck", "flavor": "flute", "lanes": 4, "diffs": ["Normal", "Hard"]},
+    {"id": "anak_kambing",   "melody": "anak_kambing",   "title": "Anak Kambing Saya",   "region": "Nusa Tenggara Timur","category": _LA, "bpm": 96,  "root": 62, "groove": "pop",  "lead": "pluck", "flavor": None,    "lanes": 4, "diffs": ["Easy", "Normal"]},
 ]
 
 # chords that could harmonise a melody, scored by how many melody notes they contain

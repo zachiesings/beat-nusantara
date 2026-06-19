@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>Beat Nusantara — App Preview</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  :root{
+    --navy:#0E0A16; --ink2:#2A1830; --border:rgba(255,255,255,.16);
+    --gold:#F2B73C; --goldLt:#FCD675; --coral:#E8744C; --maroon:#B23A4E;
+    --teal:#2FA987; --indigo:#5B4BC4; --hi:#F7EFE2; --lo:#C4B4BA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:'Segoe UI','Plus Jakarta Sans',system-ui,sans-serif;color:var(--hi)}
+  .page{width:297mm;height:210mm;position:relative;overflow:hidden;page-break-after:always;
+    padding:11mm 12mm;
+    background:
+     radial-gradient(420mm 280mm at 6% -12%, rgba(242,183,60,.20), transparent),
+     radial-gradient(420mm 320mm at 116% 8%, rgba(178,58,78,.24), transparent),
+     radial-gradient(440mm 360mm at 50% 124%, rgba(47,169,135,.16), transparent),
+     linear-gradient(180deg,var(--navy),var(--ink2))}
+  .page:last-child{page-break-after:auto}
+
+  /* ---- header ---- */
+  .head{text-align:center}
+  .kicker{font-size:9pt;letter-spacing:4px;color:var(--lo);text-transform:uppercase;font-weight:700}
+  h1{font-size:32pt;font-weight:800;letter-spacing:-1px;line-height:1.05;margin-top:3mm;
+     background:linear-gradient(120deg,var(--goldLt),var(--coral),var(--maroon));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--lo);font-size:11.5pt;margin-top:2.5mm}
+  .badges{margin-top:4mm;display:flex;gap:6mm;justify-content:center;flex-wrap:wrap}
+  .badge{font-size:8.5pt;border:1px solid var(--border);border-radius:999px;padding:2mm 4mm;
+     background:rgba(255,255,255,.06);color:var(--hi)}
+  .badge b{color:var(--gold)}
+
+  /* ---- phone row ---- */
+  .row{display:flex;gap:5.5mm;justify-content:center;align-items:flex-start;margin-top:7mm}
+  .col{width:39mm;display:flex;flex-direction:column;align-items:center;gap:3mm}
+  .cap{font-size:8pt;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--goldLt);text-align:center}
+  .cap span{display:block;font-weight:600;letter-spacing:.3px;color:var(--lo);text-transform:none;margin-top:.6mm;font-size:7.5pt}
+  .phone{width:39mm;aspect-ratio:1290/2796;border-radius:6mm;background:#000;border:1.1mm solid #000;
+     box-shadow:0 6mm 14mm rgba(0,0,0,.55), 0 0 0 .3mm rgba(242,183,60,.25);overflow:hidden}
+  .phone img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .stripe{position:absolute;left:12mm;right:12mm;bottom:9mm;display:flex;gap:4mm;justify-content:center}
+  .chip{font-size:8.5pt;color:var(--hi);background:rgba(255,255,255,.05);border:1px solid var(--border);
+     border-radius:3mm;padding:2.4mm 4mm;flex:1;text-align:center}
+  .chip b{color:var(--gold);display:block;font-size:11pt;margin-bottom:.6mm}
+
+  /* ---- page 2 ---- */
+  h2{font-size:22pt;font-weight:800;letter-spacing:-.5px;
+     background:linear-gradient(120deg,var(--goldLt),var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .p2sub{color:var(--lo);font-size:11pt;margin-top:2mm}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-top:9mm}
+  .card{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:5mm;padding:6mm}
+  .card .ic{font-size:17pt}
+  .card h4{font-size:12pt;font-weight:800;margin-top:2.5mm}
+  .card p{color:var(--lo);font-size:9.5pt;line-height:1.55;margin-top:1.8mm}
+  .tf{margin-top:9mm;border:1px solid rgba(47,169,135,.5);background:rgba(47,169,135,.12);
+     border-radius:5mm;padding:5mm 6mm;display:flex;align-items:center;gap:5mm}
+  .tf .t{font-size:13pt;font-weight:800;color:var(--teal)}
+  .tf p{color:var(--hi);font-size:10pt;line-height:1.5}
+  .foot{position:absolute;left:12mm;right:12mm;bottom:8mm;text-align:center;color:var(--lo);font-size:8.5pt;line-height:1.6}
+</style>
+</head>
+<body>
+
+  <!-- ===================== PAGE 1 ===================== -->
+  <section class="page">
+    <div class="head">
+      <div class="kicker">App Preview · TestFlight</div>
+      <h1>Beat Nusantara</h1>
+      <div class="sub">Game ritme rasa Nusantara — 20 lagu original, ketuk seirama beat 🇮🇩🪔</div>
+      <div class="badges">
+        <div class="badge"><b>Screenshot asli</b> dari aplikasi (bukan gambar mockup)</div>
+        <div class="badge"><b>20</b> lagu · <b>8</b> kategori</div>
+        <div class="badge">Audio &amp; judul <b>100% original</b></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col"><div class="cap">Splash<span>Gunungan wayang</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/splash.png"></div></div>
+      <div class="col"><div class="cap">Home<span>Lobby &amp; misi harian</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/home.png"></div></div>
+      <div class="col"><div class="cap">Library<span>20 lagu, 8 genre</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/library.png"></div></div>
+      <div class="col"><div class="cap">Gameplay<span>Combo &amp; FEVER</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/gameplay.png"></div></div>
+      <div class="col"><div class="cap">Result<span>Skor &amp; rank SSS</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/result.png"></div></div>
+      <div class="col"><div class="cap">Reward<span>Koleksi skin lajur</span></div><div class="phone"><img src="../../marketing/screenshots/6.7/reward.png"></div></div>
+    </div>
+
+    <div class="stripe">
+      <div class="chip"><b>20</b>lagu playable</div>
+      <div class="chip"><b>8</b>kategori genre</div>
+      <div class="chip"><b>SSS</b>sistem ranking</div>
+      <div class="chip"><b>FEVER</b>multiplier combo</div>
+      <div class="chip"><b>5+</b>skin &amp; reward</div>
+    </div>
+  </section>
+
+  <!-- ===================== PAGE 2 ===================== -->
+  <section class="page">
+    <div class="head" style="text-align:left">
+      <h2>Apa yang sudah jadi</h2>
+      <div class="p2sub">Versi yang ada di TestFlight sekarang — bisa langsung dimainkan ujung ke ujung.</div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="ic">🎵</div><h4>20 lagu original</h4>
+        <p>Senja di Jakarta, Koplo Neon, Gamelan Pulse, Tokyo Kilat, Final: Garuda Rising, dst. Semua audio &amp; judul orisinal — bebas hak cipta.</p></div>
+      <div class="card"><div class="ic">🗂️</div><h4>8 kategori</h4>
+        <p>Pop Indonesia, Koplo/Dangdut, Nusantara Beats, Global Hits, EDM, Chill, Challenge + "Untuk Kamu".</p></div>
+      <div class="card"><div class="ic">🔥</div><h4>Gameplay 4 lajur</h4>
+        <p>Tap, hold &amp; flick mengikuti beat. Combo, akurasi Perfect/Hebat/Oke, dan mode FEVER ×2 saat streak.</p></div>
+      <div class="card"><div class="ic">🏆</div><h4>Skor &amp; ranking</h4>
+        <p>Rank D → SSS, Full Combo, skor terbaik per lagu, plus koin &amp; XP tiap selesai main.</p></div>
+      <div class="card"><div class="ic">🎨</div><h4>Koleksi &amp; reward</h4>
+        <p>Skin lajur (Neon, Senja, Samudra, Batik Emas), efek, lencana, profil — dibuka pakai koin atau nonton iklan.</p></div>
+      <div class="card"><div class="ic">🪔</div><h4>Tema Nusantara</h4>
+        <p>Identitas batik premium: gunungan wayang, motif beda tiap layar, palet emas-maroon-teal. Bahasa Indonesia penuh.</p></div>
+    </div>
+
+    <div class="tf">
+      <div class="t">✈️ TestFlight</div>
+      <p>Build sudah ter-upload &amp; valid. Bisa di-install &amp; dicoba lewat undangan TestFlight — tidak menunggu setup "business" / review App Store.</p>
+    </div>
+
+    <div class="foot">Beat Nusantara — Flutter (iOS &amp; Android) · semua lagu, judul, dan artis fiktif &amp; orisinal · pratinjau internal untuk Sean</div>
+  </section>
+
+</body>
+</html>
