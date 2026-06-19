@@ -4,6 +4,8 @@ name: iOS TestFlight
 # App Store Connect / TestFlight — using the App Store Connect API key stored in
 # repo secrets. No Codemagic / no Mac needed. Mirrors codemagic.yaml via the same
 # `codemagic-cli-tools` (app-store-connect / keychain / xcode-project).
+# build trigger: 2026-06-19 — real-song music v2 + lead-in timing fix +
+# animated mascot 'Melodi' + Home greeting + gameplay feel/UX polish
 on:
   workflow_dispatch:
   push:
