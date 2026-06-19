@@ -4,8 +4,8 @@ name: iOS TestFlight
 # App Store Connect / TestFlight — using the App Store Connect API key stored in
 # repo secrets. No Codemagic / no Mac needed. Mirrors codemagic.yaml via the same
 # `codemagic-cli-tools` (app-store-connect / keychain / xcode-project).
-# build trigger: 2026-06-19 — real-song music v2 + lead-in timing fix +
-# animated mascot 'Melodi' + Home greeting + gameplay feel/UX polish
+# build trigger: 2026-06-19b — fix duplicate CFBundleVersion (build# now epoch,
+# always-unique) so the new build (music v2 + Melodi + feel polish) actually uploads
 on:
   workflow_dispatch:
   push:
@@ -76,7 +76,7 @@ jobs:
       - name: Build IPA (release)
         run: |
           flutter build ipa --release \
-            --build-number=${{ github.run_number }} \
+            --build-number=$(date +%s) \
             --export-options-plist="$HOME/export_options.plist"
 
       - name: Upload to App Store Connect / TestFlight
